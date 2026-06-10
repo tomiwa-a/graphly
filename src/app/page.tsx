@@ -1,5 +1,5 @@
 import { BodyLayout } from "@/components/layout/body-layout";
-import { BookOpen, Network, Code2, GitBranch, ArrowRight, Sparkles } from "lucide-react";
+import { Network, Code2, GitBranch, ArrowRight, Sparkles } from "lucide-react";
 
 const features = [
   {

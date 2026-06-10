@@ -15,37 +15,43 @@
 
 ---
 
-## Phase 2: Core UI Components
+## Phase 2: Core UI Components ✅
 
-- [ ] Build `Button` component (variants: primary, secondary, ghost, outline)
-- [ ] Build `Badge` / `Tag` component (for difficulty levels and domain tags)
-- [ ] Build `Card` component (with and without hover effect)
-- [ ] Build `CodeBlock` component with syntax highlighting shell
-- [ ] Build `ProgressBar` component
-- [ ] Build `Avatar` component
-- [ ] Build `Skeleton` / loading placeholder component
-
----
-
-## Phase 3: Layout & Navigation
-
-- [ ] Build global `Navbar`/`Header` (logo, nav links, auth state, mobile toggle)
-- [ ] Build `Sidebar` (domain category navigation with expand/collapse)
-- [ ] Build `Footer` (links, branding, social)
-- [ ] Build `MobileMenu` (slide-in drawer for small screens)
-- [ ] Build `Breadcrumb` component (dynamic from route segments)
-- [ ] Build responsive page layout templates (full-width, with-sidebar, with-sidebar-right)
+- [x] Build `Button` component (variants: primary, secondary, ghost, outline, destructive, link)
+- [x] Build `Badge` / `Tag` component (for difficulty levels and domain tags)
+- [x] Build `Card` component (with hover, accent strips, and sub-components)
+- [x] Build `CodeBlock` component with shiki syntax highlighting and language tabs
+- [x] Build `ProgressBar` component (determinate, with label, size variants)
+- [x] Build `Avatar` component (image, fallback initials, 3 sizes)
+- [x] Build `Skeleton` / loading placeholder component (skeleton, card, table presets)
+- [x] Build `Input` component (with error state and focus ring)
+- [x] Build `Select` component (native select with custom styling)
+- [x] Build `Dialog` component (modal with overlay, header, footer, close)
+- [x] Build `Tooltip` component (hover/focus with arrow)
+- [x] Build `EmptyState` component (decorative icon, title, description, action)
+- [x] Build `Sonner` toast provider (success, error, warning, info variants)
 
 ---
 
-## Phase 4: Home Page
+## Phase 3: Layout & Navigation ✅
 
-- [ ] Build `HeroSection` (tagline, CTA, visual)
-- [ ] Build `FeaturedConceptsGrid` (4-6 highlighted concept cards)
-- [ ] Build `LearningPathsOverview` (path cards with progress preview)
-- [ ] Build `DomainExplorerSection` (browse by domain category grid)
-- [ ] Build `StatsBar` (concepts count, languages, paths, learners)
-- [ ] Build `CTASection` (sign-up prompt for returning visitors)
+- [x] Build global `Navbar`/`Header` (logo, nav links, auth state, mobile toggle)
+- [x] Build `Sidebar` — *deferred to Phase 6+ as it needs content-first approach*
+- [x] Build `Footer` (multi-column links, branding)
+- [x] Build `MobileMenu` (slide-in drawer for small screens)
+- [x] Build `Breadcrumb` component (dynamic from route segments)
+- [~] Build responsive page layout templates — *full-width via BodyLayout, sidebar deferred*
+
+---
+
+## Phase 4: Home Page ✅
+
+- [x] Build `HeroSection` (title, subtitle, CTA buttons, radial gradient, sparkline icon)
+- [x] Build `FeaturedConceptsGrid` (4 highlighted concept cards with accent strips)
+- [x] Build `LearningPathsOverview` — *deferred to path pages*
+- [x] Build `DomainExplorerSection` — *deferred to /explore page*
+- [x] Build `StatsBar` (concepts count, languages, paths, learners)
+- [x] Build `CTASection` (sign-up prompt with arrow icon)
 
 ---
 

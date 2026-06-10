@@ -21,7 +21,7 @@ import { Skeleton, CardSkeleton } from "@/components/ui/skeleton";
 import { CodeBlock } from "@/components/ui/code-block";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useState } from "react";
-import { Info, ArrowRight, Search, BookOpen, AlertCircle, Inbox } from "lucide-react";
+import { Info, ArrowRight, Search, BookOpen, AlertCircle } from "lucide-react";
 
 export default function ComponentsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
