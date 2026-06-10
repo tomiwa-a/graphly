@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getConceptBySlug, getAllSlugs, concepts } from "@/lib/data/concepts";
+import { chapters } from "@/lib/data/chapters";
 import { ConceptCardMini } from "@/components/concepts/concept-card";
 import { TableOfContents } from "@/components/concepts/table-of-contents";
 import { LanguageTabSwitcher } from "@/components/concepts/language-tab-switcher";
@@ -37,6 +38,8 @@ export default async function ConceptPage({
   const { slug } = await params;
   const concept = getConceptBySlug(slug);
   if (!concept) notFound();
+
+  const chapter = chapters.find((ch) => ch.id === concept.chapterId);
 
   const prerequisiteConcepts = concepts.filter((c) =>
     concept.prerequisites.includes(c.slug)
@@ -105,6 +108,14 @@ export default async function ConceptPage({
                   <span className="text-sm text-foreground-secondary font-sans">
                     {concept.domain}
                   </span>
+                  {chapter && (
+                    <>
+                      <span className="h-1 w-1 rounded-full bg-foreground-muted" />
+                      <span className="text-sm text-foreground-secondary font-sans">
+                        Chapter: <span className="font-semibold text-foreground">{chapter.title}</span>
+                      </span>
+                    </>
+                  )}
                   <span className="h-1 w-1 rounded-full bg-foreground-muted" />
                   <span className="text-sm text-foreground-secondary font-sans">
                     {concept.estimatedMinutes} min read

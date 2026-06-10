@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { concepts } from "@/lib/data/concepts";
+import { chapters } from "@/lib/data/chapters";
 import { ConceptCard } from "@/components/concepts/concept-card";
 import { ConceptFilters } from "@/components/concepts/concept-filters";
 import { Reveal } from "@/components/reveal";
@@ -44,21 +45,45 @@ export default function ConceptsPage() {
         </div>
       </Reveal>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        {filtered.map((concept, i) => (
-          <Reveal key={concept.slug} delay={i * 60}>
-            <ConceptCard
-              slug={concept.slug}
-              title={concept.title}
-              summary={concept.summary}
-              difficulty={concept.difficulty}
-              domain={concept.domain}
-              estimatedMinutes={concept.estimatedMinutes}
-            />
-          </Reveal>
-        ))}
+      <div className="space-y-12">
+        {chapters.map((chapter) => {
+          const chapterConcepts = filtered.filter((c) => c.chapterId === chapter.id);
+          if (chapterConcepts.length === 0) return null;
+
+          return (
+            <div key={chapter.id} className="space-y-6">
+              <div className="border-b border-border pb-3">
+                <span className="text-[10px] font-heading font-bold text-primary-dark uppercase tracking-wider">
+                  Chapter Zone
+                </span>
+                <h2 className="text-xl font-medium tracking-[-0.02em] text-foreground font-heading mt-0.5">
+                  {chapter.title}
+                </h2>
+                <p className="mt-1 text-xs text-foreground-secondary font-sans leading-relaxed max-w-2xl">
+                  {chapter.summary}
+                </p>
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                {chapterConcepts.map((concept, idx) => (
+                  <Reveal key={concept.slug} delay={idx * 40}>
+                    <ConceptCard
+                      slug={concept.slug}
+                      title={concept.title}
+                      summary={concept.summary}
+                      difficulty={concept.difficulty}
+                      domain={concept.domain}
+                      estimatedMinutes={concept.estimatedMinutes}
+                    />
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+
         {filtered.length === 0 && (
-          <div className="col-span-full py-16 text-center">
+          <div className="py-16 text-center">
             <p className="text-foreground-secondary font-sans">
               No concepts match your filters.
             </p>

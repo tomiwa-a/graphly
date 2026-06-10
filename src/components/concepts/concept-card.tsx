@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Difficulty } from "@/lib/data/concepts";
+import { concepts } from "@/lib/data/concepts";
+import { chapters } from "@/lib/data/chapters";
 
 const diffStyles: Record<string, string> = {
   beginner: "bg-success-light text-success-dark",
@@ -24,6 +26,9 @@ export function ConceptCard({
   domain,
   estimatedMinutes,
 }: ConceptCardProps) {
+  const concept = concepts.find((c) => c.slug === slug);
+  const chapter = chapters.find((ch) => ch.id === concept?.chapterId);
+
   return (
     <Link
       href={`/concepts/${slug}`}
@@ -39,7 +44,7 @@ export function ConceptCard({
           </span>
         )}
       </div>
-      <div className="mt-2 flex items-center gap-2">
+      <div className="mt-2 flex items-center gap-2 flex-wrap">
         <span
           className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold leading-none font-heading ${diffStyles[difficulty]}`}
         >
@@ -48,6 +53,14 @@ export function ConceptCard({
         <span className="text-xs text-foreground-secondary font-sans">
           {domain}
         </span>
+        {chapter && (
+          <>
+            <span className="h-1 w-1 rounded-full bg-foreground-muted/40" />
+            <span className="text-xs text-foreground-secondary font-sans">
+              Chapter: <span className="font-semibold text-foreground-secondary">{chapter.title}</span>
+            </span>
+          </>
+        )}
       </div>
       <p className="mt-3 text-sm leading-relaxed text-foreground-secondary font-sans line-clamp-2">
         {summary}

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import type { PathStep } from "@/lib/data/paths";
+import { concepts } from "@/lib/data/concepts";
+import { chapters } from "@/lib/data/chapters";
 
 function StepCard({
   step,
@@ -16,6 +18,9 @@ function StepCard({
   onToggle: () => void;
   isLast: boolean;
 }) {
+  const concept = concepts.find((c) => c.slug === step.conceptSlug);
+  const chapter = chapters.find((ch) => ch.id === concept?.chapterId);
+
   return (
     <div className="flex gap-4">
       {/* Timeline line + node */}
@@ -38,7 +43,7 @@ function StepCard({
 
       {/* Content */}
       <div className="pb-8">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="text-lg font-heading font-medium text-primary-dark/25">
             {String(step.order).padStart(2, "0")}
           </span>
@@ -52,6 +57,11 @@ function StepCard({
           >
             {step.title}
           </Link>
+          {chapter && (
+            <span className="inline-flex items-center rounded-full bg-primary-muted text-primary-dark px-2.5 py-0.5 text-[9px] font-heading font-bold border border-primary/20">
+              {chapter.title}
+            </span>
+          )}
         </div>
         <p
           className={`mt-1 ml-10 text-sm font-sans ${
