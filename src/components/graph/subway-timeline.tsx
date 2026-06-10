@@ -6,6 +6,7 @@ import { Check, BookOpen, Lock, HelpCircle, ArrowRight, ExternalLink } from "luc
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { concepts } from "@/lib/data/concepts";
+import { chapters } from "@/lib/data/chapters";
 
 export interface SubwayStep {
   title: string;
@@ -14,6 +15,7 @@ export interface SubwayStep {
   estimatedMinutes: number;
   difficulty: string;
   domain: string;
+  chapterId: string;
   reason: string;
 }
 
@@ -149,8 +151,26 @@ export function SubwayTimeline({
           const nextStepCompleted = !isLast && isCompleted(syllabus[idx + 1].slug);
           const showCompletedTrack = completed && nextStepCompleted;
 
+          const currentChapter = chapters.find((ch) => ch.id === step.chapterId);
+          const showChapterHeader = idx === 0 || step.chapterId !== syllabus[idx - 1].chapterId;
+
           return (
-            <div key={`subway-step-${step.slug}`} className="relative flex gap-6">
+            <div key={`subway-step-group-${step.slug}`} className="space-y-6">
+              {showChapterHeader && (
+                <div className="relative py-2 flex items-start gap-4">
+                  <div className="absolute left-[5px] top-[14px] z-20 h-4 w-4 rounded-full bg-primary-dark border-4 border-white shadow-md animate-pulse" />
+                  <div className="ml-10">
+                    <span className="text-[9px] font-heading font-bold text-primary-dark bg-primary-muted border border-primary/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      Entering Zone: {currentChapter?.title || step.chapterId}
+                    </span>
+                    <p className="mt-1 text-[10px] text-foreground-secondary font-sans leading-relaxed max-w-lg">
+                      {currentChapter?.summary}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="relative flex gap-6">
               {/* Dynamic Connecting Track segment overlay */}
               {!isLast && (
                 <div
@@ -264,6 +284,7 @@ export function SubwayTimeline({
                     {completed ? "Completed ✓" : "Mark Mastered"}
                   </button>
                 </div>
+              </div>
               </div>
             </div>
           );

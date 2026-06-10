@@ -1,4 +1,5 @@
 import { concepts, type Concept } from "./data/concepts";
+import { chapters } from "./data/chapters";
 
 export interface GraphEdge {
   from: string;
@@ -191,59 +192,64 @@ export class GraphEngine {
   }[] {
     // 1. Find the direct transition path
     const path = this.findPath(start, target);
+    let finalSlugs: string[] = [];
+    let resolveReason = (slug: string): string => "";
+
     if (!path) {
       // If no path is found, fall back to target + its prerequisites
       const prerequisites = this.getTransitivePrerequisites(target);
       const allSlugs = [target, ...prerequisites];
-      const sortedSlugs = this.topologicalSort(allSlugs);
+      finalSlugs = this.topologicalSort(allSlugs);
+      resolveReason = (slug) => slug === target ? "Target Goal" : "Prerequisite to goal";
+    } else {
+      // 2. We have a path. Collect all required concepts (start + intermediate step nodes + target)
+      const pathSlugs = [start, ...path.map((step) => step.slug)];
 
-      return sortedSlugs.map((slug) => {
-        const c = concepts.find((cc) => cc.slug === slug)!;
-        return {
-          title: c.title,
-          description: c.summary,
-          slug: c.slug,
-          estimatedMinutes: c.estimatedMinutes,
-          difficulty: c.difficulty,
-          domain: c.domain,
-          chapterId: c.chapterId,
-          reason: slug === target ? "Target Goal" : "Prerequisite to goal"
-        };
+      // 3. For each node in the path, also pull its strict prerequisites to ensure the user is fully prepared
+      let allRequiredSlugs: string[] = [];
+      pathSlugs.forEach((slug) => {
+        allRequiredSlugs.push(slug);
+        allRequiredSlugs = [...allRequiredSlugs, ...this.getTransitivePrerequisites(slug)];
       });
+
+      // 4. Sort all required concepts topologically
+      finalSlugs = this.topologicalSort([...new Set(allRequiredSlugs)]);
+      resolveReason = (slug) => {
+        const pathStepIdx = path.findIndex((step) => step.slug === slug);
+        if (slug === start) {
+          return "Your starting point.";
+        } else if (pathStepIdx !== -1) {
+          return path[pathStepIdx].reason;
+        } else {
+          return `Prerequisite required for ${
+            path.find((step) => {
+              const stepConcept = concepts.find((cc) => cc.slug === step.slug);
+              return stepConcept?.prerequisites.includes(slug);
+            })?.slug || "next steps"
+          }.`;
+        }
+      };
     }
 
-    // 2. We have a path. Collect all required concepts (start + intermediate step nodes + target)
-    const pathSlugs = [start, ...path.map((step) => step.slug)];
-
-    // 3. For each node in the path, also pull its strict prerequisites to ensure the user is fully prepared
-    let allRequiredSlugs: string[] = [];
-    pathSlugs.forEach((slug) => {
-      allRequiredSlugs.push(slug);
-      allRequiredSlugs = [...allRequiredSlugs, ...this.getTransitivePrerequisites(slug)];
+    // Now, sort/group finalSlugs by chapterId (using the chapters order),
+    // and if same chapter, preserve their relative topological order.
+    const chapterOrder = chapters.map((ch) => ch.id);
+    const sortedAndGroupedSlugs = [...finalSlugs].sort((aSlug, bSlug) => {
+      const aConcept = concepts.find((c) => c.slug === aSlug)!;
+      const bConcept = concepts.find((c) => c.slug === bSlug)!;
+      
+      const aChapterIdx = chapterOrder.indexOf(aConcept.chapterId);
+      const bChapterIdx = chapterOrder.indexOf(bConcept.chapterId);
+      
+      if (aChapterIdx !== bChapterIdx) {
+        return aChapterIdx - bChapterIdx;
+      }
+      
+      return finalSlugs.indexOf(aSlug) - finalSlugs.indexOf(bSlug);
     });
 
-    // 4. Sort all required concepts topologically
-    const sortedRequiredSlugs = this.topologicalSort([...new Set(allRequiredSlugs)]);
-
-    // 5. Build syllabus items mapping transition reasons from the BFS path
-    return sortedRequiredSlugs.map((slug) => {
+    return sortedAndGroupedSlugs.map((slug) => {
       const c = concepts.find((cc) => cc.slug === slug)!;
-      // Find if this slug is an intermediate step in the path
-      const pathStepIdx = path.findIndex((step) => step.slug === slug);
-      let stepReason = "";
-      if (slug === start) {
-        stepReason = "Your starting point.";
-      } else if (pathStepIdx !== -1) {
-        stepReason = path[pathStepIdx].reason;
-      } else {
-        stepReason = `Prerequisite required for ${
-          path.find((step) => {
-            const stepConcept = concepts.find((cc) => cc.slug === step.slug);
-            return stepConcept?.prerequisites.includes(slug);
-          })?.slug || "next steps"
-        }.`;
-      }
-
       return {
         title: c.title,
         description: c.summary,
@@ -252,7 +258,7 @@ export class GraphEngine {
         difficulty: c.difficulty,
         domain: c.domain,
         chapterId: c.chapterId,
-        reason: stepReason
+        reason: resolveReason(slug)
       };
     });
   }
