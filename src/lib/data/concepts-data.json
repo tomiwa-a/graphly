@@ -44,7 +44,8 @@
     "seoTitle": "Bits and Binary: Bitwise Operations for Backend Engineers",
     "seoDescription": "Understanding bits, binary representation, and bitwise operations — the foundation of high-performance data structures like Bloom filters and bitmap indexes.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/bits",
-    "ogImage": null
+    "ogImage": null,
+    "citations": []
   },
   {
     "slug": "bloom-filters",
@@ -90,7 +91,8 @@
     "seoTitle": "Bloom Filters: Space-Efficient Probabilistic Set Membership",
     "seoDescription": "Understand Bloom filters — the probabilistic data structure with zero false negatives that powers cache shielding, malicious URL detection, and database query optimization.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/bloom-filters",
-    "ogImage": null
+    "ogImage": null,
+    "citations": []
   },
   {
     "slug": "caching-strategies",
@@ -157,7 +159,8 @@
     "seoTitle": "Caching Strategies: Cache-Aside, Write-Through, and CDN Patterns",
     "seoDescription": "Master caching strategies — cache-aside, write-through, write-behind, and CDN caching. Learn TTL management, invalidation, and cache stampede prevention.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/caching-strategies",
-    "ogImage": null
+    "ogImage": null,
+    "citations": []
   },
   {
     "slug": "circuit-breakers",
@@ -218,7 +221,8 @@
     "seoTitle": "Circuit Breakers: Preventing Cascading Failures in Distributed Systems",
     "seoDescription": "Learn how circuit breakers detect and isolate faulting downstream services, prevent cascading failures, and implement fallback strategies in production systems.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/circuit-breakers",
-    "ogImage": null
+    "ogImage": null,
+    "citations": []
   },
   {
     "slug": "hash-functions",
@@ -268,7 +272,8 @@
     "seoTitle": "Hash Functions: From HashMap to Consistent Hashing",
     "seoDescription": "Understand hash functions — how they map keys to integers, handle collisions, and power HashMaps, Bloom filters, and consistent hashing in distributed systems.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/hash-functions",
-    "ogImage": null
+    "ogImage": null,
+    "citations": []
   },
   {
     "slug": "http",
@@ -298,7 +303,7 @@
       {
         "id": "how-it-works",
         "title": "How it works",
-        "content": "A client opens a TCP connection to a server and sends a request with a method (GET, POST, PUT, DELETE), a path (/users/123), headers (Content-Type, Authorization), and optionally a body. The server processes the request and responds with a status code (200, 404, 500), headers, and a body."
+        "content": "A client opens a TCP connection to a server and sends a request with a method (GET, POST, PUT, DELETE), a path (/users/123), headers (Content-Type, Authorization), and optionally a body. The server processes the request and responds with a status code (200, 404, 500), headers, and a body.\n\n> [!TIP]\n> HTTP/2 and HTTP/3 bring major performance improvements: multiplexing (multiple requests over a single connection), header compression, and server push. In production, always prefer HTTP/2 or HTTP/3 if your infrastructure supports it — especially for latency-sensitive APIs."
       },
       {
         "id": "production-concerns",
@@ -331,7 +336,16 @@
     "seoTitle": "HTTP Protocol: Methods, Status Codes, and Request Lifecycle",
     "seoDescription": "Learn the HTTP protocol that powers all web communication — methods, status codes, headers, and request/response lifecycle for backend engineers.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/http",
-    "ogImage": null
+    "ogImage": null,
+    "citations": [
+      {
+        "title": "HTTP: The Definitive Guide",
+        "author": "David Gourley & Brian Totty",
+        "chapter": "Chapter 1: HTTP Overview",
+        "page_range": "3-28",
+        "external_link": "https://www.oreilly.com/library/view/http-the-definitive/1565925092/"
+      }
+    ]
   },
   {
     "slug": "idempotency",
@@ -401,7 +415,8 @@
     "seoTitle": "Idempotency in REST APIs: Building Reliable Distributed Endpoints",
     "seoDescription": "Learn how idempotency keys mathematically prevent double-billing and duplicate resource creation in HTTP POST networks.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/idempotency",
-    "ogImage": null
+    "ogImage": null,
+    "citations": []
   },
   {
     "slug": "indexes",
@@ -460,7 +475,8 @@
     "seoTitle": "Database Indexes: B-Trees, Query Performance, and Tradeoffs",
     "seoDescription": "Learn how database indexes work under the hood — B-trees, composite indexes, query planning, and the read/write performance tradeoffs every backend engineer must understand.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/indexes",
-    "ogImage": null
+    "ogImage": null,
+    "citations": []
   },
   {
     "slug": "message-queues",
@@ -520,6 +536,7 @@
     "seoTitle": "Message Queues: Decoupling Services with Async Messaging",
     "seoDescription": "Understand message queues — how producers and consumers decouple services, handle failures, and build resilient asynchronous systems with RabbitMQ, SQS, and BullMQ.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/message-queues",
-    "ogImage": null
+    "ogImage": null,
+    "citations": []
   }
 ]

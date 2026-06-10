@@ -103,6 +103,7 @@ function loadConcepts() {
               : data.canonical_url
             : null,
         ogImage: data.og_image || null,
+        citations: data.citations || [],
       });
     }
   }

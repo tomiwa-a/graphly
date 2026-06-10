@@ -12,6 +12,14 @@ export interface ConceptSection {
   content: string;
 }
 
+export interface Citation {
+  title: string;
+  author: string;
+  chapter?: string;
+  page_range?: string;
+  external_link?: string;
+}
+
 export interface Concept {
   slug: string;
   chapterId: string;
@@ -29,6 +37,7 @@ export interface Concept {
   seoDescription: string | null;
   canonicalUrl: string | null;
   ogImage: string | null;
+  citations: Citation[];
 }
 
 import conceptsData from "./concepts-data.json";

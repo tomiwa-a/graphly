@@ -11,6 +11,12 @@ related: [idempotency, caching-strategies]
 seo_title: "HTTP Protocol: Methods, Status Codes, and Request Lifecycle"
 seo_description: "Learn the HTTP protocol that powers all web communication — methods, status codes, headers, and request/response lifecycle for backend engineers."
 canonical_url: "/concepts/http"
+citations:
+  - title: "HTTP: The Definitive Guide"
+    author: "David Gourley & Brian Totty"
+    chapter: "Chapter 1: HTTP Overview"
+    page_range: "3-28"
+    external_link: "https://www.oreilly.com/library/view/http-the-definitive/1565925092/"
 code_examples:
   - language: Go
     title: HTTP server and handler
@@ -84,6 +90,9 @@ Everything in backend engineering sits on top of HTTP. REST APIs, GraphQL, webho
 ## How it works
 
 A client opens a TCP connection to a server and sends a request with a method (GET, POST, PUT, DELETE), a path (/users/123), headers (Content-Type, Authorization), and optionally a body. The server processes the request and responds with a status code (200, 404, 500), headers, and a body.
+
+> [!TIP]
+> HTTP/2 and HTTP/3 bring major performance improvements: multiplexing (multiple requests over a single connection), header compression, and server push. In production, always prefer HTTP/2 or HTTP/3 if your infrastructure supports it — especially for latency-sensitive APIs.
 
 ## Production concerns
 

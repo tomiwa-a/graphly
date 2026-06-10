@@ -29,18 +29,11 @@ This roadmap outlines the multi-phase transition from static hardcoded concept l
 ---
 
 ## Phase 2: Rich Formatting (Tables, Admonitions & Literature Citations)
-- [ ] **Markdown Table Support**: Build parser capability to compile standard markdown tables into responsive, stylized HTML comparison grids (ideal for comparing database index types, HTTP methods, or cache eviction strategies).
-- [ ] **Admonitions & Alerts**: Support GitHub-style callouts (`> [!NOTE]`, `> [!WARNING]`, `> [!TIP]`) using vanilla CSS styles for highlights.
-- [ ] **Textbook & Book Citations**: Include a frontmatter block for literature citations to ground the content in standard computer science literature:
-  ```yaml
-  citations:
-    - title: "Designing Data-Intensive Applications"
-      author: "Martin Kleppmann"
-      chapter: "Chapter 3: Storage and Retrieval"
-      page_range: "75-92"
-      external_link: "https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/"
-  ```
-  Render these citations in a premium "Core Literature References" card at the bottom of the concept detail layout.
+- [x] **Markdown Table Support**: GFM tables rendered as responsive, styled comparison grids via `remark-gfm` + custom table components in the markdown renderer.
+- [x] **Admonitions & Alerts**: GitHub-style callouts (`> [!NOTE]`, `> [!WARNING]`, `> [!TIP]`, `> [!CAUTION]`) parsed and rendered as styled callout cards.
+- [x] **Textbook & Book Citations**: Frontmatter `citations` block parsed by build script; rendered as "Core Literature References" card at the bottom of concept pages.
+
+  **Rendering**: Section body content now rendered as full Markdown via `react-markdown` + `remark-gfm`, enabling inline **bold**, `code`, ```fenced code blocks``` with Shiki syntax highlighting, lists, tables, admonitions, and links anywhere in the body.
 
 ---
 

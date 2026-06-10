@@ -9,6 +9,8 @@ import { PrerequisiteWarningBanner } from "@/components/concepts/prerequisite-wa
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { SITE_URL } from "@/lib/constants";
+import { MarkdownRenderer } from "@/components/ui/markdown";
+import { CitationCard } from "@/components/ui/citation-card";
 
 const diffStyles: Record<string, string> = {
   beginner: "bg-success-light text-success-dark",
@@ -69,6 +71,9 @@ export default async function ConceptPage({
       : []),
     ...(concept.codeExamples.length > 0
       ? [{ id: "code-examples", title: "Code Examples" }]
+      : []),
+    ...(concept.citations?.length > 0
+      ? [{ id: "citations", title: "References" }]
       : []),
     { id: "continue-learning", title: "Continue Learning" },
   ];
@@ -161,9 +166,7 @@ export default async function ConceptPage({
                 <h2 className="text-xl font-medium font-heading text-foreground tracking-[-0.02em] mb-3">
                   {section.title}
                 </h2>
-                <p className="text-base leading-relaxed text-foreground-secondary font-sans whitespace-pre-line">
-                  {section.content}
-                </p>
+                <MarkdownRenderer content={section.content} />
               </section>
             </Reveal>
           ))}
@@ -218,6 +221,15 @@ export default async function ConceptPage({
                   Code Examples
                 </h2>
                 <LanguageTabSwitcher examples={concept.codeExamples} />
+              </section>
+            </Reveal>
+          )}
+
+          {/* Citations */}
+          {concept.citations?.length > 0 && (
+            <Reveal>
+              <section id="citations" className="mb-10 scroll-mt-24">
+                <CitationCard citations={concept.citations} />
               </section>
             </Reveal>
           )}
