@@ -9,7 +9,9 @@ import { JourneyBuilder } from "@/components/graph/journey-builder";
 import { SubwayTimeline } from "@/components/graph/subway-timeline";
 import { AdvisoryDetours } from "@/components/graph/advisory-detours";
 import { ProgressMasteryCard, ResetProgressButton } from "@/components/graph/progress-mastery-card";
+import { PrerequisiteWarningBanner } from "@/components/concepts/prerequisite-warning-banner";
 import { GraphEngine } from "@/lib/graph-engine";
+import { cn } from "@/lib/utils";
 
 type NodePosition = { x: number; y: number };
 
@@ -55,6 +57,7 @@ function GraphView({
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [completedSlugs, setCompletedSlugs] = useState<string[]>([]);
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
   // Synchronize concept completion states from localStorage
   useEffect(() => {
@@ -85,6 +88,22 @@ function GraphView({
     if (!concept) return false;
     return concept.prerequisites.every((prereq) => completedSlugs.includes(prereq));
   };
+
+  // Upstream prerequisites of hovered node
+  const upstreamPrereqs = useMemo(() => {
+    if (!hoveredSlug) return null;
+    return new Set(concepts.find((c) => c.slug === hoveredSlug)?.prerequisites || []);
+  }, [hoveredSlug]);
+
+  // Downstream dependents of hovered node
+  const downstreamDependents = useMemo(() => {
+    if (!hoveredSlug) return null;
+    const deps = new Set<string>();
+    concepts.forEach((c) => {
+      if (c.prerequisites.includes(hoveredSlug)) deps.add(c.slug);
+    });
+    return deps;
+  }, [hoveredSlug]);
 
   const focusedNeighbors = useMemo(() => {
     if (!focusSlug) return null;
@@ -156,25 +175,57 @@ function GraphView({
           const to = nodePositions[edge.to];
           if (!from || !to) return null;
 
-          const dimmed =
-            focusedNeighbors &&
-            !(focusedNeighbors.has(edge.from) && focusedNeighbors.has(edge.to));
+          // Determine if this edge is part of the hovered node's flow
+          const isIncomingPrereq = hoveredSlug && edge.to === hoveredSlug;
+          const isOutgoingDep = hoveredSlug && edge.from === hoveredSlug;
+          const isEdgeHovered = isIncomingPrereq || isOutgoingDep;
 
           const edgeCompleted = isCompleted(edge.from) && isCompleted(edge.to);
 
+          const dimmed =
+            (focusedNeighbors &&
+              !(focusedNeighbors.has(edge.from) && focusedNeighbors.has(edge.to))) ||
+            (hoveredSlug && !isEdgeHovered);
+
+          let strokeColor = "rgba(45,42,38,0.2)";
+          if (hoveredSlug) {
+            if (isIncomingPrereq) strokeColor = "#C0392B"; // red for prerequisites
+            else if (isOutgoingDep) strokeColor = "#e17055"; // orange for downstream
+          } else if (edgeCompleted) {
+            strokeColor = "#C0392B";
+          }
+
           return (
-            <line
-              key={i}
-              x1={from.x}
-              y1={from.y}
-              x2={to.x}
-              y2={to.y}
-              stroke={edgeCompleted ? "#C0392B" : "rgba(45,42,38,0.2)"}
-              strokeWidth={edgeCompleted ? 2.5 : 1}
-              opacity={dimmed ? 0.06 : edge.type === "requires" ? 0.4 : 0.2}
-              strokeDasharray={edge.type === "related" ? "4 4" : "none"}
-              style={{ transition: "all 300ms ease" }}
-            />
+            <g key={`edge-group-${i}`}>
+              {/* Static core line */}
+              <line
+                x1={from.x}
+                y1={from.y}
+                x2={to.x}
+                y2={to.y}
+                stroke={strokeColor}
+                strokeWidth={isEdgeHovered ? 2.5 : edgeCompleted ? 2.2 : 1.2}
+                opacity={dimmed ? 0.05 : 0.6}
+                strokeDasharray={edge.type === "related" ? "4 4" : "none"}
+                style={{ transition: "all 300ms ease" }}
+              />
+
+              {/* Animated flowing line overlay */}
+              {((edgeCompleted && !hoveredSlug) || isEdgeHovered) && !dimmed && (
+                <line
+                  x1={from.x}
+                  y1={from.y}
+                  x2={to.x}
+                  y2={to.y}
+                  stroke={strokeColor}
+                  strokeWidth={isEdgeHovered ? 3 : 2.5}
+                  opacity={isEdgeHovered ? 0.8 : 0.4}
+                  strokeDasharray="5 5"
+                  className="animate-dash-flow"
+                  style={{ transition: "all 300ms ease" }}
+                />
+              )}
+            </g>
           );
         })}
 
@@ -183,23 +234,45 @@ function GraphView({
           const pos = nodePositions[concept.slug];
           if (!pos) return null;
 
-          const dimmed = focusedNeighbors && !focusedNeighbors.has(concept.slug);
           const isFocused = focusSlug === concept.slug;
           const completed = isCompleted(concept.slug);
           const available = isAvailable(concept.slug);
+
+          // Hover dependency states
+          const isNodeHovered = hoveredSlug === concept.slug;
+          const isUpstream = upstreamPrereqs?.has(concept.slug);
+          const isDownstream = downstreamDependents?.has(concept.slug);
+          const isPartOfHoverChain = isNodeHovered || isUpstream || isDownstream;
+
+          const dimmed =
+            (focusedNeighbors && !focusedNeighbors.has(concept.slug)) ||
+            (hoveredSlug && !isPartOfHoverChain);
+
+          let nodeBorderColor = "rgba(45,42,38,0.15)";
+          if (isNodeHovered) {
+            nodeBorderColor = "#C0392B";
+          } else if (isUpstream) {
+            nodeBorderColor = "#C0392B"; // red for prerequisite
+          } else if (isDownstream) {
+            nodeBorderColor = "#e17055"; // orange for dependent
+          } else if (isFocused) {
+            nodeBorderColor = "#C0392B";
+          }
 
           return (
             <g
               key={concept.slug}
               className="cursor-pointer"
               onClick={() => onSelectNode(concept.slug)}
+              onMouseEnter={() => setHoveredSlug(concept.slug)}
+              onMouseLeave={() => setHoveredSlug(null)}
               style={{
                 opacity: dimmed ? 0.15 : 1,
                 transition: "opacity 300ms ease",
               }}
             >
               {/* Pulse ring for available node */}
-              {available && (
+              {available && !hoveredSlug && (
                 <circle
                   cx={pos.x}
                   cy={pos.y}
@@ -208,11 +281,21 @@ function GraphView({
                   stroke="#C0392B"
                   strokeWidth={1.5}
                   strokeDasharray="3 3"
-                  className="opacity-40"
-                  style={{
-                    transformOrigin: `${pos.x}px ${pos.y}px`,
-                    animation: "pulse-ring 2s infinite",
-                  }}
+                  className="opacity-40 animate-pulse-ring"
+                />
+              )}
+
+              {/* Hover outline ring */}
+              {isPartOfHoverChain && !dimmed && (
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={isNodeHovered ? 40 : 34}
+                  fill="none"
+                  stroke={isNodeHovered ? "#C0392B" : isUpstream ? "#C0392B" : "#e17055"}
+                  strokeWidth={1}
+                  opacity={0.3}
+                  className="animate-pulse-ring"
                 />
               )}
 
@@ -220,12 +303,11 @@ function GraphView({
               <circle
                 cx={pos.x}
                 cy={pos.y}
-                r={isFocused ? 36 : 30}
+                r={isNodeHovered || isFocused ? 36 : 30}
                 fill={completed ? "#C0392B" : "white"}
-                stroke={isFocused ? "#C0392B" : "rgba(45,42,38,0.12)"}
-                strokeWidth={isFocused ? 3 : 1.5}
-                className="shadow-sm"
-                style={{ transition: "all 300ms ease" }}
+                stroke={nodeBorderColor}
+                strokeWidth={isNodeHovered || isFocused ? 3.5 : isPartOfHoverChain ? 2.5 : 1.5}
+                className="shadow-sm transition-all duration-300"
               />
 
               {/* Status Indicator Dot */}
@@ -252,9 +334,9 @@ function GraphView({
 
               <text
                 x={pos.x}
-                y={pos.y + (isFocused ? 24 : 20)}
+                y={pos.y + (isNodeHovered || isFocused ? 24 : 20)}
                 textAnchor="middle"
-                className={`text-[9px] font-sans ${completed ? "font-bold fill-primary-dark" : "fill-foreground-secondary"}`}
+                className={`text-[9px] font-sans ${completed ? "font-bold fill-primary-dark" : "fill-foreground-secondary"} ${isNodeHovered && "fill-foreground font-bold"}`}
                 style={{ pointerEvents: "none" }}
               >
                 {concept.title.length > 16
@@ -265,6 +347,108 @@ function GraphView({
           );
         })}
       </svg>
+    </div>
+  );
+}
+
+function MobileMetroLine({
+  focusSlug,
+  onSelectNode,
+}: {
+  focusSlug: string | null;
+  onSelectNode: (slug: string) => void;
+}) {
+  const [completedSlugs, setCompletedSlugs] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadProgress = () => {
+      try {
+        const saved = localStorage.getItem("graphy-completed-concepts");
+        if (saved) setCompletedSlugs(JSON.parse(saved));
+      } catch {}
+    };
+    loadProgress();
+    window.addEventListener("storage", loadProgress);
+    window.addEventListener("concept-completed-updated", loadProgress);
+    return () => {
+      window.removeEventListener("storage", loadProgress);
+      window.removeEventListener("concept-completed-updated", loadProgress);
+    };
+  }, []);
+
+  const isCompleted = (slug: string) => completedSlugs.includes(slug);
+  const isAvailable = (slug: string) => {
+    if (isCompleted(slug)) return false;
+    const c = concepts.find((cc) => cc.slug === slug);
+    return c ? c.prerequisites.every((p) => completedSlugs.includes(p)) : false;
+  };
+
+  // Sort topologically for mobile stacked rendering
+  const sortedConcepts = useMemo(() => {
+    const slugs = concepts.map((c) => c.slug);
+    const sorted = GraphEngine.topologicalSort(slugs);
+    return sorted.map((s) => concepts.find((c) => c.slug === s)!);
+  }, []);
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-[20px] bg-surface-muted/30 border border-border p-4 mb-4 text-center">
+        <p className="text-xs text-foreground-secondary font-sans">
+          📱 Stacking graph nodes as a vertical sequence for optimal mobile reading. Click a station to inspect.
+        </p>
+      </div>
+
+      <div className="relative pl-6 space-y-6">
+        <div className="absolute left-[17px] top-3 bottom-3 w-0.5 bg-border" />
+
+        {sortedConcepts.map((concept, idx) => {
+          const completed = isCompleted(concept.slug);
+          const active = isAvailable(concept.slug);
+          const selected = focusSlug === concept.slug;
+
+          return (
+            <div
+              key={`mobile-metro-${concept.slug}`}
+              onClick={() => onSelectNode(concept.slug)}
+              className={cn(
+                "relative flex items-start gap-4 p-4 rounded-2xl border bg-surface-card shadow-sm cursor-pointer transition-all duration-200 active:scale-[0.98]",
+                selected ? "border-primary-dark ring-1 ring-primary-dark/30 shadow-md" : "border-border",
+                active && "border-primary-dark/30 bg-primary-muted/10"
+              )}
+            >
+              {/* Circle badge on timeline */}
+              <div className="absolute left-[-21px] top-[18px] z-10 flex h-4 w-4 items-center justify-center rounded-full bg-white border border-border">
+                <div
+                  className={cn(
+                    "h-2 w-2 rounded-full",
+                    completed ? "bg-primary-dark" : active ? "bg-primary animate-pulse" : "bg-foreground-dim"
+                  )}
+                />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[9px] font-mono text-foreground-secondary">
+                    STATION {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <span className={cn(
+                    "text-[8px] font-heading font-bold rounded-full px-2 py-0.5 uppercase",
+                    completed ? "bg-success-light text-success-dark" : active ? "bg-primary-light text-primary-dark animate-pulse" : "bg-surface-muted text-foreground-muted"
+                  )}>
+                    {completed ? "Mastered" : active ? "Learn Next" : "Locked"}
+                  </span>
+                </div>
+                <h4 className="mt-1 text-sm font-medium font-heading text-foreground truncate">
+                  {concept.title}
+                </h4>
+                <p className="mt-1 text-xs text-foreground-secondary line-clamp-2 font-sans">
+                  {concept.summary}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -370,7 +554,7 @@ export default function GraphPage() {
     ? concepts.find((c) => c.slug === selectedSlug)
     : null;
 
-  // Initialize a default dynamic path on mount
+  // Initialize default journey timeline on mount
   useEffect(() => {
     const defaultSyllabus = GraphEngine.compileSyllabus("bits", "caching-strategies");
     setSyllabus(defaultSyllabus);
@@ -485,10 +669,22 @@ export default function GraphPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             {view === "graph" ? (
-              <GraphView
-                focusSlug={selectedSlug}
-                onSelectNode={setSelectedSlug}
-              />
+              <>
+                {/* Desktop SVG Canvas */}
+                <div className="hidden md:block">
+                  <GraphView
+                    focusSlug={selectedSlug}
+                    onSelectNode={setSelectedSlug}
+                  />
+                </div>
+                {/* Mobile Responsive Metro Line Stack */}
+                <div className="block md:hidden">
+                  <MobileMetroLine
+                    focusSlug={selectedSlug}
+                    onSelectNode={setSelectedSlug}
+                  />
+                </div>
+              </>
             ) : (
               <ListView />
             )}
@@ -498,17 +694,26 @@ export default function GraphPage() {
           <div className="lg:col-span-1">
             {selectedConcept ? (
               <Reveal>
-                <div className="rounded-[24px] border border-border bg-surface-card p-6 shadow-card sticky top-24">
-                  <p className="text-xs font-bold tracking-[0.15em] text-foreground-secondary uppercase font-heading mb-1">
-                    Selected
-                  </p>
-                  <h2 className="text-xl font-medium font-heading text-foreground">
-                    {selectedConcept.title}
-                  </h2>
-                  <p className="mt-2 text-sm leading-relaxed text-foreground-secondary font-sans">
-                    {selectedConcept.summary}
-                  </p>
-                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                <div className="rounded-[24px] border border-border bg-surface-card p-6 shadow-card sticky top-24 space-y-4">
+                  <div>
+                    <p className="text-xs font-bold tracking-[0.15em] text-foreground-secondary uppercase font-heading mb-1">
+                      Selected
+                    </p>
+                    <h2 className="text-xl font-medium font-heading text-foreground">
+                      {selectedConcept.title}
+                    </h2>
+                    <p className="mt-2 text-sm leading-relaxed text-foreground-secondary font-sans">
+                      {selectedConcept.summary}
+                    </p>
+                  </div>
+
+                  {/* Dynamic Prerequisite Warning Banner inside Side Panel */}
+                  <PrerequisiteWarningBanner
+                    slug={selectedConcept.slug}
+                    prerequisites={selectedConcept.prerequisites}
+                  />
+
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold font-heading ${
                         selectedConcept.difficulty === "beginner"
@@ -529,7 +734,7 @@ export default function GraphPage() {
                       {selectedConcept.estimatedMinutes}m
                     </span>
                   </div>
-                  <div className="mt-4 flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 pt-1 border-t border-border/40">
                     {selectedConcept.prerequisites.length > 0 && (
                       <p className="text-xs text-foreground-secondary font-sans">
                         <span className="font-medium">Requires:</span>{" "}
@@ -553,7 +758,7 @@ export default function GraphPage() {
                       </p>
                     )}
                   </div>
-                  <div className="mt-6 flex gap-3">
+                  <div className="flex gap-3 pt-3 border-t border-border/40">
                     <Link
                       href={`/concepts/${selectedConcept.slug}`}
                       className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-bold font-heading text-primary-dark shadow-button hover:bg-primary/90 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 cursor-pointer"

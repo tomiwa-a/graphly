@@ -4,6 +4,7 @@ import { ConceptCardMini } from "@/components/concepts/concept-card";
 import { TableOfContents } from "@/components/concepts/table-of-contents";
 import { LanguageTabSwitcher } from "@/components/concepts/language-tab-switcher";
 import { ConceptCompletion } from "@/components/concepts/concept-completion";
+import { PrerequisiteWarningBanner } from "@/components/concepts/prerequisite-warning-banner";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 
@@ -68,13 +69,21 @@ export default async function ConceptPage({
         <div className="lg:col-span-3">
           <Reveal>
             {/* Breadcrumb */}
-            <div className="mb-6">
+            <div className="mb-6 flex items-center justify-between gap-4">
               <Link
                 href="/concepts"
                 className="text-sm text-foreground-secondary font-sans hover:text-foreground transition-colors"
               >
                 ← All concepts
               </Link>
+            </div>
+            
+            {/* Warning banner */}
+            <div className="mb-8">
+              <PrerequisiteWarningBanner
+                slug={concept.slug}
+                prerequisites={concept.prerequisites}
+              />
             </div>
 
             {/* Header */}
