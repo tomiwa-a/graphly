@@ -17,41 +17,34 @@
 
 ## Phase 2: Core UI Components ✅
 
-- [x] Build `Button` component (variants: primary, secondary, ghost, outline, destructive, link)
+- [x] Build `Button` component (variants: primary, secondary, outline, ghost, destructive, link) and 5 sizes
 - [x] Build `Badge` / `Tag` component (for difficulty levels and domain tags)
 - [x] Build `Card` component (with hover, accent strips, and sub-components)
 - [x] Build `CodeBlock` component with shiki syntax highlighting and language tabs
 - [x] Build `ProgressBar` component (determinate, with label, size variants)
-- [x] Build `Avatar` component (image, fallback initials, 3 sizes)
-- [x] Build `Skeleton` / loading placeholder component (skeleton, card, table presets)
-- [x] Build `Input` component (with error state and focus ring)
-- [x] Build `Select` component (native select with custom styling)
-- [x] Build `Dialog` component (modal with overlay, header, footer, close)
-- [x] Build `Tooltip` component (hover/focus with arrow)
-- [x] Build `EmptyState` component (decorative icon, title, description, action)
-- [x] Build `Sonner` toast provider (success, error, warning, info variants)
-
----
+- [x] Build Very simple basic UI designed directly for concept pages with clear navigation and focused reading experience
 
 ## Phase 3: Layout & Navigation ✅
 
-- [x] Build global `Navbar`/`Header` (logo, nav links, auth state, mobile toggle)
-- [x] Build `Sidebar` — *deferred to Phase 6+ as it needs content-first approach*
-- [x] Build `Footer` (multi-column links, branding)
-- [x] Build `MobileMenu` (slide-in drawer for small screens)
-- [x] Build `Breadcrumb` component (dynamic from route segments)
-- [~] Build responsive page layout templates — *full-width via BodyLayout, sidebar deferred*
+- [x] Build simple navbar with Graphy branding and basic navigation links
+- [x] Build minimal footer with essential links
+- [x] Build concept page layout with clear content areas and navigation
+
+## Phase 4: Home Page
+
+- [ ] *Skipped - Going directly to Phase 5*
 
 ---
 
-## Phase 4: Home Page ✅
+## Phase 5: Concept Page ✅
 
-- [x] Build `HeroSection` (title, subtitle, CTA buttons, radial gradient, sparkline icon)
-- [x] Build `FeaturedConceptsGrid` (4 highlighted concept cards with accent strips)
-- [x] Build `LearningPathsOverview` — *deferred to path pages*
-- [x] Build `DomainExplorerSection` — *deferred to /explore page*
-- [x] Build `StatsBar` (concepts count, languages, paths, learners)
-- [x] Build `CTASection` (sign-up prompt with arrow icon)
+- [x] Build `ConceptHeader` (title, summary, difficulty, domain, reading time)
+- [x] Build `PrerequisitesList` (linked prerequisite concept cards)
+- [x] Build `RelatedConceptsList` (linked related concept cards)
+- [x] Build `LanguageTabSwitcher` (tab bar with language icons, empty state per language)
+- [x] Build `TableOfContents` (sticky sidebar nav from page headings)
+- [x] Build `ProgressAndBookmarkBar` (mark-read toggle, bookmark button)
+- [x] Build `NextRecommendedSection` (2-3 suggested next concepts)
 
 ---
 
