@@ -84,13 +84,13 @@
 
 ---
 
-## Phase 9: Dynamic Journey Builder & Dashboard (UI Only)
+## Phase 9: Dynamic Journey Builder & Dashboard (UI Only) ✅
 
-- [ ] Build `JourneyBuilder` component: Visual selection of starting concept and goal concept (e.g., Bits ➔ Caching)
-- [ ] Build `SubwayTimeline` component: Dynamically renders the compiled topological path as a sequential horizontal/vertical metro line
-- [ ] Build `AdvisoryDetours` card: Displays recommended "local stops" and prerequisite detours based on current selection
-- [ ] Build `ProgressMasteryCard`: Local-storage driven completion tracker (e.g., 3/6 concepts completed)
-- [ ] Build `ResetProgressButton`: Clean trigger to flush localStorage progress keys and reset the graph visuals
+- [x] Build `JourneyBuilder` component: Visual selection of starting concept and goal concept (e.g., Bits ➔ Caching)
+- [x] Build `SubwayTimeline` component: Dynamically renders the compiled topological path as a sequential horizontal/vertical metro line
+- [x] Build `AdvisoryDetours` card: Displays recommended "local stops" and prerequisite detours based on current selection
+- [x] Build `ProgressMasteryCard`: Local-storage driven completion tracker (e.g., 3/6 concepts completed)
+- [x] Build `ResetProgressButton`: Clean trigger to flush localStorage progress keys and reset the graph visuals
 
 ---
 
