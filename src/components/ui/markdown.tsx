@@ -1,140 +1,112 @@
 "use client";
 
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { HighlightedCode } from "@/components/ui/highlighted-code";
-import { Admonition } from "@/components/ui/admonition";
+import { useState, useEffect, useRef } from "react";
+
+const ADMONITION_COLORS: Record<string, { border: string; bg: string; icon: string; label: string }> = {
+  note: { border: "#0ea5e9", bg: "#f0f9ff", icon: "info", label: "Note" },
+  tip: { border: "#10b981", bg: "#ecfdf5", icon: "lightbulb", label: "Tip" },
+  warning: { border: "#f59e0b", bg: "#fffbeb", icon: "alert", label: "Warning" },
+  caution: { border: "#ef4444", bg: "#fef2f2", icon: "danger", label: "Caution" },
+};
+
+const languageMap: Record<string, string> = {
+  go: "go", typescript: "typescript", python: "python",
+  js: "javascript", ts: "typescript", py: "python",
+  sql: "sql", bash: "bash", json: "json",
+  yaml: "yaml", rust: "rust", csharp: "csharp", java: "java",
+};
+
+function escapeHtml(str: string) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 export function MarkdownRenderer({ content }: { content: string }) {
-  return (
-    <div className="prose-custom">
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          code({ className, children, ...props }) {
-            const match = /language-(\w+)/.exec(className || "");
-            const language = match ? match[1] : "";
-            const code = String(children).replace(/\n$/, "");
+  const [html, setHtml] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const highlighterRef = useRef<any>(null);
 
-            if (language) {
-              return <HighlightedCode code={code} language={language} />;
-            }
+  useEffect(() => {
+    let cancelled = false;
 
-            return (
-              <code
-                className="rounded-md bg-surface-muted px-1.5 py-0.5 text-sm font-mono text-foreground before:content-none after:content-none"
-                {...props}
-              >
-                {children}
-              </code>
-            );
-          },
-          pre({ children }) {
-            return <>{children}</>;
-          },
-          blockquote({ children }) {
-            const childrenArray = (
-              Array.isArray(children) ? children : [children]
-            ).filter(Boolean);
+    async function render() {
+      // Preprocess admonitions: convert > [!NOTE]\n> body to raw HTML
+      const preprocessed = content.replace(
+        /^> \[!(\w+)\]\n((?:^> .*\n?)*)/gm,
+        (_match: string, type: string, body: string) => {
+          const t = type.toLowerCase();
+          const cfg = ADMONITION_COLORS[t] || ADMONITION_COLORS.note;
+          const inner = body
+            .split("\n")
+            .map((l: string) => l.replace(/^> /, "").replace(/^>$/, ""))
+            .join("\n")
+            .trim();
+          return `<div class="admonition" style="background:${cfg.bg};border-left:4px solid ${cfg.border};border-radius:0.75rem;padding:1.25rem;margin:1.25rem 0">
+<div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;font-size:0.875rem;color:${cfg.border}">${cfg.label}</div>
+<div style="margin-top:0.625rem;font-size:0.875rem;line-height:1.75">${inner}</div>
+</div>`;
+        },
+      );
 
-            const firstChild = childrenArray[0] as
-              | React.ReactElement
-              | undefined;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const firstProps = firstChild?.props as any;
-            if (!firstChild || !firstProps?.children) {
-              return (
-                <blockquote className="my-4 border-l-4 border-border pl-4 italic text-foreground-secondary">
-                  {children}
-                </blockquote>
-              );
-            }
+      if (cancelled) return;
 
-            const textContent =
-              typeof firstProps.children === "string"
-                ? firstProps.children
-                : "";
+      const { marked } = await import("marked");
+      if (cancelled) return;
+      const raw = await marked.parse(preprocessed, { gfm: true, breaks: false });
+      if (cancelled) return;
 
-            const match = textContent.match(/^\[!(\w+)\]/);
-            if (!match) {
-              return (
-                <blockquote className="my-4 border-l-4 border-border pl-4 italic text-foreground-secondary">
-                  {children}
-                </blockquote>
-              );
-            }
+      // Highlight code blocks with Shiki
+      const { createHighlighter } = await import("shiki");
+      if (cancelled) return;
 
-            const type = match[1].toLowerCase();
+      if (!highlighterRef.current) {
+        highlighterRef.current = await createHighlighter({
+          themes: ["github-dark"],
+          langs: [
+            "go", "typescript", "python", "java", "csharp",
+            "javascript", "tsx", "json", "bash", "sql",
+            "yaml", "markdown", "rust", "php", "kotlin", "ruby",
+          ],
+        });
+      }
 
-            const cleanedChildren = childrenArray.map((child, i) => {
-              if (i === 0 && typeof child === "object" && child !== null) {
-                const cleaned = textContent.replace(/^\[!\w+\]\s*/, "");
-                return <span key="cleaned">{cleaned}</span>;
-              }
-              return child;
+      if (cancelled) return;
+
+      const hl = highlighterRef.current;
+      const highlighted = raw.replace(
+        /<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g,
+        (_, lang, code) => {
+          const decoded = code
+            .replace(/&amp;/g, "&").replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">").replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'");
+          try {
+            return hl.codeToHtml(decoded, {
+              lang: languageMap[lang] ?? lang,
+              theme: "github-dark",
             });
+          } catch {
+            return `<pre class="shiki" style="background-color:#24292e;color:#e1e4e8;padding:1rem;border-radius:1rem;overflow-x:auto;margin:1rem 0;border:1px solid var(--color-border)"><code>${escapeHtml(decoded)}</code></pre>`;
+          }
+        },
+      );
 
-            return <Admonition type={type}>{cleanedChildren}</Admonition>;
-          },
-          table({ children }) {
-            return (
-              <div className="my-4 overflow-x-auto rounded-xl border border-border">
-                <table className="min-w-full border-collapse text-sm">
-                  {children}
-                </table>
-              </div>
-            );
-          },
-          th({ children }) {
-            return (
-              <th className="border-b border-border bg-surface-muted px-4 py-2.5 text-left text-xs font-bold font-heading text-foreground uppercase tracking-wider">
-                {children}
-              </th>
-            );
-          },
-          tr({ children }) {
-            return (
-              <tr className="last:[&_td]:border-b-0 [&_td]:border-b [&_td]:border-border">
-                {children}
-              </tr>
-            );
-          },
-          td({ children }) {
-            return (
-              <td className="px-4 py-2.5 text-sm text-foreground-secondary">
-                {children}
-              </td>
-            );
-          },
-          a({ href, children }) {
-            return (
-              <a
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-dark underline decoration-primary-dark/30 underline-offset-2 hover:decoration-primary-dark transition-all"
-              >
-                {children}
-              </a>
-            );
-          },
-          ul({ children }) {
-            return <ul className="my-3 list-disc pl-6 text-foreground-secondary space-y-1">{children}</ul>;
-          },
-          ol({ children }) {
-            return <ol className="my-3 list-decimal pl-6 text-foreground-secondary space-y-1">{children}</ol>;
-          },
-          li({ children }) {
-            return <li className="text-sm leading-relaxed">{children}</li>;
-          },
-          p({ children }) {
-            return <p className="text-base leading-relaxed text-foreground-secondary my-3">{children}</p>;
-          },
-          strong({ children }) {
-            return <strong className="font-semibold text-foreground">{children}</strong>;
-          },
-        }}
-      />
-    </div>
+      if (!cancelled) setHtml(highlighted);
+    }
+
+    render();
+    return () => { cancelled = true; };
+  }, [content]);
+
+  if (html === null) {
+    return <p className="text-foreground-secondary whitespace-pre-wrap">{content}</p>;
+  }
+
+  return (
+    <div className="markdown-body" dangerouslySetInnerHTML={{ __html: html }} />
   );
 }
