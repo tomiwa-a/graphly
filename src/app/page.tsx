@@ -1,5 +1,7 @@
+"use client";
+
 import { BodyLayout } from "@/components/layout/body-layout";
-import { Network, Code2, GitBranch, ArrowRight, Sparkles } from "lucide-react";
+import { BookOpen, Network, Code2, GitBranch, ArrowRight, Sparkles } from "lucide-react";
 
 const features = [
   {
@@ -23,52 +25,6 @@ const features = [
       "Follow guided paths through the graph or explore freely. Track progress and get recommendations on what to learn next.",
     accent: "success" as const,
   },
-];
-
-const featuredConcepts = [
-  {
-    title: "Idempotency",
-    description:
-      "Making repeated operations safe through idempotency keys and safe retries.",
-    difficulty: "Intermediate",
-    domain: "API Design",
-    accent: "primary" as const,
-    slug: "idempotency",
-  },
-  {
-    title: "Indexes",
-    description:
-      "How database indexes speed up queries and the tradeoffs they introduce.",
-    difficulty: "Intermediate",
-    domain: "Databases",
-    accent: "secondary" as const,
-    slug: "indexes",
-  },
-  {
-    title: "Circuit Breakers",
-    description:
-      "Preventing cascading failures by detecting and isolating faulting services.",
-    difficulty: "Advanced",
-    domain: "Reliability",
-    accent: "destructive" as const,
-    slug: "circuit-breakers",
-  },
-  {
-    title: "HTTP",
-    description:
-      "The foundation of web communication — methods, status codes, and headers.",
-    difficulty: "Beginner",
-    domain: "Foundations",
-    accent: "warning" as const,
-    slug: "http",
-  },
-];
-
-const stats = [
-  { label: "Concepts", value: "50+" },
-  { label: "Languages", value: "5" },
-  { label: "Learning Paths", value: "10" },
-  { label: "Exercises", value: "40+" },
 ];
 
 export default function Home() {
@@ -116,7 +72,12 @@ export default function Home() {
       <section className="border-y border-border bg-surface-muted">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {stats.map((stat) => (
+            {[
+              { label: "Concepts", value: "50+" },
+              { label: "Languages", value: "5" },
+              { label: "Learning Paths", value: "10" },
+              { label: "Exercises", value: "40+" },
+            ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-2xl font-bold text-primary">{stat.value}</p>
                 <p className="text-xs text-foreground-muted">{stat.label}</p>
@@ -179,7 +140,44 @@ export default function Home() {
             </a>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredConcepts.map((concept, i) => (
+            {[
+              {
+                title: "Idempotency",
+                description:
+                  "Making repeated operations safe through idempotency keys and safe retries.",
+                difficulty: "Intermediate",
+                domain: "API Design",
+                accent: "primary" as const,
+                slug: "idempotency",
+              },
+              {
+                title: "Indexes",
+                description:
+                  "How database indexes speed up queries and the tradeoffs they introduce.",
+                difficulty: "Intermediate",
+                domain: "Databases",
+                accent: "secondary" as const,
+                slug: "indexes",
+              },
+              {
+                title: "Circuit Breakers",
+                description:
+                  "Preventing cascading failures by detecting and isolating faulting services.",
+                difficulty: "Advanced",
+                domain: "Reliability",
+                accent: "destructive" as const,
+                slug: "circuit-breakers",
+              },
+              {
+                title: "HTTP",
+                description:
+                  "The foundation of web communication — methods, status codes, and headers.",
+                difficulty: "Beginner",
+                domain: "Foundations",
+                accent: "warning" as const,
+                slug: "http",
+              },
+            ].map((concept, i) => (
               <a
                 key={concept.slug}
                 href={`/concepts/${concept.slug}`}
@@ -228,14 +226,14 @@ export default function Home() {
                 href="/explore"
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-button hover:bg-primary-dark transition-colors"
               >
-                Explore the Graph
+                Start Exploring
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
-                href="/signup"
+                href="/paths"
                 className="inline-flex h-12 items-center justify-center rounded-lg border border-border bg-surface-card px-8 text-sm font-semibold text-foreground shadow-button hover:bg-surface-hover transition-colors"
               >
-                Create Account
+                View Learning Paths
               </a>
             </div>
           </div>
