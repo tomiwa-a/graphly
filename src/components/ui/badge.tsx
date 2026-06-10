@@ -2,16 +2,16 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium transition-colors",
+  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold border-2 border-border transition-colors font-heading",
   {
     variants: {
       variant: {
-        default: "bg-primary-light text-primary",
-        secondary: "bg-surface-muted text-foreground-secondary border border-border",
-        outline: "border border-border text-foreground-secondary",
-        success: "bg-success-light text-success",
-        warning: "bg-warning-light text-warning",
-        destructive: "bg-destructive-light text-destructive",
+        default: "bg-primary text-primary-dark",
+        secondary: "bg-surface-muted text-foreground-secondary",
+        outline: "bg-surface-card text-foreground",
+        success: "bg-success text-success-dark",
+        warning: "bg-warning text-warning-dark",
+        destructive: "bg-destructive text-destructive-dark",
       },
     },
     defaultVariants: {
@@ -55,3 +55,4 @@ export function DifficultyBadge({
     </Badge>
   );
 }
+

@@ -2,26 +2,28 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium transition-all duration-150 select-none",
+  "inline-flex items-center justify-center gap-2 text-sm font-semibold select-none border-2 border-border font-heading tracking-wide transition-all duration-100 ease-out cursor-pointer active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
   {
     variants: {
       variant: {
         primary:
-          "bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-button",
+          "bg-primary text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
         secondary:
-          "bg-primary-light text-primary hover:bg-primary-muted active:scale-[0.98]",
+          "bg-success text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
+        accent:
+          "bg-accent text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
         outline:
-          "border border-border bg-surface-card text-foreground hover:bg-surface-hover hover:border-border-hover active:scale-[0.98]",
+          "bg-surface-card text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
         ghost:
-          "text-foreground-secondary hover:text-foreground hover:bg-surface-hover active:scale-[0.98]",
-        link: "text-primary hover:text-primary-dark underline-offset-4 hover:underline",
+          "border-transparent bg-transparent text-foreground-secondary hover:text-foreground hover:bg-surface-hover shadow-none active:translate-y-0 active:shadow-none",
+        link: "border-transparent bg-transparent text-primary-dark underline-offset-4 hover:underline shadow-none active:translate-y-0 active:shadow-none p-0 h-auto",
       },
       size: {
-        sm: "h-8 px-3 text-xs gap-1.5",
-        default: "h-9 px-4",
-        lg: "h-10 px-5 text-base",
-        icon: "h-9 w-9",
-        "icon-sm": "h-8 w-8",
+        sm: "h-8 px-3 text-xs gap-1.5 rounded-lg",
+        default: "h-10 px-5 text-sm rounded-xl",
+        lg: "h-12 px-6 text-base rounded-2xl",
+        icon: "h-10 w-10 p-0 rounded-xl",
+        "icon-sm": "h-8 w-8 p-0 rounded-lg",
       },
     },
     defaultVariants: {
@@ -52,3 +54,4 @@ export function Button({
     </button>
   );
 }
+

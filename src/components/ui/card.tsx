@@ -10,8 +10,8 @@ export function Card({ className, children, hover }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-surface-card p-5 shadow-card",
-        hover && "transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5",
+        "rounded-2xl border-2 border-border bg-surface-card p-5 shadow-card text-foreground",
+        hover && "transition-all duration-120 ease-graphy hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-card-hover",
         className,
       )}
     >
@@ -42,7 +42,7 @@ export function CardTitle({
   children?: React.ReactNode;
 }) {
   return (
-    <h3 className={cn("text-base font-semibold text-foreground", className)}>
+    <h3 className={cn("text-base font-semibold text-foreground font-heading", className)}>
       {children}
     </h3>
   );
@@ -56,7 +56,7 @@ export function CardDescription({
   children?: React.ReactNode;
 }) {
   return (
-    <p className={cn("mt-1 text-sm leading-relaxed text-foreground-secondary", className)}>
+    <p className={cn("mt-1 text-sm leading-relaxed text-foreground-secondary font-sans", className)}>
       {children}
     </p>
   );
@@ -69,7 +69,7 @@ export function CardContent({
   className?: string;
   children?: React.ReactNode;
 }) {
-  return <div className={cn(className)}>{children}</div>;
+  return <div className={cn("font-sans", className)}>{children}</div>;
 }
 
 export function CardFooter({
@@ -82,7 +82,7 @@ export function CardFooter({
   return (
     <div
       className={cn(
-        "mt-4 flex items-center gap-2 border-t border-border pt-4",
+        "mt-4 flex items-center gap-2 border-t-2 border-border pt-4 font-sans",
         className,
       )}
     >
@@ -90,3 +90,4 @@ export function CardFooter({
     </div>
   );
 }
+

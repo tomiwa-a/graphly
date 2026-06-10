@@ -100,39 +100,42 @@ export function CodeBlock({ examples, className }: CodeBlockProps) {
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border border-border shadow-card",
+        "overflow-hidden rounded-2xl border-2 border-border shadow-card",
         className,
       )}
     >
-      <div className="flex items-center justify-between border-b border-border bg-surface-muted px-4">
-        <div className="flex gap-0">
-          {examples.map((ex, i) => (
-            <button
-              key={ex.language}
-              onClick={() => setActiveIndex(i)}
-              className={cn(
-                "relative px-3 py-2.5 text-xs font-medium transition-colors",
-                i === activeIndex
-                  ? "text-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
-                  : "text-foreground-muted hover:text-foreground",
-              )}
-            >
-              {ex.language.charAt(0).toUpperCase() + ex.language.slice(1)}
-            </button>
-          ))}
+      <div className="flex items-center justify-between border-b-2 border-border bg-surface-muted px-4 py-2">
+        <div className="flex gap-1.5">
+          {examples.map((ex, i) => {
+            const isActive = i === activeIndex;
+            return (
+              <button
+                key={ex.language}
+                onClick={() => setActiveIndex(i)}
+                className={cn(
+                  "px-2.5 py-1 text-xs font-bold font-heading transition-all duration-100 rounded-lg select-none cursor-pointer",
+                  isActive
+                    ? "bg-primary text-primary-dark border-2 border-border shadow-[0_2px_0_0_var(--color-border)]"
+                    : "text-foreground-secondary hover:text-foreground border-2 border-transparent"
+                )}
+              >
+                {ex.language.charAt(0).toUpperCase() + ex.language.slice(1)}
+              </button>
+            );
+          })}
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-foreground-muted hover:text-foreground hover:bg-surface-hover transition-colors"
+          className="flex items-center gap-1.5 rounded-lg border-2 border-border bg-surface-card px-2.5 py-1 text-xs font-bold font-heading shadow-[0_2px_0_0_var(--color-border)] hover:-translate-y-[0.5px] hover:shadow-[0_2.5px_0_0_var(--color-border)] active:translate-y-[1px] active:shadow-none transition-all duration-100 cursor-pointer select-none"
         >
           {copied ? (
             <>
-              <Check className="h-3.5 w-3.5 text-success" />
+              <Check className="h-3.5 w-3.5 text-success-dark" />
               Copied
             </>
           ) : (
             <>
-              <Copy className="h-3.5 w-3.5" />
+              <Copy className="h-3.5 w-3.5 text-foreground-secondary" />
               Copy
             </>
           )}

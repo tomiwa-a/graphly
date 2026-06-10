@@ -70,11 +70,11 @@ const concepts = [
 
 const diffStyles: Record<string, string> = {
   beginner:
-    "bg-success-light text-success",
+    "bg-success text-success-dark",
   intermediate:
-    "bg-warning-light text-warning",
+    "bg-warning text-warning-dark",
   advanced:
-    "bg-destructive-light text-destructive",
+    "bg-destructive text-destructive-dark",
 };
 
 export default function Home() {
@@ -87,51 +87,51 @@ export default function Home() {
         <Reveal>
           <div className="mb-10 flex items-end justify-between">
             <div>
-              <p className="text-[10px] font-medium tracking-[0.18em] text-foreground-muted uppercase">
+              <p className="text-xs font-bold tracking-[0.15em] text-foreground-secondary uppercase font-heading">
                 Featured
               </p>
-              <h2 className="mt-1.5 text-2xl font-semibold tracking-tight text-foreground">
+              <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground font-heading">
                 Start with these concepts
               </h2>
             </div>
             <Link
               href="/concepts"
-              className="hidden sm:inline-flex text-sm text-foreground-muted hover:text-foreground transition-colors"
+              className="hidden sm:inline-flex text-sm font-bold font-heading text-foreground-secondary hover:text-foreground transition-colors"
             >
               View all &rarr;
             </Link>
           </div>
         </Reveal>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {concepts.map((concept, i) => (
             <Reveal key={concept.slug} delay={i * 80}>
               <Link
                 href={`/concepts/${concept.slug}`}
-                className="group block rounded-xl border border-border bg-surface-card p-5 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5"
+                className="group block rounded-2xl border-2 border-border bg-surface-card p-5 shadow-card transition-all duration-120 ease-graphy hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-card-hover"
               >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-light text-primary">
-                    <concept.icon className="h-4 w-4" />
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-border bg-primary text-foreground shadow-[2px_2px_0_0_var(--color-border)] group-hover:scale-105 transition-transform duration-100 ease-out">
+                    <concept.icon className="h-5 w-5 stroke-[2.2]" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="text-base font-bold font-heading text-foreground group-hover:text-primary-dark transition-colors">
                       {concept.title}
                     </h3>
                     <div className="mt-1.5 flex items-center gap-2">
                       <span
-                        className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium leading-none ${diffStyles[concept.difficulty]}`}
+                        className={`inline-flex items-center rounded-full border-2 border-border px-2.5 py-0.5 text-[10px] font-bold leading-none font-heading ${diffStyles[concept.difficulty]}`}
                       >
                         {concept.difficulty.charAt(0).toUpperCase() +
                           concept.difficulty.slice(1)}
                       </span>
-                      <span className="text-[10px] text-foreground-muted">
+                      <span className="text-xs font-semibold text-foreground-secondary font-sans">
                         {concept.domain}
                       </span>
                     </div>
                   </div>
                 </div>
-                <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">
+                <p className="mt-4 text-sm leading-relaxed text-foreground-secondary font-sans font-medium">
                   {concept.description}
                 </p>
               </Link>
@@ -141,23 +141,23 @@ export default function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section className="border-t border-border bg-surface-muted">
+      <section className="border-t-2 border-border bg-surface-muted">
         <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
           <Reveal>
             <div className="mx-auto max-w-xl text-center">
               <div className="flex justify-center mb-4">
-                <LogoMark className="h-8 w-8 text-primary" />
+                <LogoMark className="h-10 w-10 text-foreground" />
               </div>
-              <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground font-heading">
                 Ready to explore?
               </h2>
-              <p className="mt-2 text-foreground-secondary">
+              <p className="mt-2 text-foreground-secondary font-sans font-medium">
                 Start anywhere. Follow the graph. Build your mental model of
                 backend engineering.
               </p>
               <Link
                 href="/concepts"
-                className="mt-6 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-white hover:bg-primary-dark transition-colors active:scale-[0.98] shadow-button"
+                className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-xl border-2 border-border bg-primary px-6 text-sm font-bold font-heading text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)] transition-all duration-100 cursor-pointer select-none"
               >
                 Browse all concepts
               </Link>
@@ -168,3 +168,4 @@ export default function Home() {
     </>
   );
 }
+
