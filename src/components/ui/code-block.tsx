@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,19 +15,65 @@ type CodeBlockProps = {
   className?: string;
 };
 
-const languageIcons: Record<string, string> = {
-  go: "go",
-  typescript: "ts",
-  python: "py",
-  csharp: "cs",
-  java: "java",
-};
-
 export function CodeBlock({ examples, className }: CodeBlockProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [html, setHtml] = useState("");
+  const highlighterRef = useRef<any>(null);
 
   const active = examples[activeIndex];
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function highlight() {
+      const { createHighlighter } = await import("shiki");
+
+      if (!highlighterRef.current) {
+        highlighterRef.current = await createHighlighter({
+          themes: ["github-dark"],
+          langs: [
+            "go",
+            "typescript",
+            "python",
+            "java",
+            "csharp",
+            "javascript",
+            "tsx",
+            "json",
+            "bash",
+            "sql",
+            "yaml",
+            "markdown",
+            "rust",
+            "php",
+            "kotlin",
+            "ruby",
+          ],
+        });
+      }
+
+      if (cancelled) return;
+
+      try {
+        const result = highlighterRef.current.codeToHtml(active.code, {
+          lang: languageMap[active.language] ?? active.language,
+          theme: "github-dark",
+        });
+        if (!cancelled) setHtml(result);
+      } catch {
+        if (!cancelled)
+          setHtml(
+            `<pre class="shiki" style="background-color:#24292e;color:#e1e4e8"><code>${escapeHtml(active.code)}</code></pre>`,
+          );
+      }
+    }
+
+    highlight();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeIndex, active]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(active.code);
@@ -91,9 +137,31 @@ export function CodeBlock({ examples, className }: CodeBlockProps) {
           )}
         </button>
       </div>
-      <pre className="overflow-x-auto bg-[#1c1917] p-4 text-sm leading-relaxed text-[#f5f5f4]">
-        <code>{active.code}</code>
-      </pre>
+      <div
+        className="overflow-x-auto [&_pre]:m-0 [&_pre]:bg-[#24292e] [&_pre]:p-4 [&_pre]:text-sm [&_pre]:leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </div>
   );
+}
+
+const languageMap: Record<string, string> = {
+  go: "go",
+  typescript: "typescript",
+  python: "python",
+  csharp: "csharp",
+  java: "java",
+  js: "javascript",
+  ts: "typescript",
+  py: "python",
+  cs: "csharp",
+};
+
+function escapeHtml(str: string) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
