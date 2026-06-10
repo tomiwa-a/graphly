@@ -4,14 +4,14 @@
 
 ---
 
-## Phase 1: Setup
+## Phase 1: Setup ✅
 
-- [ ] Initialize Next.js project with TypeScript and App Router
-- [ ] Configure Tailwind CSS with custom design tokens (colors, spacing, typography)
-- [ ] Set up base layout shell (`RootLayout`, `BodyLayout`)
-- [ ] Configure font loading (Inter or similar system font stack)
-- [ ] Set up dark/light theme infrastructure (`ThemeProvider`, `useTheme` hook)
-- [ ] Add ESLint and Prettier config
+- [x] Initialize Next.js project with TypeScript and App Router
+- [x] Configure Tailwind CSS with custom design tokens (colors, spacing, typography)
+- [x] Set up base layout shell (`RootLayout`, `BodyLayout`)
+- [x] Configure font loading (Inter or similar system font stack)
+- [~] Set up dark/light theme infrastructure (`ThemeProvider`, `useTheme` hook) — *skipped, light mode only*
+- [x] Add ESLint and Prettier config
 
 ---
 
