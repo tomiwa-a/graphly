@@ -43,54 +43,44 @@
 - [x] Build `RelatedConceptsList` (linked related concept cards)
 - [x] Build `LanguageTabSwitcher` (tab bar with language icons, empty state per language)
 - [x] Build `TableOfContents` (sticky sidebar nav from page headings)
-- [x] Build `ProgressAndBookmarkBar` (mark-read toggle, bookmark button)
 - [x] Build `NextRecommendedSection` (2-3 suggested next concepts)
+- [x] Build `ConceptCard` + `ConceptCardMini` reusable components
+- [x] Build `ConceptFilters` (domain + difficulty filter pills)
+- [x] Build `/concepts` index page with filtering
+- [x] Build `/concepts/[slug]` detail page with two-column layout
 
 ---
 
-## Phase 5: Concept Page
+## Phase 6: Learning Paths ✅
 
-- [ ] Build `ConceptHeader` (title, summary, difficulty badge, domain tags, reading time)
-- [ ] Build `PrerequisitesList` (linked prerequisite concept cards)
-- [ ] Build `RelatedConceptsList` (linked related concept cards)
-- [ ] Build `LanguageTabSwitcher` (tab bar with language icons, empty state per language)
-- [ ] Build `TableOfContents` (sticky sidebar nav from page headings)
-- [ ] Build `ProgressAndBookmarkBar` (mark-read toggle, bookmark button)
-- [ ] Build `NextRecommendedSection` (2-3 suggested next concepts)
-
----
-
-## Phase 6: Learning Paths Page
-
-- [ ] Build `PathIndexPage` (grid of all learning path cards)
-- [ ] Build `PathCard` (title, summary, difficulty, step count, estimated hours)
-- [ ] Build `PathDetailPage` header (title, summary, metadata, overall progress bar)
-- [ ] Build `StepList` (ordered vertical timeline with checkable steps)
-- [ ] Build `StepCard` (title, type badge, duration, completion checkbox)
-- [ ] Build empty/completed state for finished paths
+- [x] Build `PathCard` (title, summary, difficulty, step count, estimated hours)
+- [x] Build `PathIndexPage` (`/paths`) with grid of path cards
+- [x] Build `StepList` (vertical timeline with checkable steps)
+- [x] Build `StepCard` (timeline node, title, summary, completion checkbox)
+- [x] Build `/paths/[slug]` detail page with progress tracking (localStorage)
+- [x] Build completion celebration state
 
 ---
 
-## Phase 7: Graph Explorer
+## Phase 7: Graph Explorer ✅
 
-- [ ] Build `GraphContainer` (canvas wrapper with zoom/pan controls)
-- [ ] Build `ConceptNode` component (draggable node with label, difficulty color)
-- [ ] Build edge/connection rendering between nodes
-- [ ] Build `NodeTooltip` (popover on hover with quick summary + link)
-- [ ] Build `GraphControls` (zoom in/out, reset, fit-to-screen buttons)
-- [ ] Build `ListViewFallback` (accessible table/list of relationships)
-- [ ] Build `FocusMode` (select a node to highlight its neighborhood)
+- [x] Build `GraphContainer` (custom SVG canvas with zoom/pan controls)
+- [x] Build `ConceptNode` component (circle node with difficulty color, label)
+- [x] Build edge/connection rendering (solid = prerequisite, dashed = related)
+- [x] Build node detail side panel (summary, metadata, links)
+- [x] Build `GraphControls` (zoom in/out, reset buttons)
+- [x] Build `ListViewFallback` (accessible table of all concepts)
+- [x] Build `FocusMode` (click node to dim unrelated nodes)
 
 ---
 
-## Phase 8: Search
+## Phase 8: Search ✅
 
-- [ ] Build `SearchInput` (search bar with icon, keyboard shortcut hint)
-- [ ] Build `SearchSuggestionsDropdown` (live suggestions as user types)
-- [ ] Build `SearchResultsPage` (result list with pagination)
-- [ ] Build `SearchResultCard` (title, type badge, difficulty, domain, excerpt)
-- [ ] Build `SearchFilters` (domain checkboxes, difficulty radio, language selector)
-- [ ] Build empty state ("No results found") with suggestions
+- [x] Build `SearchInput` (search bar with icon, ⌘K keyboard shortcut)
+- [x] Build `SearchResultsPage` (real-time filtering with result count)
+- [x] Build `SearchFilters` (domain checkboxes, difficulty radio — sidebar)
+- [x] Build empty state with suggested searches
+- [x] Build responsive filter sidebar (collapses on mobile)
 
 ---
 
@@ -110,7 +100,8 @@
 - [ ] Build `SignInPage` (email input, provider buttons: Google, GitHub)
 - [ ] Build `SignUpPage` (name, email, preferred language selection)
 - [ ] Build `AuthGuard` wrapper component (redirect to sign-in if unauthenticated)
-- [ ] Build `NotFoundPage` (404 with link to home/explore)
+- [x] Build `NotFoundPage` (404 with disconnected graph illustration + links)
 - [ ] Build `ErrorBoundary` fallback UI (500 with retry button)
 - [ ] Build responsive pass (test every page at mobile, tablet, desktop breakpoints)
 - [ ] Build page transition animations (optional, subtle fade/slide)
+
