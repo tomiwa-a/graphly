@@ -94,13 +94,13 @@
 
 ---
 
-## Phase 10: Flow Highlights, Warnings & Mobile Metro-Lines (UI Only)
+## Phase 10: Flow Highlights, Warnings & Mobile Metro-Lines (UI Only) ✅
 
-- [ ] Build `PrerequisiteWarningBanner`: Interactive alert banner shown in concept headers and sidebars when prerequisites are incomplete
-- [ ] Build `DependencyFlowHighlighter`: Interactive hover state on the graph canvas that highlights upstream prerequisites (in red) and downstream applications, dimming other nodes
-- [ ] Build `EdgeFlowAnimation`: CSS-based SVG dash-flow animations on connection lines of completed/active learning paths
-- [ ] Build `MobileMetroLine`: Responsive fallback that automatically stacks the SVG graph canvas as a clean, vertical, touch-friendly metro line timeline on mobile screens
-- [ ] Build page transition animations for smooth switching between routes
-- [ ] Conduct detailed cross-device responsive layout check for all concept, path, and graph pages
+- [x] Build `PrerequisiteWarningBanner`: Interactive alert banner shown in concept headers and sidebars when prerequisites are incomplete
+- [x] Build `DependencyFlowHighlighter`: Interactive hover state on the graph canvas that highlights upstream prerequisites (in red) and downstream applications, dimming other nodes
+- [x] Build `EdgeFlowAnimation`: CSS-based SVG dash-flow animations on connection lines of completed/active learning paths
+- [x] Build `MobileMetroLine`: Responsive fallback that automatically stacks the SVG graph canvas as a clean, vertical, touch-friendly metro line timeline on mobile screens
+- [x] Build page transition animations for smooth switching between routes
+- [x] Conduct detailed cross-device responsive layout check for all concept, path, and graph pages
 
 
