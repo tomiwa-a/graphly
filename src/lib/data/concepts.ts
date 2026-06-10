@@ -14,6 +14,8 @@ export interface ConceptSection {
 
 export interface Concept {
   slug: string;
+  chapterId: string;
+  level: "chapter" | "concept" | "topic";
   title: string;
   summary: string;
   difficulty: Difficulty;
@@ -28,6 +30,8 @@ export interface Concept {
 export const concepts: Concept[] = [
   {
     slug: "idempotency",
+    chapterId: "api-design",
+    level: "topic",
     title: "Idempotency",
     summary:
       "Making repeated operations safe by ensuring the same request produces the same result no matter how many times it's executed.",
@@ -152,6 +156,8 @@ app.post("/payments", (req, res) => {
   },
   {
     slug: "indexes",
+    chapterId: "databases",
+    level: "topic",
     title: "Database Indexes",
     summary:
       "How indexes speed up database queries and the storage and write-performance tradeoffs they introduce.",
@@ -220,6 +226,8 @@ app.post("/payments", (req, res) => {
   },
   {
     slug: "circuit-breakers",
+    chapterId: "reliability",
+    level: "topic",
     title: "Circuit Breakers",
     summary:
       "Preventing cascading failures by detecting and isolating faulting downstream services.",
@@ -328,6 +336,8 @@ result, err := cb.Execute(func() (interface{}, error) {
   },
   {
     slug: "http",
+    chapterId: "foundations",
+    level: "topic",
     title: "HTTP",
     summary:
       "The foundation of web communication — methods, status codes, headers, and the request/response lifecycle.",
@@ -435,6 +445,8 @@ def delete_user(user_id):
   },
   {
     slug: "message-queues",
+    chapterId: "reliability",
+    level: "topic",
     title: "Message Queues",
     summary:
       "Decoupling services through asynchronous message passing for reliability and scalability.",
@@ -521,6 +533,8 @@ for msg := range msgs {
   },
   {
     slug: "caching-strategies",
+    chapterId: "caching",
+    level: "topic",
     title: "Caching Strategies",
     summary:
       "Improving performance with cache-aside, write-through, and CDN patterns to reduce load on databases.",
@@ -640,6 +654,8 @@ def get_user(user_id):
   },
   {
     slug: "bits",
+    chapterId: "foundations",
+    level: "topic",
     title: "Bits & Binary",
     summary: "The fundamental units of binary information and bitwise operations that power all higher-level data structures.",
     difficulty: "beginner",
@@ -679,6 +695,8 @@ def get_user(user_id):
   },
   {
     slug: "hash-functions",
+    chapterId: "foundations",
+    level: "topic",
     title: "Hash Functions",
     summary: "Mapping arbitrary-sized keys to fixed-size integers, powering HashMaps, cryptographic security, and data indexing.",
     difficulty: "beginner",
@@ -718,6 +736,8 @@ def get_user(user_id):
   },
   {
     slug: "bloom-filters",
+    chapterId: "databases",
+    level: "topic",
     title: "Bloom Filters",
     summary: "A space-efficient probabilistic data structure that checks set membership with zero false negatives.",
     difficulty: "intermediate",

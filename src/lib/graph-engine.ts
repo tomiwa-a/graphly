@@ -186,6 +186,7 @@ export class GraphEngine {
     estimatedMinutes: number;
     difficulty: string;
     domain: string;
+    chapterId: string;
     reason: string;
   }[] {
     // 1. Find the direct transition path
@@ -205,6 +206,7 @@ export class GraphEngine {
           estimatedMinutes: c.estimatedMinutes,
           difficulty: c.difficulty,
           domain: c.domain,
+          chapterId: c.chapterId,
           reason: slug === target ? "Target Goal" : "Prerequisite to goal"
         };
       });
@@ -249,6 +251,7 @@ export class GraphEngine {
         estimatedMinutes: c.estimatedMinutes,
         difficulty: c.difficulty,
         domain: c.domain,
+        chapterId: c.chapterId,
         reason: stepReason
       };
     });
