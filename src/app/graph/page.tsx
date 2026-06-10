@@ -3,8 +3,9 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { concepts } from "@/lib/data/concepts";
+import { chapters, type Chapter } from "@/lib/data/chapters";
 import { Reveal } from "@/components/reveal";
-import { ZoomIn, ZoomOut, Maximize2, List, Grid3X3, Compass } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2, List, Grid3X3, Compass, ChevronDown, ChevronUp } from "lucide-react";
 import { JourneyBuilder } from "@/components/graph/journey-builder";
 import { SubwayTimeline } from "@/components/graph/subway-timeline";
 import { AdvisoryDetours } from "@/components/graph/advisory-detours";
@@ -16,15 +17,31 @@ import { cn } from "@/lib/utils";
 type NodePosition = { x: number; y: number };
 
 const nodePositions: Record<string, NodePosition> = {
-  http: { x: 100, y: 150 },
-  idempotency: { x: 280, y: 80 },
-  indexes: { x: 280, y: 220 },
-  bits: { x: 100, y: 320 },
-  "hash-functions": { x: 280, y: 320 },
-  "bloom-filters": { x: 460, y: 320 },
-  "circuit-breakers": { x: 460, y: 80 },
-  "message-queues": { x: 460, y: 200 },
+  http: { x: 140, y: 180 },
+  bits: { x: 140, y: 310 },
+  "hash-functions": { x: 260, y: 310 },
+  idempotency: { x: 380, y: 90 },
+  indexes: { x: 380, y: 220 },
+  "bloom-filters": { x: 500, y: 310 },
+  "circuit-breakers": { x: 500, y: 90 },
+  "message-queues": { x: 500, y: 200 },
   "caching-strategies": { x: 620, y: 260 },
+};
+
+const chapterBoxes = [
+  { id: "foundations", title: "Foundations", x: 70, y: 130, w: 230, h: 220 },
+  { id: "api-design", title: "API Design", x: 330, y: 40, w: 100, h: 100 },
+  { id: "databases", title: "Database Systems", x: 330, y: 170, w: 260, h: 190 },
+  { id: "reliability", title: "Reliability & Scale", x: 450, y: 40, w: 100, h: 210 },
+  { id: "caching", title: "Caching Infrastructure", x: 570, y: 210, w: 100, h: 100 },
+];
+
+const chapterViews: Record<string, { zoom: number; pan: { x: number; y: number } }> = {
+  foundations: { zoom: 1.3, pan: { x: 100, y: -80 } },
+  "api-design": { zoom: 1.7, pan: { x: 50, y: 100 } },
+  databases: { zoom: 1.3, pan: { x: -120, y: -100 } },
+  reliability: { zoom: 1.4, pan: { x: -250, y: 40 } },
+  caching: { zoom: 1.7, pan: { x: -350, y: -120 } },
 };
 
 const diffColor: Record<string, string> = {
@@ -58,6 +75,7 @@ function GraphView({
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [completedSlugs, setCompletedSlugs] = useState<string[]>([]);
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+  const [activeChapter, setActiveChapter] = useState<string | null>(null);
 
   // Synchronize concept completion states from localStorage
   useEffect(() => {
@@ -115,6 +133,27 @@ function GraphView({
     return neighbors;
   }, [focusSlug]);
 
+  const handleChapterClick = (chapterId: string) => {
+    if (activeChapter === chapterId) {
+      setActiveChapter(null);
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+    } else {
+      setActiveChapter(chapterId);
+      const view = chapterViews[chapterId];
+      if (view) {
+        setZoom(view.zoom);
+        setPan(view.pan);
+      }
+    }
+  };
+
+  const handleCanvasClick = () => {
+    setActiveChapter(null);
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
   return (
     <div className="relative rounded-[24px] border border-border bg-surface-card shadow-card overflow-hidden">
       {/* Controls */}
@@ -135,6 +174,7 @@ function GraphView({
         </button>
         <button
           onClick={() => {
+            setActiveChapter(null);
             setZoom(1);
             setPan({ x: 0, y: 0 });
           }}
@@ -167,7 +207,53 @@ function GraphView({
             <circle cx="1" cy="1" r="0.8" fill="rgba(45,42,38,0.06)" />
           </pattern>
         </defs>
-        <rect width="720" height="400" fill="url(#dots)" />
+        <rect
+          width="720"
+          height="400"
+          fill="url(#dots)"
+          className="cursor-grab"
+          onClick={handleCanvasClick}
+        />
+
+        {/* Chapter Bounding Boxes */}
+        {chapterBoxes.map((box) => {
+          const isActive = activeChapter === box.id;
+          const isDimmed = activeChapter && activeChapter !== box.id;
+
+          return (
+            <g
+              key={`chapter-box-${box.id}`}
+              className="cursor-pointer transition-all duration-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleChapterClick(box.id);
+              }}
+              style={{
+                opacity: isDimmed ? 0.22 : 1,
+              }}
+            >
+              <rect
+                x={box.x}
+                y={box.y}
+                width={box.w}
+                height={box.h}
+                rx={16}
+                fill={isActive ? "rgba(192, 57, 43, 0.01)" : "rgba(45, 42, 38, 0.01)"}
+                stroke={isActive ? "#C0392B" : "rgba(45, 42, 38, 0.04)"}
+                strokeWidth={isActive ? 2 : 1.2}
+                strokeDasharray={isActive ? "none" : "3 3"}
+                className="hover:fill-primary-muted/20 hover:stroke-primary-dark/20 transition-all duration-300"
+              />
+              <text
+                x={box.x + 12}
+                y={box.y + 22}
+                className={`text-[7px] font-heading font-bold tracking-[0.1em] uppercase select-none transition-colors ${isActive ? "fill-primary-dark" : "fill-foreground-muted"}`}
+              >
+                {box.title}
+              </text>
+            </g>
+          );
+        })}
 
         {/* Edges */}
         {edges.map((edge, i) => {
@@ -182,22 +268,30 @@ function GraphView({
 
           const edgeCompleted = isCompleted(edge.from) && isCompleted(edge.to);
 
+          const fromConcept = concepts.find(c => c.slug === edge.from);
+          const toConcept = concepts.find(c => c.slug === edge.to);
+
+          // Dim edges that belong to inactive chapters if a chapter is focused
+          const isEdgeInActiveChapter = activeChapter 
+            ? (fromConcept?.chapterId === activeChapter && toConcept?.chapterId === activeChapter)
+            : true;
+
           const dimmed =
             (focusedNeighbors &&
               !(focusedNeighbors.has(edge.from) && focusedNeighbors.has(edge.to))) ||
-            (hoveredSlug && !isEdgeHovered);
+            (hoveredSlug && !isEdgeHovered) ||
+            (!isEdgeInActiveChapter);
 
           let strokeColor = "rgba(45,42,38,0.2)";
           if (hoveredSlug) {
-            if (isIncomingPrereq) strokeColor = "#C0392B"; // red for prerequisites
-            else if (isOutgoingDep) strokeColor = "#e17055"; // orange for downstream
+            if (isIncomingPrereq) strokeColor = "#C0392B"; 
+            else if (isOutgoingDep) strokeColor = "#e17055"; 
           } else if (edgeCompleted) {
             strokeColor = "#C0392B";
           }
 
           return (
             <g key={`edge-group-${i}`}>
-              {/* Static core line */}
               <line
                 x1={from.x}
                 y1={from.y}
@@ -210,7 +304,7 @@ function GraphView({
                 style={{ transition: "all 300ms ease" }}
               />
 
-              {/* Animated flowing line overlay */}
+              {/* Flow Overlay animation */}
               {((edgeCompleted && !hoveredSlug) || isEdgeHovered) && !dimmed && (
                 <line
                   x1={from.x}
@@ -244,17 +338,21 @@ function GraphView({
           const isDownstream = downstreamDependents?.has(concept.slug);
           const isPartOfHoverChain = isNodeHovered || isUpstream || isDownstream;
 
+          // Dim nodes not in the active chapter
+          const isNodeInActiveChapter = activeChapter ? concept.chapterId === activeChapter : true;
+
           const dimmed =
             (focusedNeighbors && !focusedNeighbors.has(concept.slug)) ||
-            (hoveredSlug && !isPartOfHoverChain);
+            (hoveredSlug && !isPartOfHoverChain) ||
+            (!isNodeInActiveChapter);
 
           let nodeBorderColor = "rgba(45,42,38,0.15)";
           if (isNodeHovered) {
             nodeBorderColor = "#C0392B";
           } else if (isUpstream) {
-            nodeBorderColor = "#C0392B"; // red for prerequisite
+            nodeBorderColor = "#C0392B";
           } else if (isDownstream) {
-            nodeBorderColor = "#e17055"; // orange for dependent
+            nodeBorderColor = "#e17055";
           } else if (isFocused) {
             nodeBorderColor = "#C0392B";
           }
@@ -263,7 +361,10 @@ function GraphView({
             <g
               key={concept.slug}
               className="cursor-pointer"
-              onClick={() => onSelectNode(concept.slug)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectNode(concept.slug);
+              }}
               onMouseEnter={() => setHoveredSlug(concept.slug)}
               onMouseLeave={() => setHoveredSlug(null)}
               style={{
@@ -359,6 +460,10 @@ function MobileMetroLine({
   onSelectNode: (slug: string) => void;
 }) {
   const [completedSlugs, setCompletedSlugs] = useState<string[]>([]);
+  const [openChapters, setOpenChapters] = useState<Record<string, boolean>>({
+    foundations: true,
+    databases: true,
+  });
 
   useEffect(() => {
     const loadProgress = () => {
@@ -383,68 +488,112 @@ function MobileMetroLine({
     return c ? c.prerequisites.every((p) => completedSlugs.includes(p)) : false;
   };
 
-  // Sort topologically for mobile stacked rendering
-  const sortedConcepts = useMemo(() => {
-    const slugs = concepts.map((c) => c.slug);
-    const sorted = GraphEngine.topologicalSort(slugs);
-    return sorted.map((s) => concepts.find((c) => c.slug === s)!);
-  }, []);
+  const toggleChapter = (chapterId: string) => {
+    setOpenChapters((prev) => ({ ...prev, [chapterId]: !prev[chapterId] }));
+  };
 
   return (
     <div className="space-y-4">
       <div className="rounded-[20px] bg-surface-muted/30 border border-border p-4 mb-4 text-center">
         <p className="text-xs text-foreground-secondary font-sans">
-          📱 Stacking graph nodes as a vertical sequence for optimal mobile reading. Click a station to inspect.
+          📱 Stacking chapters into collapsible mobile accordions. Open a chapter to check your sub-stops.
         </p>
       </div>
 
-      <div className="relative pl-6 space-y-6">
-        <div className="absolute left-[17px] top-3 bottom-3 w-0.5 bg-border" />
-
-        {sortedConcepts.map((concept, idx) => {
-          const completed = isCompleted(concept.slug);
-          const active = isAvailable(concept.slug);
-          const selected = focusSlug === concept.slug;
+      <div className="space-y-3">
+        {chapters.map((chapter) => {
+          const chapterConcepts = concepts.filter((c) => c.chapterId === chapter.id);
+          const completedCount = chapterConcepts.filter((c) => isCompleted(c.slug)).length;
+          const totalCount = chapterConcepts.length;
+          const chapterProgress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+          const isOpen = openChapters[chapter.id];
 
           return (
             <div
-              key={`mobile-metro-${concept.slug}`}
-              onClick={() => onSelectNode(concept.slug)}
-              className={cn(
-                "relative flex items-start gap-4 p-4 rounded-2xl border bg-surface-card shadow-sm cursor-pointer transition-all duration-200 active:scale-[0.98]",
-                selected ? "border-primary-dark ring-1 ring-primary-dark/30 shadow-md" : "border-border",
-                active && "border-primary-dark/30 bg-primary-muted/10"
-              )}
+              key={`mobile-chapter-${chapter.id}`}
+              className="rounded-[20px] border border-border bg-surface-card overflow-hidden shadow-sm transition-all"
             >
-              {/* Circle badge on timeline */}
-              <div className="absolute left-[-21px] top-[18px] z-10 flex h-4 w-4 items-center justify-center rounded-full bg-white border border-border">
-                <div
-                  className={cn(
-                    "h-2 w-2 rounded-full",
-                    completed ? "bg-primary-dark" : active ? "bg-primary animate-pulse" : "bg-foreground-dim"
-                  )}
-                />
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[9px] font-mono text-foreground-secondary">
-                    STATION {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <span className={cn(
-                    "text-[8px] font-heading font-bold rounded-full px-2 py-0.5 uppercase",
-                    completed ? "bg-success-light text-success-dark" : active ? "bg-primary-light text-primary-dark animate-pulse" : "bg-surface-muted text-foreground-muted"
-                  )}>
-                    {completed ? "Mastered" : active ? "Learn Next" : "Locked"}
-                  </span>
+              {/* Accordion Header */}
+              <button
+                onClick={() => toggleChapter(chapter.id)}
+                className="w-full flex items-center justify-between p-4 bg-surface-card hover:bg-surface-muted/30 transition-colors text-left border-b border-transparent cursor-pointer"
+              >
+                <div>
+                  <h4 className="font-heading font-medium text-sm text-foreground">
+                    {chapter.title}
+                  </h4>
+                  <p className="text-[10px] text-foreground-muted font-sans mt-0.5">
+                    {completedCount}/{totalCount} mastered ({chapterProgress}%) • {chapter.estimatedHours}h
+                  </p>
                 </div>
-                <h4 className="mt-1 text-sm font-medium font-heading text-foreground truncate">
-                  {concept.title}
-                </h4>
-                <p className="mt-1 text-xs text-foreground-secondary line-clamp-2 font-sans">
-                  {concept.summary}
-                </p>
-              </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-1.5 w-16 rounded-full bg-surface-muted overflow-hidden hidden sm:block">
+                    <div
+                      className="h-full bg-primary-dark transition-all duration-300"
+                      style={{ width: `${chapterProgress}%` }}
+                    />
+                  </div>
+                  {isOpen ? <ChevronUp className="h-4 w-4 text-foreground-secondary" /> : <ChevronDown className="h-4 w-4 text-foreground-secondary" />}
+                </div>
+              </button>
+
+              {/* Accordion Content */}
+              {isOpen && (
+                <div className="p-4 bg-surface-muted/10 border-t border-border/40 space-y-3">
+                  <p className="text-[11px] text-foreground-secondary font-sans leading-relaxed italic mb-2">
+                    {chapter.summary}
+                  </p>
+                  <div className="relative pl-6 space-y-4">
+                    <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-border" />
+
+                    {chapterConcepts.map((concept, idx) => {
+                      const completed = isCompleted(concept.slug);
+                      const active = isAvailable(concept.slug);
+                      const selected = focusSlug === concept.slug;
+
+                      return (
+                        <div
+                          key={`mobile-metro-${concept.slug}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectNode(concept.slug);
+                          }}
+                          className={cn(
+                            "relative flex items-start gap-3 p-3 rounded-xl border bg-surface-card shadow-sm cursor-pointer transition-all duration-200 active:scale-[0.98]",
+                            selected ? "border-primary-dark ring-1 ring-primary-dark/30" : "border-border",
+                            active && "border-primary-dark/30 bg-primary-muted/5"
+                          )}
+                        >
+                          <div className="absolute left-[-23px] top-[14px] z-10 flex h-3 w-3 items-center justify-center rounded-full bg-white border border-border">
+                            <div
+                              className={cn(
+                                "h-1.5 w-1.5 rounded-full",
+                                completed ? "bg-primary-dark" : active ? "bg-primary animate-pulse" : "bg-foreground-dim"
+                              )}
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <h5 className="text-xs font-heading font-medium text-foreground truncate">
+                                {concept.title}
+                              </h5>
+                              <span className={cn(
+                                "text-[7px] font-heading font-bold rounded-full px-1.5 py-0.2 uppercase tracking-wider shrink-0",
+                                completed ? "bg-success-light text-success-dark" : active ? "bg-primary-light text-primary-dark" : "bg-surface-muted text-foreground-muted"
+                              )}>
+                                {completed ? "Mastered" : active ? "Learn Next" : "Locked"}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-[10px] text-foreground-secondary line-clamp-1 font-sans">
+                              {concept.summary}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
