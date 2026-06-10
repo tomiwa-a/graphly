@@ -10,7 +10,7 @@ prerequisites: [bits, hash-functions]
 related: [caching-strategies, indexes]
 seo_title: "Bloom Filters: Space-Efficient Probabilistic Set Membership"
 seo_description: "Understand Bloom filters — the probabilistic data structure with zero false negatives that powers cache shielding, malicious URL detection, and database query optimization."
-canonical_url: "https://graphy.dev/concepts/bloom-filters"
+canonical_url: "/concepts/bloom-filters"
 code_examples:
   - language: TypeScript
     title: Simple Bloom Filter implementation

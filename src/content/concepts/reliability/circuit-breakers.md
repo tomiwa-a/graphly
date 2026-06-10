@@ -10,7 +10,7 @@ prerequisites: [http, idempotency]
 related: [message-queues, caching-strategies]
 seo_title: "Circuit Breakers: Preventing Cascading Failures in Distributed Systems"
 seo_description: "Learn how circuit breakers detect and isolate faulting downstream services, prevent cascading failures, and implement fallback strategies in production systems."
-canonical_url: "https://graphy.dev/concepts/circuit-breakers"
+canonical_url: "/concepts/circuit-breakers"
 code_examples:
   - language: Go
     title: Circuit breaker with gobreaker

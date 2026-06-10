@@ -10,7 +10,7 @@ prerequisites: []
 related: [hash-functions]
 seo_title: "Bits and Binary: Bitwise Operations for Backend Engineers"
 seo_description: "Understanding bits, binary representation, and bitwise operations — the foundation of high-performance data structures like Bloom filters and bitmap indexes."
-canonical_url: "https://graphy.dev/concepts/bits"
+canonical_url: "/concepts/bits"
 code_examples:
   - language: TypeScript
     title: Bitwise flags in TypeScript

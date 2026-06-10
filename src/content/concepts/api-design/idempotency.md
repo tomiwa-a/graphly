@@ -10,7 +10,7 @@ prerequisites: [http]
 related: [message-queues, circuit-breakers]
 seo_title: "Idempotency in REST APIs: Building Reliable Distributed Endpoints"
 seo_description: "Learn how idempotency keys mathematically prevent double-billing and duplicate resource creation in HTTP POST networks."
-canonical_url: "https://graphy.dev/concepts/idempotency"
+canonical_url: "/concepts/idempotency"
 code_examples:
   - language: Go
     title: Idempotent API handler

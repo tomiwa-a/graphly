@@ -10,7 +10,7 @@ prerequisites: []
 related: [idempotency, caching-strategies]
 seo_title: "HTTP Protocol: Methods, Status Codes, and Request Lifecycle"
 seo_description: "Learn the HTTP protocol that powers all web communication — methods, status codes, headers, and request/response lifecycle for backend engineers."
-canonical_url: "https://graphy.dev/concepts/http"
+canonical_url: "/concepts/http"
 code_examples:
   - language: Go
     title: HTTP server and handler

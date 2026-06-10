@@ -5,7 +5,7 @@ This roadmap outlines the multi-phase transition from static hardcoded concept l
 ---
 
 ## Phase 1: Chapter-Grouped Directory & Custom Page SEO
-- [ ] **Directory Organization**: Group markdown files under their respective chapter subdirectories to maintain logical organization:
+- [x] **Directory Organization**: Group markdown files under their respective chapter subdirectories to maintain logical organization:
   ```
   src/content/concepts/
   ├── foundations/
@@ -16,15 +16,15 @@ This roadmap outlines the multi-phase transition from static hardcoded concept l
   └── databases/
       └── indexes.md
   ```
-- [ ] **Frontmatter SEO Overrides**: Introduce custom SEO parameters inside each markdown's metadata frontmatter:
+- [x] **Frontmatter SEO Overrides**: Introduce custom SEO parameters inside each markdown's metadata frontmatter:
   ```yaml
   seo_title: "Idempotency in REST APIs: Building Reliable Distributed Endpoints"
   seo_description: "Learn how idempotency keys mathematically prevent double-billing and duplicate resource creation in HTTP POST networks."
-  canonical_url: "https://graphy.dev/concepts/idempotency"
+  canonical_url: "/concepts/idempotency"
   og_image: "/images/og/idempotency.png"
   ```
-- [ ] **Dynamic Sitemap & Robots.txt**: Establish [sitemap.ts](file:///Users/pitersonsmartpro/Documents/projects/graphy/src/app/sitemap.ts) and [robots.ts](file:///Users/pitersonsmartpro/Documents/projects/graphy/src/app/robots.ts) at the App router root, dynamically fetching metadata from all chapter directories to index every topic cleanly.
-- [ ] **JSON-LD Schema Markup**: Inject JSON-LD structured schema tags (specifically `TechArticle` and `CourseInfo`) into the HTML head of [concepts/[slug]/page.tsx](file:///Users/pitersonsmartpro/Documents/projects/graphy/src/app/concepts/%5Bslug%5D/page.tsx) to facilitate rich search results in Google/Bing.
+- [x] **Dynamic Sitemap & Robots.txt**: [sitemap.ts](file:///Users/pitersonsmartpro/Documents/projects/graphy/src/app/sitemap.ts) and [robots.ts](file:///Users/pitersonsmartpro/Documents/projects/graphy/src/app/robots.ts) at the App router root, dynamically fetching metadata from all chapter directories to index every topic cleanly.
+- [x] **JSON-LD Schema Markup**: JSON-LD structured schema tags (`TechArticle`) injected into the HTML head of [concepts/[slug]/page.tsx](file:///Users/pitersonsmartpro/Documents/projects/graphy/src/app/concepts/%5Bslug%5D/page.tsx) to facilitate rich search results in Google/Bing.
 
 ---
 

@@ -43,7 +43,7 @@
     ],
     "seoTitle": "Bits and Binary: Bitwise Operations for Backend Engineers",
     "seoDescription": "Understanding bits, binary representation, and bitwise operations — the foundation of high-performance data structures like Bloom filters and bitmap indexes.",
-    "canonicalUrl": "https://graphy.dev/concepts/bits",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/bits",
     "ogImage": null
   },
   {
@@ -89,7 +89,7 @@
     ],
     "seoTitle": "Bloom Filters: Space-Efficient Probabilistic Set Membership",
     "seoDescription": "Understand Bloom filters — the probabilistic data structure with zero false negatives that powers cache shielding, malicious URL detection, and database query optimization.",
-    "canonicalUrl": "https://graphy.dev/concepts/bloom-filters",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/bloom-filters",
     "ogImage": null
   },
   {
@@ -156,7 +156,7 @@
     ],
     "seoTitle": "Caching Strategies: Cache-Aside, Write-Through, and CDN Patterns",
     "seoDescription": "Master caching strategies — cache-aside, write-through, write-behind, and CDN caching. Learn TTL management, invalidation, and cache stampede prevention.",
-    "canonicalUrl": "https://graphy.dev/concepts/caching-strategies",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/caching-strategies",
     "ogImage": null
   },
   {
@@ -217,7 +217,7 @@
     ],
     "seoTitle": "Circuit Breakers: Preventing Cascading Failures in Distributed Systems",
     "seoDescription": "Learn how circuit breakers detect and isolate faulting downstream services, prevent cascading failures, and implement fallback strategies in production systems.",
-    "canonicalUrl": "https://graphy.dev/concepts/circuit-breakers",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/circuit-breakers",
     "ogImage": null
   },
   {
@@ -267,7 +267,7 @@
     ],
     "seoTitle": "Hash Functions: From HashMap to Consistent Hashing",
     "seoDescription": "Understand hash functions — how they map keys to integers, handle collisions, and power HashMaps, Bloom filters, and consistent hashing in distributed systems.",
-    "canonicalUrl": "https://graphy.dev/concepts/hash-functions",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/hash-functions",
     "ogImage": null
   },
   {
@@ -330,7 +330,7 @@
     ],
     "seoTitle": "HTTP Protocol: Methods, Status Codes, and Request Lifecycle",
     "seoDescription": "Learn the HTTP protocol that powers all web communication — methods, status codes, headers, and request/response lifecycle for backend engineers.",
-    "canonicalUrl": "https://graphy.dev/concepts/http",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/http",
     "ogImage": null
   },
   {
@@ -400,7 +400,7 @@
     ],
     "seoTitle": "Idempotency in REST APIs: Building Reliable Distributed Endpoints",
     "seoDescription": "Learn how idempotency keys mathematically prevent double-billing and duplicate resource creation in HTTP POST networks.",
-    "canonicalUrl": "https://graphy.dev/concepts/idempotency",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/idempotency",
     "ogImage": null
   },
   {
@@ -459,7 +459,7 @@
     ],
     "seoTitle": "Database Indexes: B-Trees, Query Performance, and Tradeoffs",
     "seoDescription": "Learn how database indexes work under the hood — B-trees, composite indexes, query planning, and the read/write performance tradeoffs every backend engineer must understand.",
-    "canonicalUrl": "https://graphy.dev/concepts/indexes",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/indexes",
     "ogImage": null
   },
   {
@@ -519,7 +519,7 @@
     ],
     "seoTitle": "Message Queues: Decoupling Services with Async Messaging",
     "seoDescription": "Understand message queues — how producers and consumers decouple services, handle failures, and build resilient asynchronous systems with RabbitMQ, SQS, and BullMQ.",
-    "canonicalUrl": "https://graphy.dev/concepts/message-queues",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/message-queues",
     "ogImage": null
   }
 ]

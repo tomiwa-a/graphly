@@ -10,7 +10,7 @@ prerequisites: [bits]
 related: [bloom-filters, indexes]
 seo_title: "Hash Functions: From HashMap to Consistent Hashing"
 seo_description: "Understand hash functions — how they map keys to integers, handle collisions, and power HashMaps, Bloom filters, and consistent hashing in distributed systems."
-canonical_url: "https://graphy.dev/concepts/hash-functions"
+canonical_url: "/concepts/hash-functions"
 code_examples:
   - language: TypeScript
     title: Simple DJB2 string hash

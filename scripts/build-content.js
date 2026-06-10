@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const matter = require("gray-matter");
 
+const SITE_URL = "https://graphy.ellomas.com";
+
 const CONTENT_DIR = path.join(__dirname, "..", "src", "content", "concepts");
 const OUTPUT_FILE = path.join(
   __dirname,
@@ -94,7 +96,12 @@ function loadConcepts() {
         codeExamples,
         seoTitle: data.seo_title || null,
         seoDescription: data.seo_description || null,
-        canonicalUrl: data.canonical_url || null,
+        canonicalUrl:
+          data.canonical_url
+            ? data.canonical_url.startsWith("/")
+              ? `${SITE_URL}${data.canonical_url}`
+              : data.canonical_url
+            : null,
         ogImage: data.og_image || null,
       });
     }

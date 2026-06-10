@@ -10,7 +10,7 @@ prerequisites: [http, indexes, bloom-filters]
 related: [idempotency, message-queues]
 seo_title: "Caching Strategies: Cache-Aside, Write-Through, and CDN Patterns"
 seo_description: "Master caching strategies — cache-aside, write-through, write-behind, and CDN caching. Learn TTL management, invalidation, and cache stampede prevention."
-canonical_url: "https://graphy.dev/concepts/caching-strategies"
+canonical_url: "/concepts/caching-strategies"
 code_examples:
   - language: TypeScript
     title: Cache-aside with Redis

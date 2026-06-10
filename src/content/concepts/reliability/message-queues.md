@@ -10,7 +10,7 @@ prerequisites: [http]
 related: [idempotency, circuit-breakers]
 seo_title: "Message Queues: Decoupling Services with Async Messaging"
 seo_description: "Understand message queues — how producers and consumers decouple services, handle failures, and build resilient asynchronous systems with RabbitMQ, SQS, and BullMQ."
-canonical_url: "https://graphy.dev/concepts/message-queues"
+canonical_url: "/concepts/message-queues"
 code_examples:
   - language: TypeScript
     title: BullMQ producer and consumer

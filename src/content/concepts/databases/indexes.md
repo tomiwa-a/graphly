@@ -10,7 +10,7 @@ prerequisites: [http]
 related: [caching-strategies]
 seo_title: "Database Indexes: B-Trees, Query Performance, and Tradeoffs"
 seo_description: "Learn how database indexes work under the hood — B-trees, composite indexes, query planning, and the read/write performance tradeoffs every backend engineer must understand."
-canonical_url: "https://graphy.dev/concepts/indexes"
+canonical_url: "/concepts/indexes"
 code_examples:
   - language: TypeScript
     title: Prisma index definition

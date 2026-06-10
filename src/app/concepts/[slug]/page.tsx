@@ -8,6 +8,7 @@ import { ConceptCompletion } from "@/components/concepts/concept-completion";
 import { PrerequisiteWarningBanner } from "@/components/concepts/prerequisite-warning-banner";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
+import { SITE_URL } from "@/lib/constants";
 
 const diffStyles: Record<string, string> = {
   beginner: "bg-success-light text-success-dark",
@@ -78,7 +79,7 @@ export default async function ConceptPage({
     headline: concept.seoTitle || concept.title,
     description: concept.seoDescription || concept.summary,
     name: concept.title,
-    url: concept.canonicalUrl || `https://graphy.dev/concepts/${concept.slug}`,
+    url: concept.canonicalUrl || `${SITE_URL}/concepts/${concept.slug}`,
     difficulty: concept.difficulty,
     estimatedTime: `PT${concept.estimatedMinutes}M`,
     teaches: concept.title,
