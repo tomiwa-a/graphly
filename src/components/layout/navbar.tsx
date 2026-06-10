@@ -9,6 +9,7 @@ import { LogoFull } from "@/components/logo";
 const navLinks = [
   { href: "/concepts", label: "Concepts" },
   { href: "/paths", label: "Paths" },
+  { href: "/graph", label: "Graph" },
 ];
 
 export function Navbar() {
