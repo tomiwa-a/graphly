@@ -527,7 +527,7 @@ for msg := range msgs {
     difficulty: "intermediate",
     domain: "Caching",
     estimatedMinutes: 16,
-    prerequisites: ["http", "indexes"],
+    prerequisites: ["http", "indexes", "bloom-filters"],
     related: ["idempotency", "message-queues"],
     sections: [
       {
@@ -638,6 +638,118 @@ def get_user(user_id):
       },
     ],
   },
+  {
+    slug: "bits",
+    title: "Bits & Binary",
+    summary: "The fundamental units of binary information and bitwise operations that power all higher-level data structures.",
+    difficulty: "beginner",
+    domain: "Foundations",
+    estimatedMinutes: 8,
+    prerequisites: [],
+    related: ["hash-functions"],
+    sections: [
+      {
+        id: "what-it-is",
+        title: "What it is",
+        content: "A bit (binary digit) is the most basic unit of information in computing, representing a logical state of 0 or 1. Pointers, arrays, and integers are all stored as sequences of bits in memory. Bitwise operators (AND, OR, XOR, NOT, shifts) manipulate these binary values directly, offering maximum execution speed and minimum memory footprint."
+      },
+      {
+        id: "why-it-matters",
+        title: "Why it matters",
+        content: "High-performance data structures—like bit arrays, Bloom filters, and bitmap indexes—depend directly on bitwise arithmetic. By using individual bits as boolean flags, a system can store and query set membership in raw CPU cache with zero pointer indirection or database overhead."
+      },
+      {
+        id: "bitwise-ops",
+        title: "Key Bitwise Operators",
+        content: "1. AND (&): Sets bit to 1 if both bits are 1.\n2. OR (|): Sets bit to 1 if either bit is 1.\n3. XOR (^): Sets bit to 1 if only one bit is 1.\n4. Left Shift (<<): Shifts bits left, filling with 0. Multiplying by 2^n.\n5. Right Shift (>>): Shifts bits right. Dividing by 2^n."
+      }
+    ],
+    codeExamples: [
+      {
+        language: "TypeScript",
+        title: "Bitwise flags in TypeScript",
+        code: `const READ = 1 << 0;  // 0001\nconst WRITE = 1 << 1; // 0010\nconst EXEC = 1 << 2;  // 0100\n\n// Combine flags using OR (|)\nlet userPerms = READ | WRITE; // 0011\n\n// Check flags using AND (&)\nconst canWrite = (userPerms & WRITE) === WRITE;\nconsole.log(canWrite); // true\n\n// Remove a flag using AND NOT\nuserPerms = userPerms & ~WRITE; // 0001`
+      },
+      {
+        language: "Go",
+        title: "Bitwise manipulation in Go",
+        code: `package main\nimport "fmt"\n\nfunc main() {\n    var bitmask uint8 = 0 // 00000000\n\n    // Set 3rd bit to 1\n    bitmask |= (1 << 3) // 00001000\n\n    // Check 3rd bit\n    hasThird := (bitmask & (1 << 3)) != 0\n    fmt.Println(hasThird) // true\n}`
+      }
+    ]
+  },
+  {
+    slug: "hash-functions",
+    title: "Hash Functions",
+    summary: "Mapping arbitrary-sized keys to fixed-size integers, powering HashMaps, cryptographic security, and data indexing.",
+    difficulty: "beginner",
+    domain: "Algorithms",
+    estimatedMinutes: 10,
+    prerequisites: ["bits"],
+    related: ["bloom-filters", "indexes"],
+    sections: [
+      {
+        id: "what-it-is",
+        title: "What it is",
+        content: "A hash function takes an input (often a string or object) and returns a fixed-size integer, called a hash value or code. A good hash function is deterministic (same input always yields same output), fast to compute, and minimizes collisions (different inputs yielding the same hash value)."
+      },
+      {
+        id: "why-it-matters",
+        title: "Why it matters",
+        content: "Hash functions power the core data structures of the web: Hash tables support O(1) average-time inserts and reads. In backend engineering, hash functions distribute load uniformly (Consistent Hashing), detect data tampering (cryptographic hashes like SHA-256), and determine bit indices for space-saving probabilistic filters."
+      },
+      {
+        id: "collision-resolution",
+        title: "Collision Resolution",
+        content: "When two different keys generate the same hash, it is a collision. Databases resolve collisions using:\n- Chaining: Storing colliding items in a linked list at that index.\n- Open Addressing: Finding another empty slot using probing sequences (linear, quadratic)."
+      }
+    ],
+    codeExamples: [
+      {
+        language: "TypeScript",
+        title: "Simple DJB2 string hash",
+        code: `function djb2Hash(str: string): number {\n  let hash = 5381;\n  for (let i = 0; i < str.length; i++) {\n    const char = str.charCodeAt(i);\n    // hash * 33 + c\n    hash = ((hash << 5) + hash) + char;\n    hash = hash & hash; // Convert to 32bit integer\n  }\n  return Math.abs(hash);\n}\n\nconsole.log(djb2Hash("hello")); // 261185`
+      },
+      {
+        language: "Go",
+        title: "FNV-1a hash in Go",
+        code: `package main\nimport (\n    "fmt"\n    "hash/fnv"\n)\n\nfunc hashString(s string) uint32 {\n    h := fnv.New32a()\n    h.Write([]byte(s))\n    return h.Sum32()\n}\n\nfunc main() {\n    fmt.Println(hashString("hello")) // 1335836873\n}`
+      }
+    ]
+  },
+  {
+    slug: "bloom-filters",
+    title: "Bloom Filters",
+    summary: "A space-efficient probabilistic data structure that checks set membership with zero false negatives.",
+    difficulty: "intermediate",
+    domain: "Data Structures",
+    estimatedMinutes: 14,
+    prerequisites: ["bits", "hash-functions"],
+    related: ["caching-strategies", "indexes"],
+    sections: [
+      {
+        id: "what-it-is",
+        title: "What it is",
+        content: "A Bloom Filter is a space-efficient probabilistic data structure. It can check if an element is a member of a set. It returns either:\n1. 'Possibly in the set' (potential False Positive)\n2. 'Definitely not in the set' (absolute guarantee of False Negative = 0%)\nIt uses a bit array and multiple independent hash functions."
+      },
+      {
+        id: "how-it-works",
+        title: "How it works under the hood",
+        content: "Initialize a bit array of size 'm' to all 0s. Define 'k' hash functions.\n- To ADD: Hash the element with each of the 'k' functions. Set the bits at those indices to 1.\n- To QUERY: Hash the element with the same functions. If ANY of the bits at these indices is 0, the element is definitely NOT in the set. If ALL are 1, it might be in the set (or other keys set those bits, creating a false positive)."
+      },
+      {
+        id: "real-world-use",
+        title: "Real-world Applications",
+        content: "1. Cache Shielding: Keep a Bloom Filter in memory. If a user queries a non-existent post ID, the Bloom filter says 'Definitely Not Exist' instantly, preventing a database check.\n2. Medium/Google Chrome: Check if a URL is in a malicious domain list locally before loading the page."
+      }
+    ],
+    codeExamples: [
+      {
+        language: "TypeScript",
+        title: "Simple Bloom Filter implementation",
+        code: `class BloomFilter {\n  private size: number;\n  private bits: boolean[];\n\n  constructor(size = 100) {\n    this.size = size;\n    this.bits = new Array(size).fill(false);\n  }\n\n  private hash1(str: string): number {\n    let hash = 0;\n    for (let i = 0; i < str.length; i++) {\n      hash = (hash * 31 + str.charCodeAt(i)) % this.size;\n    }\n    return hash;\n  }\n\n  private hash2(str: string): number {\n    let hash = 5381;\n    for (let i = 0; i < str.length; i++) {\n      hash = ((hash << 5) + hash + str.charCodeAt(i)) % this.size;\n    }\n    return Math.abs(hash);\n  }\n\n  add(item: string) {\n    this.bits[this.hash1(item)] = true;\n    this.bits[this.hash2(item)] = true;\n  }\n\n  contains(item: string): boolean {\n    return this.bits[this.hash1(item)] && this.bits[this.hash2(item)];\n  }\n}`
+      }
+    ]
+  }
 ];
 
 export function getConceptBySlug(slug: string): Concept | undefined {

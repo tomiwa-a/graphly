@@ -79,20 +79,67 @@ export function StepList({
   const [completed, setCompleted] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) setCompleted(new Set(JSON.parse(saved)));
-    } catch {}
-  }, [storageKey]);
+    const syncProgress = () => {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        const pathCompletedSet = saved ? new Set<number>(JSON.parse(saved)) : new Set<number>();
 
-  const toggle = (order: number) => {
+        const globalSaved = localStorage.getItem("graphy-completed-concepts");
+        const globalCompletedList: string[] = globalSaved ? JSON.parse(globalSaved) : [];
+
+        // Sync: Any step whose concept is completed globally is completed in this path
+        steps.forEach((step) => {
+          if (globalCompletedList.includes(step.conceptSlug)) {
+            pathCompletedSet.add(step.order);
+          } else {
+            // Only remove if it was checked here but unchecked globally
+            pathCompletedSet.delete(step.order);
+          }
+        });
+
+        localStorage.setItem(storageKey, JSON.stringify([...pathCompletedSet]));
+        setCompleted(pathCompletedSet);
+      } catch {}
+    };
+
+    syncProgress();
+    window.addEventListener("storage", syncProgress);
+    window.addEventListener("concept-completed-updated", syncProgress);
+
+    return () => {
+      window.removeEventListener("storage", syncProgress);
+      window.removeEventListener("concept-completed-updated", syncProgress);
+    };
+  }, [storageKey, steps]);
+
+  const toggle = (order: number, conceptSlug: string) => {
+    let nextPathCompleted = new Set<number>();
     setCompleted((prev) => {
       const next = new Set(prev);
       if (next.has(order)) next.delete(order);
       else next.add(order);
       localStorage.setItem(storageKey, JSON.stringify([...next]));
+      nextPathCompleted = next;
       return next;
     });
+
+    // Update global list
+    try {
+      const globalSaved = localStorage.getItem("graphy-completed-concepts");
+      let globalList: string[] = globalSaved ? JSON.parse(globalSaved) : [];
+
+      if (globalList.includes(conceptSlug)) {
+        globalList = globalList.filter((s) => s !== conceptSlug);
+      } else {
+        globalList.push(conceptSlug);
+      }
+
+      localStorage.setItem("graphy-completed-concepts", JSON.stringify(globalList));
+
+      // Notify other components
+      window.dispatchEvent(new Event("storage"));
+      window.dispatchEvent(new Event("concept-completed-updated"));
+    } catch {}
   };
 
   const progress = steps.length > 0 ? (completed.size / steps.length) * 100 : 0;
@@ -124,7 +171,7 @@ export function StepList({
             key={step.order}
             step={step}
             isCompleted={completed.has(step.order)}
-            onToggle={() => toggle(step.order)}
+            onToggle={() => toggle(step.order, step.conceptSlug)}
             isLast={i === steps.length - 1}
           />
         ))}

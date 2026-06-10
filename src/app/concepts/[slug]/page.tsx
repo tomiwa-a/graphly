@@ -3,6 +3,7 @@ import { getConceptBySlug, getAllSlugs, concepts } from "@/lib/data/concepts";
 import { ConceptCardMini } from "@/components/concepts/concept-card";
 import { TableOfContents } from "@/components/concepts/table-of-contents";
 import { LanguageTabSwitcher } from "@/components/concepts/language-tab-switcher";
+import { ConceptCompletion } from "@/components/concepts/concept-completion";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 
@@ -77,27 +78,32 @@ export default async function ConceptPage({
             </div>
 
             {/* Header */}
-            <header className="mb-10">
-              <h1 className="text-3xl font-medium tracking-[-0.03em] text-foreground font-heading sm:text-4xl">
-                {concept.title}
-              </h1>
-              <p className="mt-3 text-base leading-relaxed text-foreground-secondary font-sans font-medium max-w-xl">
-                {concept.summary}
-              </p>
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <span
-                  className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold font-heading ${diffStyles[concept.difficulty]}`}
-                >
-                  {concept.difficulty.charAt(0).toUpperCase() +
-                    concept.difficulty.slice(1)}
-                </span>
-                <span className="text-sm text-foreground-secondary font-sans">
-                  {concept.domain}
-                </span>
-                <span className="h-1 w-1 rounded-full bg-foreground-muted" />
-                <span className="text-sm text-foreground-secondary font-sans">
-                  {concept.estimatedMinutes} min read
-                </span>
+            <header className="mb-10 flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+              <div>
+                <h1 className="text-3xl font-medium tracking-[-0.03em] text-foreground font-heading sm:text-4xl">
+                  {concept.title}
+                </h1>
+                <p className="mt-3 text-base leading-relaxed text-foreground-secondary font-sans font-medium max-w-xl">
+                  {concept.summary}
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <span
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold font-heading ${diffStyles[concept.difficulty]}`}
+                  >
+                    {concept.difficulty.charAt(0).toUpperCase() +
+                      concept.difficulty.slice(1)}
+                  </span>
+                  <span className="text-sm text-foreground-secondary font-sans">
+                    {concept.domain}
+                  </span>
+                  <span className="h-1 w-1 rounded-full bg-foreground-muted" />
+                  <span className="text-sm text-foreground-secondary font-sans">
+                    {concept.estimatedMinutes} min read
+                  </span>
+                </div>
+              </div>
+              <div className="shrink-0">
+                <ConceptCompletion slug={concept.slug} title={concept.title} />
               </div>
             </header>
           </Reveal>
