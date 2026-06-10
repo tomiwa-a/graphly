@@ -84,24 +84,23 @@
 
 ---
 
-## Phase 9: Dashboard
+## Phase 9: Dynamic Journey Builder & Dashboard (UI Only)
 
-- [ ] Build `DashboardLayout` (sidebar nav: progress, bookmarks, settings)
-- [ ] Build `ProgressSummaryCards` (completed concepts, paths in progress, streak)
-- [ ] Build `BookmarksList` (sortable list of saved concepts with remove action)
-- [ ] Build `RecentlyViewedList` (history of last 10 concepts)
-- [ ] Build `RecommendationsSection` (5 recommended concepts with reason labels)
-- [ ] Build `LanguagePreferencesSelector` (checkboxes for preferred languages)
+- [ ] Build `JourneyBuilder` component: Visual selection of starting concept and goal concept (e.g., Bits ➔ Caching)
+- [ ] Build `SubwayTimeline` component: Dynamically renders the compiled topological path as a sequential horizontal/vertical metro line
+- [ ] Build `AdvisoryDetours` card: Displays recommended "local stops" and prerequisite detours based on current selection
+- [ ] Build `ProgressMasteryCard`: Local-storage driven completion tracker (e.g., 3/6 concepts completed)
+- [ ] Build `ResetProgressButton`: Clean trigger to flush localStorage progress keys and reset the graph visuals
 
 ---
 
-## Phase 10: Auth Pages & Polish
+## Phase 10: Flow Highlights, Warnings & Mobile Metro-Lines (UI Only)
 
-- [ ] Build `SignInPage` (email input, provider buttons: Google, GitHub)
-- [ ] Build `SignUpPage` (name, email, preferred language selection)
-- [ ] Build `AuthGuard` wrapper component (redirect to sign-in if unauthenticated)
-- [x] Build `NotFoundPage` (404 with disconnected graph illustration + links)
-- [ ] Build `ErrorBoundary` fallback UI (500 with retry button)
-- [ ] Build responsive pass (test every page at mobile, tablet, desktop breakpoints)
-- [ ] Build page transition animations (optional, subtle fade/slide)
+- [ ] Build `PrerequisiteWarningBanner`: Interactive alert banner shown in concept headers and sidebars when prerequisites are incomplete
+- [ ] Build `DependencyFlowHighlighter`: Interactive hover state on the graph canvas that highlights upstream prerequisites (in red) and downstream applications, dimming other nodes
+- [ ] Build `EdgeFlowAnimation`: CSS-based SVG dash-flow animations on connection lines of completed/active learning paths
+- [ ] Build `MobileMetroLine`: Responsive fallback that automatically stacks the SVG graph canvas as a clean, vertical, touch-friendly metro line timeline on mobile screens
+- [ ] Build page transition animations for smooth switching between routes
+- [ ] Conduct detailed cross-device responsive layout check for all concept, path, and graph pages
+
 
