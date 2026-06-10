@@ -1,31 +1,26 @@
-import { Button as BaseButton } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
-import { forwardRef } from "react";
-import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium transition-all duration-150 select-none shadow-button",
+  "inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium transition-all duration-150 select-none",
   {
     variants: {
       variant: {
         primary:
-          "bg-primary text-white hover:bg-primary-dark active:bg-primary-dark",
+          "bg-primary text-white hover:bg-primary-dark active:scale-[0.98] shadow-button",
         secondary:
-          "bg-secondary/10 text-secondary hover:bg-secondary/15 active:bg-secondary/20",
+          "bg-primary-light text-primary hover:bg-primary-muted active:scale-[0.98]",
         outline:
-          "border border-input bg-surface-card hover:bg-surface-hover active:bg-surface-hover text-foreground",
+          "border border-border bg-surface-card text-foreground hover:bg-surface-hover hover:border-border-hover active:scale-[0.98]",
         ghost:
-          "bg-transparent hover:bg-surface-hover active:bg-surface-hover text-foreground shadow-none",
-        destructive:
-          "bg-destructive text-white hover:bg-rose-600 active:bg-rose-700",
-        link: "bg-transparent text-primary hover:underline underline-offset-4 shadow-none",
+          "text-foreground-secondary hover:text-foreground hover:bg-surface-hover active:scale-[0.98]",
+        link: "text-primary hover:text-primary-dark underline-offset-4 hover:underline",
       },
       size: {
         sm: "h-8 px-3 text-xs gap-1.5",
-        default: "h-10 px-4",
-        lg: "h-12 px-6 text-base",
-        icon: "h-10 w-10",
+        default: "h-9 px-4",
+        lg: "h-10 px-5 text-base",
+        icon: "h-9 w-9",
         "icon-sm": "h-8 w-8",
       },
     },
@@ -37,26 +32,23 @@ const buttonVariants = cva(
 );
 
 type ButtonProps = VariantProps<typeof buttonVariants> & {
-  loading?: boolean;
-  disabled?: boolean;
   className?: string;
   children?: React.ReactNode;
-} & React.ComponentPropsWithoutRef<typeof BaseButton>;
+} & React.ComponentPropsWithoutRef<"button">;
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant, size, loading, disabled, className, children, ...props }, ref) => {
-    return (
-      <BaseButton
-        ref={ref}
-        disabled={disabled || loading}
-        className={cn(buttonVariants({ variant, size }), className)}
-        {...props}
-      >
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-        {children}
-      </BaseButton>
-    );
-  },
-);
-
-Button.displayName = "Button";
+export function Button({
+  variant,
+  size,
+  className,
+  children,
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}

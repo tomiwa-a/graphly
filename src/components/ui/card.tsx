@@ -4,25 +4,14 @@ type CardProps = {
   className?: string;
   children?: React.ReactNode;
   hover?: boolean;
-  accent?: "primary" | "secondary" | "success" | "warning" | "destructive" | "info" | null;
 };
 
-const accentMap = {
-  primary: "border-l-primary",
-  secondary: "border-l-secondary",
-  success: "border-l-success",
-  warning: "border-l-accent",
-  destructive: "border-l-destructive",
-  info: "border-l-info",
-};
-
-export function Card({ className, children, hover, accent }: CardProps) {
+export function Card({ className, children, hover }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-surface-card p-6 shadow-card",
+        "rounded-xl border border-border bg-surface-card p-5 shadow-card",
         hover && "transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5",
-        accent && `border-l-[3px] ${accentMap[accent]}`,
         className,
       )}
     >
@@ -39,7 +28,7 @@ export function CardHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <div className={cn("mb-4 flex items-start justify-between gap-4", className)}>
+    <div className={cn("mb-3 flex items-start justify-between gap-4", className)}>
       {children}
     </div>
   );
@@ -53,7 +42,7 @@ export function CardTitle({
   children?: React.ReactNode;
 }) {
   return (
-    <h3 className={cn("text-lg font-semibold text-foreground", className)}>
+    <h3 className={cn("text-base font-semibold text-foreground", className)}>
       {children}
     </h3>
   );
@@ -67,7 +56,7 @@ export function CardDescription({
   children?: React.ReactNode;
 }) {
   return (
-    <p className={cn("mt-1 text-sm text-foreground-secondary", className)}>
+    <p className={cn("mt-1 text-sm leading-relaxed text-foreground-secondary", className)}>
       {children}
     </p>
   );

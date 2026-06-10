@@ -2,26 +2,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors",
+  "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium transition-colors",
   {
     variants: {
       variant: {
         default: "bg-primary-light text-primary",
         secondary: "bg-surface-muted text-foreground-secondary border border-border",
-        destructive: "bg-destructive-light text-destructive",
-        outline: "border border-input text-foreground bg-transparent",
+        outline: "border border-border text-foreground-secondary",
         success: "bg-success-light text-success",
-        warning: "bg-warning-light text-accent",
-      },
-      size: {
-        sm: "px-2 py-0 text-[10px]",
-        default: "px-2.5 py-0.5 text-xs",
-        lg: "px-3 py-1 text-sm",
+        warning: "bg-warning-light text-warning",
+        destructive: "bg-destructive-light text-destructive",
       },
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
     },
   },
 );
@@ -31,9 +25,9 @@ type BadgeProps = VariantProps<typeof badgeVariants> & {
   children?: React.ReactNode;
 };
 
-export function Badge({ variant, size, className, children }: BadgeProps) {
+export function Badge({ variant, className, children }: BadgeProps) {
   return (
-    <span className={cn(badgeVariants({ variant, size }), className)}>
+    <span className={cn(badgeVariants({ variant }), className)}>
       {children}
     </span>
   );
@@ -56,45 +50,8 @@ export function DifficultyBadge({
 }) {
   const config = difficultyConfig[level];
   return (
-    <Badge variant={config.variant} size="sm" className={className}>
+    <Badge variant={config.variant} className={className}>
       {config.label}
     </Badge>
-  );
-}
-
-const domainColors: Record<string, { bg: string; text: string }> = {
-  "api-design": { bg: "bg-domain-api-bg", text: "text-domain-api" },
-  databases: { bg: "bg-domain-database-bg", text: "text-domain-database" },
-  caching: { bg: "bg-domain-caching-bg", text: "text-domain-caching" },
-  queues: { bg: "bg-domain-queues-bg", text: "text-domain-queues" },
-  auth: { bg: "bg-domain-auth-bg", text: "text-domain-auth" },
-  reliability: { bg: "bg-domain-reliability-bg", text: "text-domain-reliability" },
-  observability: { bg: "bg-domain-observability-bg", text: "text-domain-observability" },
-  deployment: { bg: "bg-domain-deployment-bg", text: "text-domain-deployment" },
-  foundations: { bg: "bg-domain-foundations-bg", text: "text-domain-foundations" },
-};
-
-export function DomainBadge({
-  domain,
-  className,
-}: {
-  domain: string;
-  className?: string;
-}) {
-  const colors = domainColors[domain] ?? {
-    bg: "bg-surface-hover",
-    text: "text-foreground-secondary",
-  };
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-        colors.bg,
-        colors.text,
-        className,
-      )}
-    >
-      {domain.replace(/-/g, " ")}
-    </span>
   );
 }

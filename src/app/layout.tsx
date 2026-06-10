@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
+import { BodyLayout } from "@/components/layout/body-layout";
+import { EntranceCurtain } from "@/components/entrance-curtain";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,11 +16,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Graphy",
+    template: "%s — Graphy",
     default: "Graphy — Backend Engineering Knowledge Graph",
   },
   description:
-    "Learn backend engineering through a connected knowledge graph. Explore concepts, prerequisites, multi-language examples, and exercises.",
+    "Learn backend engineering through a connected knowledge graph. Explore concepts, prerequisites, multi-language examples.",
 };
 
 export default function RootLayout({
@@ -29,9 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="min-h-screen flex flex-col antialiased">
-        {children}
-        <Toaster />
+      <body className="min-h-screen antialiased">
+        <EntranceCurtain />
+        <BodyLayout>{children}</BodyLayout>
       </body>
     </html>
   );
