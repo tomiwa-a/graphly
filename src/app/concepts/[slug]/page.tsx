@@ -27,7 +27,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const concept = getConceptBySlug(slug);
   if (!concept) return { title: "Not Found" };
-  return { title: concept.title, description: concept.summary };
+  return {
+    title: concept.seoTitle || concept.title,
+    description: concept.seoDescription || concept.summary,
+    alternates: concept.canonicalUrl ? { canonical: concept.canonicalUrl } : undefined,
+    openGraph: concept.ogImage
+      ? { images: [{ url: concept.ogImage, width: 1200, height: 630 }] }
+      : undefined,
+  };
 }
 
 export default async function ConceptPage({
@@ -65,8 +72,26 @@ export default async function ConceptPage({
     { id: "continue-learning", title: "Continue Learning" },
   ];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: concept.seoTitle || concept.title,
+    description: concept.seoDescription || concept.summary,
+    name: concept.title,
+    url: concept.canonicalUrl || `https://graphy.dev/concepts/${concept.slug}`,
+    difficulty: concept.difficulty,
+    estimatedTime: `PT${concept.estimatedMinutes}M`,
+    teaches: concept.title,
+    ...(chapter ? { about: chapter.title } : {}),
+  };
+
   return (
-    <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
         {/* Content */}
         <div className="lg:col-span-3">
@@ -231,5 +256,6 @@ export default async function ConceptPage({
         </div>
       </div>
     </div>
+    </>
   );
 }

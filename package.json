@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/build-content.js",
+    "prebuild": "node scripts/build-content.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -28,6 +30,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "gray-matter": "^4.0.3",
     "prettier": "^3.8.4",
     "tailwindcss": "^4",
     "typescript": "^5"
