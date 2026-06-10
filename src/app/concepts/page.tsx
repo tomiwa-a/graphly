@@ -46,15 +46,15 @@ export default function ConceptsPage() {
       </Reveal>
 
       <div className="space-y-12">
-        {chapters.map((chapter) => {
+        {chapters.map((chapter, idx) => {
           const chapterConcepts = filtered.filter((c) => c.chapterId === chapter.id);
           if (chapterConcepts.length === 0) return null;
 
           return (
             <div key={chapter.id} className="space-y-6">
               <div className="border-b border-border pb-3">
-                <span className="text-[10px] font-heading font-bold text-primary-dark uppercase tracking-wider">
-                  Chapter Zone
+                <span className="text-[10px] font-heading font-bold text-primary-dark uppercase tracking-wider font-mono">
+                  Chapter {String(idx + 1).padStart(2, "0")}
                 </span>
                 <h2 className="text-xl font-medium tracking-[-0.02em] text-foreground font-heading mt-0.5">
                   {chapter.title}
