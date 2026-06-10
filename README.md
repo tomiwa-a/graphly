@@ -16,6 +16,7 @@ Think of it as an interactive subway system of backend engineering: select your 
 ## Why Theory-First?
 
 In the frontend world, changes are visual and fast. In backend engineering, everything is invisible, abstract, and governed by deep computer science theory. Developers often get stuck copying-and-pasting configuration or framework routes without understanding:
+
 - **Why** idempotency keys are mathematically required when networks fail.
 - **How** database indexes balance write amplification against search speed.
 - **Why** a Bloom filter works as an O(1) cache shield to prevent database penetration.
@@ -27,27 +28,28 @@ Graphy focuses entirely on **conceptual theory**—the systems concepts that sta
 ## Author
 
 **Amole Oluwatomiwa**
-* Website/GitHub: [@amole-oluwatomiwa](https://github.com/amole-oluwatomiwa)
+
+- Website/GitHub: [@tomiwa-a](https://github.com/tomiwa-a)
 
 ---
 
 ## Core Features
 
-* **Journey Mode (Dynamic Solver)**: Select any starting point (e.g. *Bits*) and destination (e.g. *Caching Strategies*) to dynamically compile an optimal, step-by-step learning timeline complete with connection links.
-* **Knowledge Graph View**: SVG canvas mapping prerequisite connections. Nodes dynamically light up as you complete concepts and show interactive prerequisite flows on hover.
-* **Curated Learning Paths**: Expert-made pathways (e.g., *Backend Fundamentals*, *Reliability Patterns*) to guide you through major backend tracks.
-* **Advisory Warning Banners**: A non-blocking dependency checker that alerts you when attempting to study topics before covering their recommended prerequisites.
-* **Multi-Language Examples**: Inline code examples in Go, TypeScript, and Python.
+- **Journey Mode (Dynamic Solver)**: Select any starting point (e.g. _Bits_) and destination (e.g. _Caching Strategies_) to dynamically compile an optimal, step-by-step learning timeline complete with connection links.
+- **Knowledge Graph View**: SVG canvas mapping prerequisite connections. Nodes dynamically light up as you complete concepts and show interactive prerequisite flows on hover.
+- **Curated Learning Paths**: Expert-made pathways (e.g., _Backend Fundamentals_, _Reliability Patterns_) to guide you through major backend tracks.
+- **Advisory Warning Banners**: A non-blocking dependency checker that alerts you when attempting to study topics before covering their recommended prerequisites.
+- **Multi-Language Examples**: Inline code examples in Go, TypeScript, and Python.
 
 ---
 
 ## Tech Stack
 
-* **Core Framework**: Next.js 16 (App Router, Turbopack)
-* **Styling**: Tailwind CSS v4 (Vanilla CSS Custom Tokens)
-* **Language**: TypeScript
-* **State & Tracking**: Unified Client-Side Storage (`localStorage`)
-* **Icons**: Lucide React
+- **Core Framework**: Next.js 16 (App Router, Turbopack)
+- **Styling**: Tailwind CSS v4 (Vanilla CSS Custom Tokens)
+- **Language**: TypeScript
+- **State & Tracking**: Unified Client-Side Storage (`localStorage`)
+- **Icons**: Lucide React
 
 ---
 
