@@ -4,14 +4,25 @@ type CardProps = {
   className?: string;
   children?: React.ReactNode;
   hover?: boolean;
+  accent?: "primary" | "secondary" | "success" | "warning" | "destructive" | "info" | null;
 };
 
-export function Card({ className, children, hover }: CardProps) {
+const accentMap = {
+  primary: "border-l-primary",
+  secondary: "border-l-secondary",
+  success: "border-l-success",
+  warning: "border-l-accent",
+  destructive: "border-l-destructive",
+  info: "border-l-info",
+};
+
+export function Card({ className, children, hover, accent }: CardProps) {
   return (
     <div
       className={cn(
         "rounded-xl border border-border bg-surface-card p-6 shadow-card",
         hover && "transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5",
+        accent && `border-l-[3px] ${accentMap[accent]}`,
         className,
       )}
     >

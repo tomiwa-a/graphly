@@ -8,9 +8,7 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "animate-pulse rounded-md bg-surface-hover",
-        "bg-gradient-to-r from-surface-hover via-surface-muted to-surface-hover bg-[length:200%_100%]",
-        "animate-[shimmer_1.5s_ease-in-out_infinite]",
+        "animate-shimmer rounded-md bg-gradient-to-r from-surface-hover via-surface-muted to-surface-hover",
         className,
       )}
     />

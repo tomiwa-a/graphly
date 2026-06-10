@@ -3,7 +3,14 @@
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge, DifficultyBadge, DomainBadge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectItem } from "@/components/ui/select";
 import { Avatar } from "@/components/ui/avatar";
@@ -12,8 +19,9 @@ import { Dialog } from "@/components/ui/dialog";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Skeleton, CardSkeleton } from "@/components/ui/skeleton";
 import { CodeBlock } from "@/components/ui/code-block";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useState } from "react";
-import { Info, ArrowRight, Search } from "lucide-react";
+import { Info, ArrowRight, Search, BookOpen, AlertCircle, Inbox } from "lucide-react";
 
 export default function ComponentsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -33,19 +41,19 @@ export default function ComponentsPage() {
           <h2 className="mb-6 text-2xl font-bold text-foreground">Color Palette</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {[
-              { name: "Primary", class: "bg-primary" },
-              { name: "Primary Dark", class: "bg-primary-dark" },
-              { name: "Secondary", class: "bg-secondary" },
-              { name: "Accent", class: "bg-accent" },
-              { name: "Success", class: "bg-success" },
-              { name: "Destructive", class: "bg-destructive" },
-              { name: "Info", class: "bg-info" },
-              { name: "Warning", class: "bg-warning" },
+              { name: "Primary", hex: "#6366f1", class: "bg-primary" },
+              { name: "Secondary", hex: "#0ea5e9", class: "bg-secondary" },
+              { name: "Accent", hex: "#f59e0b", class: "bg-accent" },
+              { name: "Success", hex: "#10b981", class: "bg-success" },
+              { name: "Destructive", hex: "#f43f5e", class: "bg-destructive" },
+              { name: "Info", hex: "#6366f1", class: "bg-info" },
+              { name: "Surface", hex: "#fefcfb", class: "bg-surface border border-border" },
+              { name: "Muted", hex: "#faf9f7", class: "bg-surface-muted border border-border" },
             ].map((c) => (
-              <div key={c.name} className="rounded-xl border border-border p-4">
+              <div key={c.name} className="rounded-xl border border-border bg-surface-card p-4">
                 <div className={`mb-2 h-16 rounded-lg ${c.class}`} />
                 <p className="text-sm font-medium text-foreground">{c.name}</p>
-                <p className="text-xs text-foreground-muted">{c.class.replace("bg-", "")}</p>
+                <p className="text-xs font-mono text-foreground-muted">{c.hex}</p>
               </div>
             ))}
           </div>
@@ -129,7 +137,7 @@ export default function ComponentsPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardTitle>Default Card</CardTitle>
-              <CardDescription>Just a simple card with title and description.</CardDescription>
+              <CardDescription>Simple card with title and description.</CardDescription>
             </Card>
             <Card hover>
               <CardHeader>
@@ -138,7 +146,7 @@ export default function ComponentsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-foreground-secondary">
-                  This card lifts on hover. Great for clickable concept cards.
+                  Lifts on hover. Great for clickable concept cards.
                 </p>
               </CardContent>
               <CardFooter>
@@ -147,14 +155,31 @@ export default function ComponentsPage() {
                 </Button>
               </CardFooter>
             </Card>
-            <Card>
-              <CardTitle>Concept Card</CardTitle>
-              <CardDescription>idempotency</CardDescription>
-              <CardContent className="mt-3 flex gap-2">
-                <DifficultyBadge level="intermediate" />
-                <DomainBadge domain="api-design" />
-                <DomainBadge domain="reliability" />
-              </CardContent>
+            <Card accent="primary">
+              <CardTitle>Accent Strip</CardTitle>
+              <CardDescription>Left border accent for emphasis.</CardDescription>
+            </Card>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Card accent="primary">
+              <CardTitle className="text-sm">API Design</CardTitle>
+              <p className="mt-1 text-2xl font-bold text-primary">12</p>
+              <p className="text-xs text-foreground-muted">concepts</p>
+            </Card>
+            <Card accent="success">
+              <CardTitle className="text-sm">Completed</CardTitle>
+              <p className="mt-1 text-2xl font-bold text-success">28</p>
+              <p className="text-xs text-foreground-muted">topics read</p>
+            </Card>
+            <Card accent="warning">
+              <CardTitle className="text-sm">In Progress</CardTitle>
+              <p className="mt-1 text-2xl font-bold text-accent">5</p>
+              <p className="text-xs text-foreground-muted">active paths</p>
+            </Card>
+            <Card accent="destructive">
+              <CardTitle className="text-sm">Exercises</CardTitle>
+              <p className="mt-1 text-2xl font-bold text-destructive">9</p>
+              <p className="text-xs text-foreground-muted">remaining</p>
             </Card>
           </div>
         </section>
@@ -164,11 +189,15 @@ export default function ComponentsPage() {
           <h2 className="mb-6 text-2xl font-bold text-foreground">Inputs</h2>
           <div className="flex flex-wrap items-end gap-4">
             <div className="w-60">
-              <label className="mb-1.5 block text-sm font-medium text-foreground">Default</label>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                Default
+              </label>
               <Input placeholder="Search concepts..." />
             </div>
             <div className="w-60">
-              <label className="mb-1.5 block text-sm font-medium text-foreground">With error</label>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                With error
+              </label>
               <Input error placeholder="Email address" />
             </div>
           </div>
@@ -178,7 +207,9 @@ export default function ComponentsPage() {
         <section>
           <h2 className="mb-6 text-2xl font-bold text-foreground">Select</h2>
           <div className="w-60">
-            <label className="mb-1.5 block text-sm font-medium text-foreground">Language</label>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
+              Language
+            </label>
             <Select placeholder="Select language" value="go">
               <SelectItem value="go">Go</SelectItem>
               <SelectItem value="typescript">TypeScript</SelectItem>
@@ -223,7 +254,10 @@ export default function ComponentsPage() {
                 </Dialog.Description>
               </Dialog.Header>
               <Dialog.Footer>
-                <Dialog.Close className="inline-flex items-center justify-center rounded-lg border border-input bg-surface-card px-4 text-sm font-medium h-10 shadow-button hover:bg-surface-hover transition-colors">
+                <Dialog.Close
+                  className="inline-flex items-center justify-center rounded-lg border border-input bg-surface-card px-4 text-sm font-medium h-10 shadow-button hover:bg-surface-hover transition-colors"
+                  onClick={() => setDialogOpen(false)}
+                >
                   Cancel
                 </Dialog.Close>
                 <Button variant="primary">Confirm</Button>
@@ -255,7 +289,7 @@ export default function ComponentsPage() {
           </div>
         </section>
 
-        {/* Skeleton */}
+        {/* Skeletons */}
         <section>
           <h2 className="mb-6 text-2xl font-bold text-foreground">Skeletons</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -266,6 +300,36 @@ export default function ComponentsPage() {
             </div>
             <CardSkeleton />
             <CardSkeleton />
+          </div>
+        </section>
+
+        {/* Empty States */}
+        <section>
+          <h2 className="mb-6 text-2xl font-bold text-foreground">Empty States</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Card>
+              <EmptyState
+                icon={BookOpen}
+                title="No concepts yet"
+                description="Start exploring to build your knowledge graph."
+                action={<Button size="sm">Browse Concepts</Button>}
+              />
+            </Card>
+            <Card>
+              <EmptyState
+                icon={Search}
+                title="No results found"
+                description="Try adjusting your search or filters."
+              />
+            </Card>
+            <Card>
+              <EmptyState
+                icon={AlertCircle}
+                title="Something went wrong"
+                description="We couldn't load this content."
+                action={<Button size="sm" variant="outline">Retry</Button>}
+              />
+            </Card>
           </div>
         </section>
 
@@ -315,6 +379,22 @@ export default function ComponentsPage() {
             >
               Warning toast
             </Button>
+          </div>
+        </section>
+
+        {/* Animations */}
+        <section>
+          <h2 className="mb-6 text-2xl font-bold text-foreground">Animations</h2>
+          <div className="flex flex-wrap gap-4">
+            <div className="animate-fade-in-up rounded-xl border border-border bg-surface-card p-4 text-sm text-foreground-secondary">
+              fade-in-up
+            </div>
+            <div className="animate-pulse-soft rounded-xl border border-border bg-surface-card p-4 text-sm text-foreground-secondary">
+              pulse-soft
+            </div>
+            <div className="animate-float rounded-xl border border-border bg-surface-card p-4 text-sm text-foreground-secondary">
+              float
+            </div>
           </div>
         </section>
       </div>

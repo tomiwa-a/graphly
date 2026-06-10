@@ -1,5 +1,5 @@
 import { BodyLayout } from "@/components/layout/body-layout";
-import { BookOpen, Network, Code2, GitBranch } from "lucide-react";
+import { BookOpen, Network, Code2, GitBranch, ArrowRight, Sparkles } from "lucide-react";
 
 const features = [
   {
@@ -7,62 +7,80 @@ const features = [
     title: "Connected Knowledge",
     description:
       "Every concept links to its prerequisites, related topics, and dependencies. See the full picture of backend engineering.",
+    accent: "primary" as const,
   },
   {
     icon: Code2,
     title: "Multi-Language Examples",
     description:
       "Learn concepts through Go, TypeScript, Python, C#, and Java. Switch between languages to see how patterns translate.",
+    accent: "secondary" as const,
   },
   {
     icon: GitBranch,
     title: "Learning Paths",
     description:
       "Follow guided paths through the graph or explore freely. Track progress and get recommendations on what to learn next.",
+    accent: "success" as const,
   },
 ];
 
 const featuredConcepts = [
   {
     title: "Idempotency",
-    description: "Making repeated operations safe through idempotency keys and safe retries.",
+    description:
+      "Making repeated operations safe through idempotency keys and safe retries.",
     difficulty: "Intermediate",
     domain: "API Design",
+    accent: "primary" as const,
     slug: "idempotency",
   },
   {
     title: "Indexes",
-    description: "How database indexes speed up queries and the tradeoffs they introduce.",
+    description:
+      "How database indexes speed up queries and the tradeoffs they introduce.",
     difficulty: "Intermediate",
     domain: "Databases",
+    accent: "secondary" as const,
     slug: "indexes",
   },
   {
     title: "Circuit Breakers",
-    description: "Preventing cascading failures by detecting and isolating faulting services.",
+    description:
+      "Preventing cascading failures by detecting and isolating faulting services.",
     difficulty: "Advanced",
     domain: "Reliability",
+    accent: "destructive" as const,
     slug: "circuit-breakers",
   },
   {
     title: "HTTP",
-    description: "The foundation of web communication — methods, status codes, and headers.",
+    description:
+      "The foundation of web communication — methods, status codes, and headers.",
     difficulty: "Beginner",
     domain: "Foundations",
+    accent: "warning" as const,
     slug: "http",
   },
+];
+
+const stats = [
+  { label: "Concepts", value: "50+" },
+  { label: "Languages", value: "5" },
+  { label: "Learning Paths", value: "10" },
+  { label: "Exercises", value: "40+" },
 ];
 
 export default function Home() {
   return (
     <BodyLayout>
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-light via-surface to-secondary-light" />
+      <section className="relative overflow-hidden bg-surface">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,var(--color-primary-light),transparent)]" />
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface-card px-4 py-1.5 text-sm text-foreground-secondary shadow-card">
-              <BookOpen className="h-4 w-4 text-primary" />
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface-card/80 px-4 py-1.5 text-sm text-foreground-secondary shadow-card backdrop-blur-sm">
+              <Sparkles className="h-4 w-4 text-accent" />
               Open source backend engineering knowledge graph
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
@@ -71,20 +89,21 @@ export default function Home() {
               <span className="text-primary">Knowledge Graph</span>
             </h1>
             <p className="mt-6 text-lg leading-8 text-foreground-secondary">
-              Learn backend concepts through a connected graph. Understand what each
-              topic means, why it exists, what depends on it, and how to implement it
-              across multiple languages.
+              Learn backend concepts through a connected graph. Understand what
+              each topic means, why it exists, what depends on it, and how to
+              implement it across multiple languages.
             </p>
             <div className="mt-10 flex items-center justify-center gap-4">
               <a
                 href="/explore"
-                className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-button hover:bg-primary-dark transition-colors"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-button hover:bg-primary-dark transition-colors"
               >
                 Start Exploring
+                <ArrowRight className="h-4 w-4" />
               </a>
               <a
                 href="/paths"
-                className="inline-flex h-12 items-center justify-center rounded-lg border border-border bg-surface-card px-8 text-sm font-semibold text-foreground shadow-button hover:bg-surface-hover transition-colors"
+                className="inline-flex h-12 items-center justify-center rounded-lg border border-border bg-surface-card/80 px-8 text-sm font-semibold text-foreground shadow-button backdrop-blur-sm hover:bg-surface-hover transition-colors"
               >
                 View Learning Paths
               </a>
@@ -93,23 +112,40 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Stats */}
+      <section className="border-y border-border bg-surface-muted">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-2xl font-bold text-primary">{stat.value}</p>
+                <p className="text-xs text-foreground-muted">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
-      <section className="border-t border-border bg-surface-muted">
+      <section className="border-t border-border">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h2 className="text-center text-2xl font-bold text-foreground">
             How it works
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-foreground-secondary">
-            Graphy organizes backend knowledge as a connected map, not a linear course.
+            Graphy organizes backend knowledge as a connected map, not a linear
+            course.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            {features.map((feature) => (
+            {features.map((feature, i) => (
               <div
                 key={feature.title}
-                className="rounded-xl border border-border bg-surface-card p-6 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5"
+                className={`animate-fade-in-up delay-${i * 75} rounded-xl border border-border bg-surface-card p-6 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 border-l-[3px] border-l-${feature.accent}`}
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-light text-primary">
-                  <feature.icon className="h-5 w-5" />
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-lg bg-${feature.accent}-light`}
+                >
+                  <feature.icon className={`h-5 w-5 text-${feature.accent}`} />
                 </div>
                 <h3 className="mt-4 font-semibold text-foreground">
                   {feature.title}
@@ -124,7 +160,7 @@ export default function Home() {
       </section>
 
       {/* Featured Concepts */}
-      <section className="border-t border-border">
+      <section className="border-t border-border bg-surface-muted">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
@@ -143,11 +179,11 @@ export default function Home() {
             </a>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredConcepts.map((concept) => (
+            {featuredConcepts.map((concept, i) => (
               <a
                 key={concept.slug}
                 href={`/concepts/${concept.slug}`}
-                className="group rounded-xl border border-border bg-surface-card p-5 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5"
+                className={`animate-fade-in-up delay-${i * 75} group rounded-xl border border-border bg-surface-card p-5 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 border-l-[3px] border-l-${concept.accent}`}
               >
                 <div className="flex items-center gap-2">
                   <span
@@ -178,27 +214,30 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-border bg-gradient-to-br from-primary-light via-surface to-secondary-light">
+      <section className="border-t border-border bg-surface">
         <div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-foreground">
-            Ready to explore backend engineering?
-          </h2>
-          <p className="mt-2 text-foreground-secondary">
-            Start anywhere. Follow the graph. Build your mental model.
-          </p>
-          <div className="mt-8 flex items-center justify-center gap-4">
-            <a
-              href="/explore"
-              className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-button hover:bg-primary-dark transition-colors"
-            >
-              Explore the Graph
-            </a>
-            <a
-              href="/signup"
-              className="inline-flex h-12 items-center justify-center rounded-lg border border-border bg-surface-card px-8 text-sm font-semibold text-foreground shadow-button hover:bg-surface-hover transition-colors"
-            >
-              Create Account
-            </a>
+          <div className="mx-auto max-w-xl">
+            <h2 className="text-2xl font-bold text-foreground">
+              Ready to explore backend engineering?
+            </h2>
+            <p className="mt-2 text-foreground-secondary">
+              Start anywhere. Follow the graph. Build your mental model.
+            </p>
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <a
+                href="/explore"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-8 text-sm font-semibold text-white shadow-button hover:bg-primary-dark transition-colors"
+              >
+                Explore the Graph
+                <ArrowRight className="h-4 w-4" />
+              </a>
+              <a
+                href="/signup"
+                className="inline-flex h-12 items-center justify-center rounded-lg border border-border bg-surface-card px-8 text-sm font-semibold text-foreground shadow-button hover:bg-surface-hover transition-colors"
+              >
+                Create Account
+              </a>
+            </div>
           </div>
         </div>
       </section>
