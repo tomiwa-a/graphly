@@ -42,24 +42,11 @@ export function Footer() {
             <h4 className="text-xs font-bold tracking-[0.1em] text-foreground font-heading uppercase mb-4">
               Project
             </h4>
-            <div className="flex gap-8 mb-5">
-              <div>
-                <p className="text-3xl font-bold tracking-tight text-primary-dark font-heading">
-                  50+
-                </p>
-                <p className="text-[10px] text-foreground-secondary font-mono tracking-[0.05em] uppercase">
-                  Concepts
-                </p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold tracking-tight text-primary-dark font-heading">
-                  5
-                </p>
-                <p className="text-[10px] text-foreground-secondary font-mono tracking-[0.05em] uppercase">
-                  Languages
-                </p>
-              </div>
-            </div>
+            <p className="text-sm font-medium text-foreground-secondary font-sans mb-5">
+              50+ concepts across 5 languages.
+              <br />
+              10 structured learning paths.
+            </p>
             <a
               href="https://github.com/your-org/graphy"
               className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-card px-4 py-2 text-sm font-bold font-heading shadow-button hover:bg-surface-hover hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 select-none cursor-pointer"

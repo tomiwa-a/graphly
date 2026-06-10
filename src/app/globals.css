@@ -2,10 +2,10 @@
 @import "tw-animate-css";
 
 @theme inline {
-  --color-primary: #d5cdff;
-  --color-primary-light: #eeecff;
-  --color-primary-dark: #6c5ce7;
-  --color-primary-muted: #f6f4ff;
+  --color-primary: #FDDCDC;
+  --color-primary-light: #FEF0F0;
+  --color-primary-dark: #C0392B;
+  --color-primary-muted: #FDF5F5;
 
   --color-accent: #ffe6c2;
   --color-accent-light: #fff9ed;
@@ -39,7 +39,7 @@
   --color-border-hover: rgba(45, 42, 38, 0.15);
   --color-input: rgba(45, 42, 38, 0.07);
 
-  --color-ring: #6c5ce7;
+  --color-ring: #C0392B;
 
   --font-sans: var(--font-sans);
   --font-heading: var(--font-heading);
