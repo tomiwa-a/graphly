@@ -7,9 +7,20 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Author](https://img.shields.io/badge/Author-Amole_Oluwatomiwa-C0392B?style=for-the-badge)](https://github.com/amole-oluwatomiwa)
 
-Graphy teaches backend engineering concepts through a connected knowledge graph rather than a traditional linear course. It helps developers understand what each concept means, why it exists under the hood, what depends on it, and how to implement it across multiple languages (Go, TypeScript, Python).
+Graphy is a learning platform focused on **backend engineering theory straight out of computer science textbooks**. Instead of teaching temporary syntax, framework-specific APIs, or library helpers, Graphy models the core, invariant principles that power software systems. It forces you to think like a computer scientist—understanding how patterns relate, why trade-offs exist, and how system constraints dictate architecture.
 
-Think of it as an interactive transit system of backend engineering: select your starting point, pick a destination, and let the Graph Engine build a custom subway journey for you.
+Think of it as an interactive subway system of backend engineering: select your starting point, choose your destination, and let the Graph Engine build a custom learning track based on prerequisite dependencies.
+
+---
+
+## Why Theory-First?
+
+In the frontend world, changes are visual and fast. In backend engineering, everything is invisible, abstract, and governed by deep computer science theory. Developers often get stuck copying-and-pasting configuration or framework routes without understanding:
+- **Why** idempotency keys are mathematically required when networks fail.
+- **How** database indexes balance write amplification against search speed.
+- **Why** a Bloom filter works as an O(1) cache shield to prevent database penetration.
+
+Graphy focuses entirely on **conceptual theory**—the systems concepts that stay constant for decades regardless of whether you are writing in Go, Python, Rust, or TypeScript. It helps you build a strong mental model of how data structures, distributed systems patterns, and networking layers interact.
 
 ---
 
