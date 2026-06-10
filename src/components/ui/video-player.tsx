@@ -61,7 +61,7 @@ export function VideoPlayer({ src, poster, className, title }: VideoPlayerProps)
   return (
     <div
       className={cn(
-        "group relative aspect-video overflow-hidden rounded-2xl border-2 border-border bg-surface-muted shadow-card text-foreground select-none",
+        "group relative aspect-video overflow-hidden rounded-[24px] border border-border bg-surface-muted shadow-card text-foreground select-none",
         className
       )}
     >
@@ -77,15 +77,15 @@ export function VideoPlayer({ src, poster, className, title }: VideoPlayerProps)
       ) : (
         /* Visual Placeholder when no video source is available */
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-accent-light p-6 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-border bg-primary text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:scale-105 transition-transform duration-100 ease-out cursor-pointer active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]">
-            <Play className="h-6 w-6 fill-foreground ml-1" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-primary text-primary-dark shadow-button hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer">
+            <Play className="h-6 w-6 fill-primary-dark ml-1" />
           </div>
           {title && (
-            <p className="mt-4 font-heading font-semibold text-sm tracking-wide text-foreground">
+            <p className="mt-4 font-heading font-medium text-base tracking-wide text-foreground">
               {title}
             </p>
           )}
-          <p className="mt-1 text-xs text-foreground-secondary font-sans max-w-xs">
+          <p className="mt-1 text-sm text-foreground-secondary font-sans max-w-xs font-medium">
             Concept walkthrough video placeholder. Fills with interactive demonstration on runtime.
           </p>
         </div>
@@ -93,10 +93,10 @@ export function VideoPlayer({ src, poster, className, title }: VideoPlayerProps)
 
       {/* Video Custom Controller Overlay (only visible if video src is loaded) */}
       {src && (
-        <div className="absolute bottom-0 left-0 right-0 border-t-2 border-border bg-surface/95 p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100 flex flex-col gap-2">
+        <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-surface/95 p-3.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100 flex flex-col gap-2">
           {/* Progress Slider */}
           <div
-            className="relative h-2.5 w-full cursor-pointer rounded-full border-2 border-border bg-surface-muted overflow-hidden"
+            className="relative h-2 w-full cursor-pointer rounded-full border border-border bg-surface-muted overflow-hidden"
             onClick={handleSeek}
           >
             <div
@@ -110,7 +110,7 @@ export function VideoPlayer({ src, poster, className, title }: VideoPlayerProps)
             <div className="flex items-center gap-1.5">
               <button
                 onClick={togglePlay}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-border bg-surface-card hover:-translate-y-[0.5px] hover:shadow-[0_2px_0_0_var(--color-border)] active:translate-y-[1px] active:shadow-none transition-all duration-100 cursor-pointer"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface-card hover:bg-surface-hover active:scale-95 transition-all duration-200 cursor-pointer"
               >
                 {isPlaying ? (
                   <Pause className="h-3.5 w-3.5 fill-foreground" />
@@ -121,7 +121,7 @@ export function VideoPlayer({ src, poster, className, title }: VideoPlayerProps)
 
               <button
                 onClick={toggleMute}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-border bg-surface-card hover:-translate-y-[0.5px] hover:shadow-[0_2px_0_0_var(--color-border)] active:translate-y-[1px] active:shadow-none transition-all duration-100 cursor-pointer"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface-card hover:bg-surface-hover active:scale-95 transition-all duration-200 cursor-pointer"
               >
                 {isMuted ? (
                   <VolumeX className="h-3.5 w-3.5" />
@@ -133,7 +133,7 @@ export function VideoPlayer({ src, poster, className, title }: VideoPlayerProps)
 
             <button
               onClick={handleFullscreen}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-border bg-surface-card hover:-translate-y-[0.5px] hover:shadow-[0_2px_0_0_var(--color-border)] active:translate-y-[1px] active:shadow-none transition-all duration-100 cursor-pointer"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface-card hover:bg-surface-hover active:scale-95 transition-all duration-200 cursor-pointer"
             >
               <Maximize className="h-3.5 w-3.5" />
             </button>

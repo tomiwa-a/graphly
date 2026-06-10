@@ -100,11 +100,11 @@ export function CodeBlock({ examples, className }: CodeBlockProps) {
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border-2 border-border shadow-card",
+        "overflow-hidden rounded-2xl border border-border shadow-card",
         className,
       )}
     >
-      <div className="flex items-center justify-between border-b-2 border-border bg-surface-muted px-4 py-2">
+      <div className="flex items-center justify-between border-b border-border bg-surface-muted px-4 py-2.5">
         <div className="flex gap-1.5">
           {examples.map((ex, i) => {
             const isActive = i === activeIndex;
@@ -113,10 +113,10 @@ export function CodeBlock({ examples, className }: CodeBlockProps) {
                 key={ex.language}
                 onClick={() => setActiveIndex(i)}
                 className={cn(
-                  "px-2.5 py-1 text-xs font-bold font-heading transition-all duration-100 rounded-lg select-none cursor-pointer",
+                  "px-3 py-1 text-xs font-bold font-heading transition-all duration-200 rounded-lg select-none cursor-pointer",
                   isActive
-                    ? "bg-primary text-primary-dark border-2 border-border shadow-[0_2px_0_0_var(--color-border)]"
-                    : "text-foreground-secondary hover:text-foreground border-2 border-transparent"
+                    ? "bg-primary text-primary-dark border border-border shadow-sm"
+                    : "text-foreground-secondary hover:text-foreground border border-transparent"
                 )}
               >
                 {ex.language.charAt(0).toUpperCase() + ex.language.slice(1)}
@@ -126,7 +126,7 @@ export function CodeBlock({ examples, className }: CodeBlockProps) {
         </div>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 rounded-lg border-2 border-border bg-surface-card px-2.5 py-1 text-xs font-bold font-heading shadow-[0_2px_0_0_var(--color-border)] hover:-translate-y-[0.5px] hover:shadow-[0_2.5px_0_0_var(--color-border)] active:translate-y-[1px] active:shadow-none transition-all duration-100 cursor-pointer select-none"
+          className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-card px-3 py-1 text-xs font-bold font-heading shadow-button hover:bg-surface-hover hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 cursor-pointer select-none"
         >
           {copied ? (
             <>

@@ -13,16 +13,16 @@ export function Heading({ as = "h2", className, children }: HeadingProps) {
   const Tag = as;
   
   const styles: Record<HeadingElement, string> = {
-    h1: "text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-[1.1]",
-    h2: "text-2xl sm:text-3xl font-semibold tracking-tight text-foreground leading-[1.2]",
-    h3: "text-xl sm:text-2xl font-semibold tracking-tight text-foreground leading-[1.25]",
+    h1: "text-4xl sm:text-5xl lg:text-6xl font-medium tracking-[-0.03em] text-foreground leading-[1.1]",
+    h2: "text-2xl sm:text-3xl font-medium tracking-tight text-foreground leading-[1.2]",
+    h3: "text-xl sm:text-2xl font-medium tracking-tight text-foreground leading-[1.25]",
     h4: "text-lg sm:text-xl font-medium tracking-tight text-foreground",
     h5: "text-base font-medium tracking-tight text-foreground",
     h6: "text-sm font-medium tracking-tight text-foreground",
   };
 
   return (
-    <Tag className={cn("font-heading font-semibold text-foreground", styles[as], className)}>
+    <Tag className={cn("font-heading text-foreground", styles[as], className)}>
       {children}
     </Tag>
   );

@@ -10,8 +10,8 @@ export function Card({ className, children, hover }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-2xl border-2 border-border bg-surface-card p-5 shadow-card text-foreground",
-        hover && "transition-all duration-120 ease-graphy hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-card-hover",
+        "rounded-[24px] border border-border bg-surface-card p-6 shadow-card text-foreground",
+        hover && "transition-all duration-200 ease-graphy hover:scale-[1.01] hover:shadow-card-hover",
         className,
       )}
     >
@@ -82,7 +82,7 @@ export function CardFooter({
   return (
     <div
       className={cn(
-        "mt-4 flex items-center gap-2 border-t-2 border-border pt-4 font-sans",
+        "mt-4 flex items-center gap-2 border-t border-border pt-4 font-sans",
         className,
       )}
     >

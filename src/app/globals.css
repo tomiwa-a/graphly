@@ -9,6 +9,7 @@
 
   --color-accent: #ffe6c2;
   --color-accent-light: #fff9ed;
+  --color-accent-dark: #e17055;
 
   --color-success: #b5f1e5;
   --color-success-light: #e6faf6;
@@ -22,21 +23,21 @@
   --color-destructive-light: #fdf0ed;
   --color-destructive-dark: #d63031;
 
-  --color-surface: #faf8f5;
+  --color-surface: #faf9f6;
   --color-surface-muted: #f3f1ed;
   --color-surface-hover: #ebe9e4;
   --color-surface-card: #ffffff;
   --color-popover: #ffffff;
 
   --color-foreground: #2d2a26;
-  --color-foreground-secondary: #6e675f;
-  --color-foreground-muted: #a8a097;
-  --color-foreground-dim: #d4cfc9;
+  --color-foreground-secondary: #7e7770;
+  --color-foreground-muted: #b0a8a0;
+  --color-foreground-dim: #dcd7d0;
 
-  --color-border: #2d2a26;
-  --color-border-light: #e0dbd5;
-  --color-border-hover: #000000;
-  --color-input: #2d2a26;
+  --color-border: rgba(45, 42, 38, 0.07);
+  --color-border-light: rgba(45, 42, 38, 0.04);
+  --color-border-hover: rgba(45, 42, 38, 0.15);
+  --color-input: rgba(45, 42, 38, 0.07);
 
   --color-ring: #6c5ce7;
 
@@ -44,20 +45,20 @@
   --font-heading: var(--font-heading);
   --font-mono: var(--font-mono);
 
-  --radius: 0.75rem;
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
+  --radius: 1rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
 
-  --shadow-card: 4px 4px 0 0 var(--color-border);
-  --shadow-card-hover: 6px 6px 0 0 var(--color-border);
-  --shadow-dropdown: 4px 4px 0 0 var(--color-border);
-  --shadow-modal: 8px 8px 0 0 var(--color-border);
-  --shadow-button: 0 3px 0 0 var(--color-border);
+  --shadow-card: 0px 1px 2px rgba(45, 42, 38, 0.02), 0px 4px 16px rgba(45, 42, 38, 0.04);
+  --shadow-card-hover: 0px 2px 4px rgba(45, 42, 38, 0.02), 0px 8px 24px rgba(45, 42, 38, 0.06);
+  --shadow-dropdown: 0px 2px 8px rgba(45, 42, 38, 0.05);
+  --shadow-modal: 0px 16px 48px rgba(45, 42, 38, 0.12);
+  --shadow-button: 0px 1px 2px rgba(45, 42, 38, 0.05);
 
-  --ease-graphy: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-graphy: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -74,7 +75,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-foreground);
 }
 
@@ -83,32 +84,16 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-primary-dark);
 }
 
-/* Tactile UI utilities */
-.btn-tactile {
-  border: 2px solid var(--color-border);
-  box-shadow: 0 4px 0 0 var(--color-border);
-  transition: transform 120ms var(--ease-graphy), box-shadow 120ms var(--ease-graphy);
+/* Joyful transitions & soft scales */
+.card-joyful {
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  transition: transform 200ms var(--ease-graphy), box-shadow 200ms var(--ease-graphy), background-color 200ms var(--ease-graphy);
 }
 
-.btn-tactile:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 0 0 var(--color-border);
-}
-
-.btn-tactile:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 0 var(--color-border);
-}
-
-.card-tactile {
-  border: 2px solid var(--color-border);
-  box-shadow: 4px 4px 0 0 var(--color-border);
-  transition: transform 120ms var(--ease-graphy), box-shadow 120ms var(--ease-graphy);
-}
-
-.card-tactile:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 0 var(--color-border);
+.card-joyful:hover {
+  transform: scale(1.01);
+  box-shadow: var(--shadow-card-hover);
 }
 
 @keyframes float-node {
@@ -117,11 +102,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes pulse-ring {
-  0%, 100% { opacity: 0.1; transform: scale(1); }
-  50% { opacity: 0.25; transform: scale(1.05); }
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50% { opacity: 0.15; transform: scale(1.03); }
 }
 
 @keyframes dash-flow {
   to { stroke-dashoffset: -20; }
 }
+
 

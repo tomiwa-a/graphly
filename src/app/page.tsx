@@ -70,11 +70,11 @@ const concepts = [
 
 const diffStyles: Record<string, string> = {
   beginner:
-    "bg-success text-success-dark",
+    "bg-success-light text-success-dark",
   intermediate:
-    "bg-warning text-warning-dark",
+    "bg-warning-light text-warning-dark",
   advanced:
-    "bg-destructive text-destructive-dark",
+    "bg-destructive-light text-destructive-dark",
 };
 
 export default function Home() {
@@ -108,10 +108,10 @@ export default function Home() {
             <Reveal key={concept.slug} delay={i * 80}>
               <Link
                 href={`/concepts/${concept.slug}`}
-                className="group block rounded-2xl border-2 border-border bg-surface-card p-5 shadow-card transition-all duration-120 ease-graphy hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-card-hover"
+                className="group block rounded-[24px] border border-border bg-surface-card p-6 shadow-card transition-all duration-200 ease-graphy hover:scale-[1.01] hover:shadow-card-hover"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border-2 border-border bg-primary text-foreground shadow-[2px_2px_0_0_var(--color-border)] group-hover:scale-105 transition-transform duration-100 ease-out">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-transparent bg-primary-light text-primary-dark group-hover:scale-105 transition-transform duration-200 ease-out">
                     <concept.icon className="h-5 w-5 stroke-[2.2]" />
                   </div>
                   <div className="min-w-0">
@@ -120,7 +120,7 @@ export default function Home() {
                     </h3>
                     <div className="mt-1.5 flex items-center gap-2">
                       <span
-                        className={`inline-flex items-center rounded-full border-2 border-border px-2.5 py-0.5 text-[10px] font-bold leading-none font-heading ${diffStyles[concept.difficulty]}`}
+                        className={`inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-[10px] font-bold leading-none font-heading ${diffStyles[concept.difficulty]}`}
                       >
                         {concept.difficulty.charAt(0).toUpperCase() +
                           concept.difficulty.slice(1)}
@@ -141,7 +141,7 @@ export default function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section className="border-t-2 border-border bg-surface-muted">
+      <section className="border-t border-border bg-surface-muted">
         <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20">
           <Reveal>
             <div className="mx-auto max-w-xl text-center">
@@ -157,7 +157,7 @@ export default function Home() {
               </p>
               <Link
                 href="/concepts"
-                className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-xl border-2 border-border bg-primary px-6 text-sm font-bold font-heading text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)] transition-all duration-100 cursor-pointer select-none"
+                className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-primary px-6 text-sm font-bold font-heading text-primary-dark shadow-button hover:bg-primary/90 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 cursor-pointer select-none"
               >
                 Browse all concepts
               </Link>

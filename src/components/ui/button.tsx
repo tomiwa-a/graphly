@@ -2,28 +2,28 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 text-sm font-semibold select-none border-2 border-border font-heading tracking-wide transition-all duration-100 ease-out cursor-pointer active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
+  "inline-flex items-center justify-center gap-2 text-sm font-semibold select-none border border-transparent font-heading tracking-wide transition-all duration-200 ease-graphy cursor-pointer hover:scale-[1.01] active:scale-[0.98]",
   {
     variants: {
       variant: {
         primary:
-          "bg-primary text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
+          "bg-primary text-primary-dark shadow-button hover:bg-primary/90",
         secondary:
-          "bg-success text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
+          "bg-success text-success-dark shadow-button hover:bg-success/90",
         accent:
-          "bg-accent text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
+          "bg-accent text-accent-dark shadow-button hover:bg-accent/90",
         outline:
-          "bg-surface-card text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)]",
+          "bg-surface-card text-foreground border-border shadow-button hover:bg-surface-hover",
         ghost:
-          "border-transparent bg-transparent text-foreground-secondary hover:text-foreground hover:bg-surface-hover shadow-none active:translate-y-0 active:shadow-none",
-        link: "border-transparent bg-transparent text-primary-dark underline-offset-4 hover:underline shadow-none active:translate-y-0 active:shadow-none p-0 h-auto",
+          "border-transparent bg-transparent text-foreground-secondary hover:text-foreground hover:bg-surface-hover shadow-none hover:scale-100 active:scale-95",
+        link: "border-transparent bg-transparent text-primary-dark underline-offset-4 hover:underline shadow-none p-0 h-auto hover:scale-100 active:scale-100",
       },
       size: {
-        sm: "h-8 px-3 text-xs gap-1.5 rounded-lg",
-        default: "h-10 px-5 text-sm rounded-xl",
-        lg: "h-12 px-6 text-base rounded-2xl",
-        icon: "h-10 w-10 p-0 rounded-xl",
-        "icon-sm": "h-8 w-8 p-0 rounded-lg",
+        sm: "h-9 px-4 text-xs gap-1.5 rounded-xl",
+        default: "h-11 px-5 text-sm rounded-2xl",
+        lg: "h-13 px-6 text-base rounded-2xl",
+        icon: "h-11 w-11 p-0 rounded-2xl",
+        "icon-sm": "h-9 w-9 p-0 rounded-xl",
       },
     },
     defaultVariants: {

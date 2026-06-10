@@ -14,7 +14,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative border-b-2 border-border bg-surface overflow-hidden">
+    <section className="relative border-b border-border bg-surface overflow-hidden">
       {/* Background glow - soft yellow/peach pastel */}
       <div
         className="absolute left-1/2 top-0 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none opacity-[0.25]"
@@ -36,17 +36,17 @@ export function Hero() {
                 "opacity 600ms var(--ease-graphy), transform 600ms var(--ease-graphy)",
             }}
           >
-            <span className="h-[2px] w-8 bg-border" />
+            <span className="h-[1.5px] w-8 bg-border" />
             <span className="text-xs font-bold tracking-[0.15em] text-foreground font-heading uppercase">
               Backend Knowledge Graph
             </span>
-            <span className="h-[2px] w-8 bg-border" />
+            <span className="h-[1.5px] w-8 bg-border" />
           </div>
 
           {/* Headline */}
           <div className="overflow-hidden py-1">
             <h1
-              className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl font-heading leading-tight"
+              className="text-4xl font-medium tracking-[-0.03em] text-foreground sm:text-5xl lg:text-6xl font-heading leading-tight"
               style={{
                 transform: initiated ? "translateY(0)" : "translateY(110%)",
                 transition:
@@ -58,10 +58,9 @@ export function Hero() {
           </div>
           <div className="overflow-hidden py-1">
             <p
-              className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl font-heading leading-none"
+              className="text-4xl font-medium tracking-[-0.03em] sm:text-5xl lg:text-6xl font-heading leading-none"
               style={{
                 color: "var(--color-primary-dark)",
-                textShadow: "1px 1px 0px var(--color-border), 2px 2px 0px var(--color-border-light)",
                 transform: initiated ? "translateY(0)" : "translateY(110%)",
                 transition:
                   "transform 900ms var(--ease-graphy)",
@@ -101,14 +100,14 @@ export function Hero() {
           >
             <Link
               href="/concepts"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border-2 border-border bg-primary px-6 text-sm font-bold font-heading text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)] transition-all duration-100 select-none cursor-pointer"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-sm font-bold font-heading text-primary-dark shadow-button hover:bg-primary/90 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 select-none cursor-pointer"
             >
               Browse Concepts
-              <ArrowRight className="h-4 w-4 stroke-[2.5]" />
+              <ArrowRight className="h-4 w-4 stroke-[2.2]" />
             </Link>
             <Link
               href="/paths"
-              className="inline-flex h-11 items-center justify-center rounded-xl border-2 border-border bg-surface-card px-6 text-sm font-bold font-heading text-foreground shadow-[0_4px_0_0_var(--color-border)] hover:-translate-y-[1px] hover:shadow-[0_5px_0_0_var(--color-border)] active:translate-y-[2px] active:shadow-[0_2px_0_0_var(--color-border)] transition-all duration-100 select-none cursor-pointer"
+              className="inline-flex h-12 items-center justify-center rounded-2xl border border-border bg-surface-card px-6 text-sm font-bold font-heading text-foreground shadow-button hover:bg-surface-hover hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 select-none cursor-pointer"
             >
               View Paths
             </Link>
@@ -132,7 +131,7 @@ export function Hero() {
               <div
                 key={stat.label}
                 className={cn(
-                  "border-2 border-border rounded-2xl p-4 shadow-[3px_3px_0_0_var(--color-border)] text-center flex-1",
+                  "border border-border rounded-[20px] bg-surface-card p-4 shadow-card hover:scale-[1.01] hover:shadow-card-hover transition-all duration-200 flex-1",
                   stat.bg
                 )}
               >
@@ -150,4 +149,5 @@ export function Hero() {
     </section>
   );
 }
+
 
