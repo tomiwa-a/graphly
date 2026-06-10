@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu, Search, BookOpen } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger } from "./sheet";
 
@@ -19,13 +20,13 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-border bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/80">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-6">
-          <a
+          <Link
             href="/"
             className="flex items-center gap-2 text-lg font-semibold tracking-tight text-primary"
           >
             <BookOpen className="h-5 w-5" />
             Graphy
-          </a>
+          </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {navLinks.map((link) => (
               <a

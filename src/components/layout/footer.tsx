@@ -1,4 +1,5 @@
 import { BookOpen } from "lucide-react";
+import Link from "next/link";
 
 const footerLinks = [
   {
@@ -35,12 +36,16 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <a href="/" className="flex items-center gap-2 text-lg font-semibold text-primary">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-lg font-semibold text-primary"
+            >
               <BookOpen className="h-5 w-5" />
               Graphy
-            </a>
+            </Link>
             <p className="mt-2 text-sm text-foreground-secondary">
-              Backend engineering knowledge graph. Learn concepts, connections, and implementations.
+              Backend engineering knowledge graph. Learn concepts, connections,
+              and implementations.
             </p>
           </div>
           {footerLinks.map((group) => (

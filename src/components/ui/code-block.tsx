@@ -19,6 +19,7 @@ export function CodeBlock({ examples, className }: CodeBlockProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [html, setHtml] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const highlighterRef = useRef<any>(null);
 
   const active = examples[activeIndex];
