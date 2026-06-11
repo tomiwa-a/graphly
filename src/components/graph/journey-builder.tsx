@@ -68,7 +68,7 @@ export function JourneyBuilder({
           {/* Goal select */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-heading font-bold text-foreground-secondary uppercase tracking-[0.1em]">
-              Where I want to get to:
+              Where I am going:
             </label>
             <select
               value={goal}
