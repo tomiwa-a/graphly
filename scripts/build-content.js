@@ -112,14 +112,42 @@ function loadConcepts() {
   return concepts;
 }
 
+function stripMarkdown(md) {
+  return md
+    .replace(/\[\[video.*?\]\]/g, "")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+    .replace(/<[^>]*>/g, "")
+    .replace(/[#*`>_\-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function generateSearchIndex(concepts) {
+  return concepts.map((c) => {
+    const allBodyText = c.sections.map((s) => s.content).join(" ");
+    return {
+      slug: c.slug,
+      title: c.title,
+      summary: c.summary,
+      domain: c.domain,
+      bodyText: stripMarkdown(allBodyText),
+    };
+  });
+}
+
 function main() {
   const concepts = loadConcepts();
   const sorted = concepts.sort((a, b) => a.slug.localeCompare(b.slug));
 
   fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(sorted, null, 2), "utf-8");
-
   console.log(`Generated ${sorted.length} concepts -> ${OUTPUT_FILE}`);
+
+  const searchIndexFile = path.join(path.dirname(OUTPUT_FILE), "search-index.json");
+  const searchIndex = generateSearchIndex(sorted);
+  fs.writeFileSync(searchIndexFile, JSON.stringify(searchIndex, null, 2), "utf-8");
+  console.log(`Generated search index -> ${searchIndexFile}`);
 }
 
 main();

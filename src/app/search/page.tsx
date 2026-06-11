@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import Link from "next/link";
 import { concepts } from "@/lib/data/concepts";
+import searchIndex from "@/lib/data/search-index.json";
 import { ConceptCard } from "@/components/concepts/concept-card";
 import { Reveal } from "@/components/reveal";
 
@@ -37,10 +38,19 @@ export default function SearchPage() {
         return false;
       if (query.trim()) {
         const q = query.toLowerCase();
+        const indexEntry = searchIndex.find((item) => item.slug === c.slug);
+        if (!indexEntry) {
+          return (
+            c.title.toLowerCase().includes(q) ||
+            c.summary.toLowerCase().includes(q) ||
+            c.domain.toLowerCase().includes(q)
+          );
+        }
         return (
-          c.title.toLowerCase().includes(q) ||
-          c.summary.toLowerCase().includes(q) ||
-          c.domain.toLowerCase().includes(q)
+          indexEntry.title.toLowerCase().includes(q) ||
+          indexEntry.summary.toLowerCase().includes(q) ||
+          indexEntry.domain.toLowerCase().includes(q) ||
+          indexEntry.bodyText.toLowerCase().includes(q)
         );
       }
       return true;

@@ -38,20 +38,20 @@ This roadmap outlines the multi-phase transition from static hardcoded concept l
 ---
 
 ## Phase 3: Media Embeds & Interactive Graphics
-- [ ] **Video Embed System**: Support video embedding for learning supplements (e.g., YouTube, Loom, or Vimeo) using frontmatter configuration or custom regex shortcodes:
+- [x] **Video Embed System**: Support video embedding for learning supplements (e.g., YouTube, Loom, or Vimeo) using frontmatter configuration or custom regex shortcodes:
   ```yaml
   video_embed:
     platform: "youtube"
     id: "h0g2d4F"
     title: "Visualizing B-Trees"
   ```
-- [ ] **Inline Graphic Captions**: Standardize inline image parsing with clean block-captions, responsive layouts, Fetch Priority, and LCP layout-shift optimizations.
-- [ ] **Mermaid/SVG Diagram Support**: Compile inline raw SVG strings or custom flowchart diagrams inside markdown bodies to render high-contrast system design schematics directly.
+- [x] **Inline Graphic Captions**: Standardize inline image parsing with clean block-captions, responsive layouts, Fetch Priority, and LCP layout-shift optimizations.
+- [x] **Mermaid/SVG Diagram Support**: Compile inline raw SVG strings or custom flowchart diagrams inside markdown bodies to render high-contrast system design schematics directly.
 
 ---
 
 ## Phase 4: Syntax-Highlighted Code & Playgrounds
-- [ ] **Shiki Highlight Compilation**: Utilize the build-time Shiki syntax highlighter (`shiki` dependency in `package.json`) to render syntax-colored code examples for Go, Python, and TypeScript, complete with:
+- [x] **Shiki Highlight Compilation**: Utilize the build-time Shiki syntax highlighter (`shiki` dependency in `package.json`) to render syntax-colored code examples for Go, Python, and TypeScript, complete with:
   * Line-numbering toggles.
   * Highlighted target lines.
   * An inline "Copy Code" button.
@@ -60,5 +60,5 @@ This roadmap outlines the multi-phase transition from static hardcoded concept l
 ---
 
 ## Phase 5: Full-Text Search Indexing & RSS Feeds
-- [ ] **Full-Text Compilation**: Modify the compiler script to build a static search index (`search-index.json`) that contains not just the title/summary but the *entire body text* of all markdown files, allowing client-side full-text search queries.
-- [ ] **Syllabus RSS Feed**: Expose an `/rss.xml` learning feed, allowing users to subscribe to new chapter additions or curriculum updates.
+- [x] **Full-Text Compilation**: Modify the compiler script to build a static search index (`search-index.json`) that contains not just the title/summary but the *entire body text* of all markdown files, allowing client-side full-text search queries.
+- [x] **Syllabus RSS Feed**: Expose an `/rss.xml` learning feed, allowing users to subscribe to new chapter additions or curriculum updates.

@@ -1,0 +1,65 @@
+[
+  {
+    "slug": "bits",
+    "title": "Bits & Binary",
+    "summary": "The fundamental units of binary information and bitwise operations that power all higher-level data structures.",
+    "domain": "Foundations",
+    "bodyText": "A bit (binary digit) is the most basic unit of information in computing, representing a logical state of 0 or 1. Pointers, arrays, and integers are all stored as sequences of bits in memory. Bitwise operators (AND, OR, XOR, NOT, shifts) manipulate these binary values directly, offering maximum execution speed and minimum memory footprint. High performance data structures—like bit arrays, Bloom filters, and bitmap indexes—depend directly on bitwise arithmetic. By using individual bits as boolean flags, a system can store and query set membership in raw CPU cache with zero pointer indirection or database overhead. 1. AND (&): Sets bit to 1 if both bits are 1. 2. OR (|): Sets bit to 1 if either bit is 1. 3. XOR (^): Sets bit to 1 if only one bit is 1. 4. Left Shift ( ): Shifts bits right. Dividing by 2^n."
+  },
+  {
+    "slug": "bloom-filters",
+    "title": "Bloom Filters",
+    "summary": "A space-efficient probabilistic data structure that checks set membership with zero false negatives.",
+    "domain": "Data Structures",
+    "bodyText": "A Bloom Filter is a space efficient probabilistic data structure. It can check if an element is a member of a set. It returns either: 1. \"Possibly in the set\" (potential False Positive) 2. \"Definitely not in the set\" (absolute guarantee of False Negative = 0%) It uses a bit array and multiple independent hash functions. Initialize a bit array of size \"m\" to all 0s. Define \"k\" hash functions. To ADD: Hash the element with each of the \"k\" functions. Set the bits at those indices to 1. To QUERY: Hash the element with the same functions. If ANY of the bits at these indices is 0, the element is definitely NOT in the set. If ALL are 1, it might be in the set (or other keys set those bits, creating a false positive). 1. Cache Shielding: Keep a Bloom Filter in memory. If a user queries a non existent post ID, the Bloom filter says \"Definitely Not Exist\" instantly, preventing a database check. 2. Medium/Google Chrome: Check if a URL is in a malicious domain list locally before loading the page."
+  },
+  {
+    "slug": "caching-strategies",
+    "title": "Caching Strategies",
+    "summary": "Improving performance with cache-aside, write-through, and CDN patterns to reduce load on databases.",
+    "domain": "Caching",
+    "bodyText": "Caching stores frequently accessed data in a fast layer (memory, Redis, CDN) so you don't hit the slower layer (database, external API) on every request. The right caching strategy depends on your read/write ratio and data consistency requirements. A database query might take 50ms. A Redis lookup takes 1ms. For data that's read 1000x more often than it's written, caching eliminates 99.9% of database load. At scale, caching is the difference between a system that handles 100 req/s and one that handles 100,000 req/s. Cache aside: application checks cache first, fetches from DB on miss, writes to cache. Write through: writes go to cache and DB simultaneously. Write behind: writes go to cache immediately, DB is updated asynchronously. Each pattern has different consistency and performance characteristics. Cache invalidation is one of the hardest problems in CS. Set appropriate TTLs. Use cache stampede prevention (locking or stale while revalidate). Monitor cache hit rates — below 80% usually means your cache isn't helping. Plan for cache failures — your app should degrade gracefully, not crash. Caching everything regardless of access pattern. Setting TTLs too long (stale data) or too short (no benefit). Not handling cache invalidation on writes. Caching user specific data with shared keys. Not monitoring hit/miss ratios."
+  },
+  {
+    "slug": "circuit-breakers",
+    "title": "Circuit Breakers",
+    "summary": "Preventing cascading failures by detecting and isolating faulting downstream services.",
+    "domain": "Reliability",
+    "bodyText": "A circuit breaker monitors calls to a downstream service. When failures exceed a threshold, it \"trips\" and stops sending requests for a cooldown period. This prevents a failing service from taking down the entire system. When Service A calls Service B and B is down, A's threads pile up waiting for timeouts. If A has 100 concurrent requests and each waits 30 seconds, A is effectively dead too. A circuit breaker fails fast, freeing resources. Three states: CLOSED (normal, requests pass through), OPEN (tripped, requests fail immediately), HALF OPEN (testing, a few requests allowed to check if the downstream has recovered). Track failure counts in a sliding window. Trip when failures exceed the threshold. Choose thresholds carefully — too sensitive and you trip on transient errors, too lenient and you don't protect fast enough. Add fallback responses when the circuit is open. Log state transitions for observability. Consider per endpoint circuit breakers. Using a single global circuit breaker for all downstream services. Not implementing a fallback response. Setting the cooldown period too short, causing rapid open/close oscillation. Not monitoring circuit breaker state in dashboards."
+  },
+  {
+    "slug": "hash-functions",
+    "title": "Hash Functions",
+    "summary": "Mapping arbitrary-sized keys to fixed-size integers, powering HashMaps, cryptographic security, and data indexing.",
+    "domain": "Algorithms",
+    "bodyText": "A hash function takes an input (often a string or object) and returns a fixed size integer, called a hash value or code. A good hash function is deterministic (same input always yields same output), fast to compute, and minimizes collisions (different inputs yielding the same hash value). Hash functions power the core data structures of the web: Hash tables support O(1) average time inserts and reads. In backend engineering, hash functions distribute load uniformly (Consistent Hashing), detect data tampering (cryptographic hashes like SHA 256), and determine bit indices for space saving probabilistic filters. When two different keys generate the same hash, it is a collision. Databases resolve collisions using: Chaining: Storing colliding items in a linked list at that index. Open Addressing: Finding another empty slot using probing sequences (linear, quadratic)."
+  },
+  {
+    "slug": "http",
+    "title": "HTTP",
+    "summary": "The foundation of web communication — methods, status codes, headers, and the request/response lifecycle.",
+    "domain": "Foundations",
+    "bodyText": "HTTP (HyperText Transfer Protocol) is the protocol that powers the web. Every time your browser loads a page, submits a form, or calls an API, it uses HTTP. It's a stateless request/response protocol: a client sends a request, a server sends back a response. Everything in backend engineering sits on top of HTTP. REST APIs, GraphQL, webhooks, health checks, authentication flows — they all use HTTP. Understanding methods, status codes, and headers is foundational to building any web service. A client opens a TCP connection to a server and sends a request with a method (GET, POST, PUT, DELETE), a path (/users/123), headers (Content Type, Authorization), and optionally a body. The server processes the request and responds with a status code (200, 404, 500), headers, and a body. [!TIP] HTTP/2 and HTTP/3 bring major performance improvements: multiplexing (multiple requests over a single connection), header compression, and server push. In production, always prefer HTTP/2 or HTTP/3 if your infrastructure supports it — especially for latency sensitive APIs. Use HTTPS in production (TLS encryption). Set appropriate timeouts on both client and server. Understand keep alive connections and connection pooling. Use correct status codes — don't return 200 for errors. Set Content Type headers correctly. Using GET for operations with side effects. Returning 200 with an error message in the body. Ignoring HTTP caching headers. Not setting timeouts, leading to hanging connections. Using POST for everything instead of appropriate methods."
+  },
+  {
+    "slug": "idempotency",
+    "title": "Idempotency",
+    "summary": "Making repeated operations safe by ensuring the same request produces the same result no matter how many times it's executed.",
+    "domain": "API Design",
+    "bodyText": "An operation is idempotent if performing it multiple times has the same effect as performing it once. HTTP GET, PUT, and DELETE are idempotent by design. POST is not — sending the same POST twice may create two resources. Networks are unreliable. Clients retry requests when they don't get a response. Without idempotency, a retried payment request could charge a customer twice. Idempotency keys let servers detect duplicate requests and return the original result. Think of an elevator button. Pressing it once calls the elevator. Pressing it five more times doesn't call five elevators — the result is the same. That's idempotency. The client generates a unique idempotency key (usually a UUID) and sends it with the request. The server checks if it has seen this key before. If yes, it returns the stored response. If no, it processes the request, stores the result keyed by the idempotency key, and returns the response. Store idempotency keys in a database with a TTL (e.g., 24 hours). Use database constraints to prevent race conditions. Consider what happens if the original request failed — should retries re attempt or return the error? Using session IDs or user IDs as idempotency keys (not unique per request). Forgetting to handle partial failures. Not setting a TTL on stored keys, causing unbounded storage growth."
+  },
+  {
+    "slug": "indexes",
+    "title": "Database Indexes",
+    "summary": "How indexes speed up database queries and the storage and write-performance tradeoffs they introduce.",
+    "domain": "Databases",
+    "bodyText": "A database index is a data structure (usually a B tree) that allows the database to find rows without scanning the entire table. It works like the index at the back of a textbook — instead of reading every page, you look up the topic and jump to the right page. Without indexes, every query scans every row in the table (a full table scan). On a table with millions of rows, this is catastrophically slow. A well placed index turns a 5 second query into a 5 millisecond query. When you create an index on a column, the database builds a sorted data structure pointing to the rows. For a B tree index, lookups are O(log n). Composite indexes cover multiple columns and support queries that filter on those columns in order. Every index slows down writes because the database must update the index on every INSERT, UPDATE, and DELETE. Indexes consume disk space. Too many indexes degrade write performance. Use EXPLAIN ANALYZE to verify your queries actually use the indexes you create. Indexing every column \"just in case.\" Creating composite indexes in the wrong column order. Not analyzing query plans to verify index usage. Forgetting that indexes on low cardinality columns (like boolean flags) are usually useless."
+  },
+  {
+    "slug": "message-queues",
+    "title": "Message Queues",
+    "summary": "Decoupling services through asynchronous message passing for reliability and scalability.",
+    "domain": "Queues",
+    "bodyText": "A message queue is a buffer that sits between a producer (sender) and a consumer (receiver). The producer pushes messages onto the queue, and the consumer pulls and processes them independently. The two sides don't need to be available at the same time. Without queues, Service A calls Service B synchronously. If B is slow or down, A blocks. With a queue, A publishes a message and moves on. B processes it when it's ready. This decoupling is critical for building resilient, scalable systems. Producer sends a message (JSON payload) to a named queue. The message broker (RabbitMQ, SQS, Redis) stores it. A consumer subscribes to the queue, picks up the message, processes it, and acknowledges completion. If the consumer fails, the message returns to the queue for retry. Handle poison messages (messages that always fail) with dead letter queues. Ensure consumers are idempotent — messages may be delivered more than once. Monitor queue depth to detect backlogs. Set appropriate visibility timeouts and retry limits. Assuming exactly once delivery (most queues guarantee at least once). Not handling message ordering. Putting too much data in the message instead of just an ID. Not monitoring queue lag. Forgetting to set up dead letter queues."
+  }
+]
