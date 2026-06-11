@@ -6,8 +6,9 @@ import Link from "next/link";
 import { concepts } from "@/lib/data/concepts";
 import { chapters, type Chapter } from "@/lib/data/chapters";
 import { Reveal } from "@/components/reveal";
-import { ZoomIn, ZoomOut, Maximize2, List, Grid3X3, Compass, ChevronDown, ChevronUp } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2, List, Grid3X3, Compass, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { JourneyBuilder } from "@/components/graph/journey-builder";
+import { ProductTour } from "@/components/graph/product-tour";
 import { SubwayTimeline } from "@/components/graph/subway-timeline";
 import { AdvisoryDetours } from "@/components/graph/advisory-detours";
 import { ProgressMasteryCard, ResetProgressButton } from "@/components/graph/progress-mastery-card";
@@ -755,6 +756,7 @@ function GraphPageContent() {
   const [syllabus, setSyllabus] = useState<ReturnType<typeof GraphEngine.compileSyllabus>>([]);
   const [startSlug, setStartSlug] = useState("bits");
   const [targetSlug, setTargetSlug] = useState("caching-strategies");
+  const [isTourOpen, setIsTourOpen] = useState(false);
 
   const selectedConcept = selectedSlug
     ? concepts.find((c) => c.slug === selectedSlug)
@@ -773,6 +775,42 @@ function GraphPageContent() {
     setSyllabus(defaultSyllabus);
   }, []);
 
+  // Onboarding tour first-time prompt checker
+  useEffect(() => {
+    const tourSeen = localStorage.getItem("graphly-tour-completed");
+    const forceTour = searchParams.get("tour") === "true" || searchParams.get("startTour") === "true";
+    if (forceTour) {
+      setIsTourOpen(true);
+    } else if (!tourSeen) {
+      const t = setTimeout(() => setIsTourOpen(true), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [searchParams]);
+
+  const handleTourStepChange = (stepIndex: number) => {
+    // Dynamic page state triggers to guide user onboarding seamlessly
+    if (stepIndex === 1) { // Navigation modes spotlight
+      setView("graph");
+      setSelectedSlug(null);
+    } else if (stepIndex === 2) { // Connected canvas spotlight
+      setView("graph");
+      setSelectedSlug(null);
+    } else if (stepIndex === 3) { // Concept Details Sidebar spotlight
+      setView("graph");
+      setSelectedSlug("bits"); // Highlight and select "Bits & Binary" to populate sidebar info
+    } else if (stepIndex === 4) { // Graph Legend spotlight
+      setView("graph");
+    } else if (stepIndex === 5) { // Journey Mode Tab spotlight
+      setView("journey");
+    }
+  };
+
+  const handleTourClose = () => {
+    setIsTourOpen(false);
+    setSelectedSlug(null);
+    setView("graph");
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
       <Reveal>
@@ -785,40 +823,49 @@ function GraphPageContent() {
               Explore connections.
             </h1>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             <button
-              onClick={() => setView("journey")}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-heading font-bold transition-all duration-200 cursor-pointer ${
-                view === "journey"
-                  ? "bg-primary-light text-primary-dark"
-                  : "text-foreground-secondary hover:text-foreground border border-border"
-              }`}
+              onClick={() => setIsTourOpen(true)}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary-dark/20 bg-primary-light text-primary-dark hover:bg-primary-light/80 text-sm font-heading font-bold cursor-pointer transition-all shadow-button mr-1.5"
             >
-              <Compass className="h-4 w-4" />
-              Journey Mode
+              <Sparkles className="h-4 w-4 stroke-[2.2]" />
+              Interactive Guide
             </button>
-            <button
-              onClick={() => setView("graph")}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-heading font-bold transition-all duration-200 cursor-pointer ${
-                view === "graph"
-                  ? "bg-primary-light text-primary-dark"
-                  : "text-foreground-secondary hover:text-foreground border border-border"
-              }`}
-            >
-              <Grid3X3 className="h-4 w-4" />
-              Graph View
-            </button>
-            <button
-              onClick={() => setView("list")}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-heading font-bold transition-all duration-200 cursor-pointer ${
-                view === "list"
-                  ? "bg-primary-light text-primary-dark"
-                  : "text-foreground-secondary hover:text-foreground border border-border"
-              }`}
-            >
-              <List className="h-4 w-4" />
-              List View
-            </button>
+            <div id="tour-tabs" className="flex gap-2">
+              <button
+                onClick={() => setView("journey")}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-heading font-bold transition-all duration-200 cursor-pointer ${
+                  view === "journey"
+                    ? "bg-primary-light text-primary-dark"
+                    : "text-foreground-secondary hover:text-foreground border border-border"
+                }`}
+              >
+                <Compass className="h-4 w-4" />
+                Journey Mode
+              </button>
+              <button
+                onClick={() => setView("graph")}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-heading font-bold transition-all duration-200 cursor-pointer ${
+                  view === "graph"
+                    ? "bg-primary-light text-primary-dark"
+                    : "text-foreground-secondary hover:text-foreground border border-border"
+                }`}
+              >
+                <Grid3X3 className="h-4 w-4" />
+                Graph View
+              </button>
+              <button
+                onClick={() => setView("list")}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-heading font-bold transition-all duration-200 cursor-pointer ${
+                  view === "list"
+                    ? "bg-primary-light text-primary-dark"
+                    : "text-foreground-secondary hover:text-foreground border border-border"
+                }`}
+              >
+                <List className="h-4 w-4" />
+                List View
+              </button>
+            </div>
           </div>
         </div>
       </Reveal>
@@ -884,7 +931,7 @@ function GraphPageContent() {
             {view === "graph" ? (
               <>
                 {/* Desktop SVG Canvas */}
-                <div className="hidden md:block">
+                <div id="tour-canvas" className="hidden md:block">
                   <GraphView
                     focusSlug={selectedSlug}
                     onSelectNode={setSelectedSlug}
@@ -904,7 +951,7 @@ function GraphPageContent() {
           </div>
 
           {/* Side panel for Graph selection detail */}
-          <div className="lg:col-span-1">
+          <div id="tour-sidebar" className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
               {selectedConcept ? (
                 <Reveal>
@@ -997,7 +1044,7 @@ function GraphPageContent() {
               )}
 
               {/* Dynamic Persistent Legend Card */}
-              <div className="rounded-[24px] border border-border bg-surface-card p-6 shadow-card">
+              <div id="tour-legend" className="rounded-[24px] border border-border bg-surface-card p-6 shadow-card">
                 <h3 className="text-xs font-bold tracking-[0.15em] text-foreground-secondary uppercase font-heading mb-4">
                   Graph Legend
                 </h3>
@@ -1048,6 +1095,11 @@ function GraphPageContent() {
           </div>
         </div>
       )}
+      <ProductTour
+        isOpen={isTourOpen}
+        onStepChange={handleTourStepChange}
+        onClose={handleTourClose}
+      />
     </div>
   );
 }
