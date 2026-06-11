@@ -198,6 +198,7 @@ function GraphView({
     setActiveChapter(null);
     setZoom(1);
     setPan({ x: 0, y: 0 });
+    onSelectNode(null);
   };
 
   return (
