@@ -335,7 +335,7 @@
     "chapterId": "foundations",
     "level": "topic",
     "title": "Hash Functions",
-    "summary": "Mapping arbitrary-sized keys to fixed-size integers, powering HashMaps, cryptographic security, and data indexing.",
+    "summary": "The mathematical algorithms mapping arbitrary data to fixed-size signatures, powering HashTables, load balancing, and cryptographic security.",
     "difficulty": "beginner",
     "domain": "Algorithms",
     "estimatedMinutes": 10,
@@ -348,35 +348,34 @@
     ],
     "sections": [
       {
-        "id": "what-it-is",
-        "title": "What it is",
-        "content": "A hash function takes an input (often a string or object) and returns a fixed-size integer, called a hash value or code. A good hash function is deterministic (same input always yields same output), fast to compute, and minimizes collisions (different inputs yielding the same hash value)."
+        "id": "hash-function-vs-hash-table",
+        "title": "Hash Function vs. Hash Table",
+        "content": "Before diving into the mathematics, we must draw a clear line between the function and the structure:\n\n* **Hash Function**: A pure mathematical algorithm. It takes raw input data of any size (like a string, a file, or an object) and translates it into a fixed-size number (e.g., a 32-bit integer). It holds no data; it is just a translator.\n* **Hash Table (HashMap)**: A data structure that stores key-value pairs in memory. It *uses* a hash function to convert keys into indices of a physical array, allowing you to store and read values in near-instant ($O(1)$) time.\n\n---"
       },
       {
-        "id": "why-it-matters",
-        "title": "Why it matters",
-        "content": "Hash functions power the core data structures of the web: Hash tables support O(1) average-time inserts and reads. In backend engineering, hash functions distribute load uniformly (Consistent Hashing), detect data tampering (cryptographic hashes like SHA-256), and determine bit indices for space-saving probabilistic filters."
+        "id": "the-hashing-pipeline",
+        "title": "The Hashing Pipeline",
+        "content": "Here is how a hash function translates keys to locate memory slots:\n\n<svg viewBox=\"0 0 600 240\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: var(--color-surface-muted, #1f2428); border-radius: 0.75rem; border: 1px solid var(--color-border); padding: 1rem;\">\n  <!-- Inputs -->\n  <rect x=\"20\" y=\"30\" width=\"100\" height=\"40\" rx=\"5\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"2\" />\n  <text x=\"70\" y=\"55\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"12\" text-anchor=\"middle\">\"Alice\"</text>\n\n  <rect x=\"20\" y=\"100\" width=\"100\" height=\"40\" rx=\"5\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"2\" />\n  <text x=\"70\" y=\"125\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"12\" text-anchor=\"middle\">\"Bob\"</text>\n\n  <rect x=\"20\" y=\"170\" width=\"100\" height=\"40\" rx=\"5\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"2\" />\n  <text x=\"70\" y=\"195\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"12\" text-anchor=\"middle\">\"Charlie\"</text>\n\n  <!-- Connectors -->\n  <path d=\"M 120 50 L 200 120\" stroke=\"#88c0d0\" stroke-width=\"2\" fill=\"none\" />\n  <path d=\"M 120 120 L 200 120\" stroke=\"#88c0d0\" stroke-width=\"2\" fill=\"none\" />\n  <path d=\"M 120 190 L 200 120\" stroke=\"#88c0d0\" stroke-width=\"2\" fill=\"none\" />\n\n  <!-- Hash Function -->\n  <rect x=\"200\" y=\"90\" width=\"160\" height=\"60\" rx=\"8\" fill=\"#88c0d0\" stroke=\"#81a1c1\" stroke-width=\"2\" />\n  <text x=\"280\" y=\"120\" fill=\"#2e3440\" font-family=\"sans-serif\" font-size=\"14\" font-weight=\"bold\" text-anchor=\"middle\">Hash Function</text>\n  <text x=\"280\" y=\"138\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">hash(key) % Buckets</text>\n\n  <!-- Connectors 2 -->\n  <path d=\"M 360 120 L 460 50\" stroke=\"#a3be8c\" stroke-width=\"2\" fill=\"none\" />\n  <path d=\"M 360 120 L 460 120\" stroke=\"#bf616a\" stroke-width=\"2\" fill=\"none\" />\n  <path d=\"M 360 120 L 460 120\" stroke=\"#bf616a\" stroke-width=\"2\" fill=\"none\" />\n\n  <!-- Buckets -->\n  <g transform=\"translate(460, 20)\">\n    <rect x=\"0\" y=\"0\" width=\"100\" height=\"40\" rx=\"4\" fill=\"#2e3440\" stroke=\"#a3be8c\" stroke-width=\"2\" />\n    <text x=\"10\" y=\"25\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"11\">Index 01: [Alice]</text>\n\n    <rect x=\"0\" y=\"50\" width=\"100\" height=\"60\" rx=\"4\" fill=\"#3b4252\" stroke=\"#bf616a\" stroke-width=\"2\" />\n    <text x=\"10\" y=\"70\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"11\">Index 02:</text>\n    <text x=\"10\" y=\"85\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">[Bob]</text>\n    <text x=\"10\" y=\"100\" fill=\"#bf616a\" font-family=\"sans-serif\" font-size=\"10\">[Charlie] (Collision!)</text>\n\n    <rect x=\"0\" y=\"130\" width=\"100\" height=\"40\" rx=\"4\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\" />\n    <text x=\"10\" y=\"155\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"11\">Index 03: Empty</text>\n  </g>\n</svg>\n\n---"
       },
       {
-        "id": "collision-resolution",
-        "title": "Collision Resolution",
-        "content": "When two different keys generate the same hash, it is a collision. Databases resolve collisions using:\n- Chaining: Storing colliding items in a linked list at that index.\n- Open Addressing: Finding another empty slot using probing sequences (linear, quadratic)."
+        "id": "the-3-hard-rules-of-hashing",
+        "title": "The 3 Hard Rules of Hashing",
+        "content": "To be useful for computers, a hash function must obey three core laws:\n\n### 1. Absolute Determinism\nSame input must **always** yield the exact same hash output.\n* *Why?* If you store \"Alice\" at memory index `8` today, but the hash function translates \"Alice\" to `25` tomorrow, you will look in the wrong slot and your data is lost forever.\n\n### 2. Fixed-Length Output\nNo matter if the input is a single character (`\"A\"`) or a 4GB raw video file, the output size must remain identical (e.g. always a 32-bit integer or a 64-character hash string).\n* *Why?* Computer memory relies on predictable layouts. Fixed-length outputs ensure database buckets and array memory frames can be pre-allocated with uniform spacing.\n\n### 3. One-Way Transmission (Pre-Image Resistance)\nYou can easily go from input to output, but it must be mathematically impossible to work backward from the output hash to reconstruct the input.\n* *Why?* Security. If database passwords are saved as hashes, an attacker stealing the database only sees the output. If the function is one-way, they cannot reconstruct the plain-text passwords.\n\n---"
+      },
+      {
+        "id": "the-pigeonhole-principle-collisions",
+        "title": "The Pigeonhole Principle & Collisions",
+        "content": "A **Collision** occurs when two completely different inputs yield the identical hash output. \n\nThis is governed by the **Pigeonhole Principle**: If you have 10 pigeons but only 9 nesting holes, at least one hole must contain more than one pigeon. Because the possible inputs to a hash function are infinite (any string of any length) but the output hash range is finite (e.g. $2^{32}$ combinations for a 32-bit integer), collisions are mathematically guaranteed to happen.\n\n### Resolution Strategies\n* **Separate Chaining**: If keys collide at Index 2, store them inside a linked list nested under Index 2. \n* **Open Addressing**: If Index 2 is full, search linearly down the array until you find the next empty slot.\n\n---"
+      },
+      {
+        "id": "hashing-tradeoffs-fast-vs-slow-functions",
+        "title": "Hashing Tradeoffs: Fast vs. Slow Functions",
+        "content": "Backend engineers choose hash functions based on a critical tradeoff: **Execution Speed vs. Cryptographic Security**.\n\n### Fast Hash Functions (Non-Cryptographic)\n* *Algorithms*: MurmurHash, FNV-1a, xxHash.\n* *Use Case*: Router load balancers, database index lookups, cache keys.\n* **Pros**: Incredibly fast. Can compute hashes for millions of requests per second with negligible CPU usage.\n* **Cons**: Vulnerable to **Hash Collision DoS (Denial of Service)** attacks. An attacker can craft a list of payload keys that purposefully collide on the same array index, turning a fast $O(1)$ lookup hash table into a slow $O(N)$ linked list, consuming 100% CPU and crashing the API server.\n\n### Slow Hash Functions (Cryptographic & Key Derivation)\n* *Algorithms*: bcrypt, Argon2, PBKDF2, SHA-256.\n* *Use Case*: Password hashing, credential storage, integrity checks.\n* **Pros**: Incredibly secure. They are designed to be computationally expensive (taking 100ms+ per hash) and utilize salt values.\n* **Cons**: Heavy CPU cost. Running a slow hash function inside a cache lookup index would instantly bottleneck database throughput and slow the application to a crawl."
       }
     ],
-    "codeExamples": [
-      {
-        "language": "TypeScript",
-        "title": "Simple DJB2 string hash",
-        "code": "function djb2Hash(str: string): number {\n  let hash = 5381;\n  for (let i = 0; i < str.length; i++) {\n    const char = str.charCodeAt(i);\n    // hash * 33 + c\n    hash = ((hash << 5) + hash) + char;\n    hash = hash & hash; // Convert to 32bit integer\n  }\n  return Math.abs(hash);\n}\n\nconsole.log(djb2Hash(\"hello\")); // 261185\n"
-      },
-      {
-        "language": "Go",
-        "title": "FNV-1a hash in Go",
-        "code": "package main\nimport (\n    \"fmt\"\n    \"hash/fnv\"\n)\n\nfunc hashString(s string) uint32 {\n    h := fnv.New32a()\n    h.Write([]byte(s))\n    return h.Sum32()\n}\n\nfunc main() {\n    fmt.Println(hashString(\"hello\")) // 1335836873\n}\n"
-      }
-    ],
-    "seoTitle": "Hash Functions: From HashMap to Consistent Hashing",
-    "seoDescription": "Understand hash functions — how they map keys to integers, handle collisions, and power HashMaps, Bloom filters, and consistent hashing in distributed systems.",
+    "codeExamples": [],
+    "seoTitle": "Hash Functions: The Mathematics of Lookup Engines",
+    "seoDescription": "Learn the core rules of hashing, the difference between hash functions and hash tables, collision resolution, and the security tradeoffs of slow vs fast hash functions.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/hash-functions",
     "ogImage": null,
     "citations": [],
