@@ -54,7 +54,7 @@ export function Footer() {
               {totalPaths} structured learning paths.
             </p>
             <a
-              href="https://github.com/your-org/graphy"
+              href="https://github.com/tomiwa-a/graphy"
               className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-card px-4 py-2 text-sm font-bold font-heading shadow-button hover:bg-surface-hover hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 select-none cursor-pointer"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4 fill-foreground" fill="currentColor">

@@ -1,15 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { concepts } from "@/lib/data/concepts";
 import { chapters } from "@/lib/data/chapters";
 import { ConceptCard } from "@/components/concepts/concept-card";
 import { ConceptFilters } from "@/components/concepts/concept-filters";
 import { Reveal } from "@/components/reveal";
 
-export default function ConceptsPage() {
+function ConceptsContent() {
+  const searchParams = useSearchParams();
   const [domain, setDomain] = useState("All");
   const [difficulty, setDifficulty] = useState("All");
+
+  useEffect(() => {
+    const d = searchParams.get("domain");
+    if (d) {
+      setDomain(d);
+    }
+  }, [searchParams]);
 
   const filtered = concepts.filter((c) => {
     if (domain !== "All" && c.domain !== domain) return false;
@@ -100,5 +109,17 @@ export default function ConceptsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ConceptsPage() {
+  return (
+    <Suspense fallback={
+      <div className="mx-auto max-w-6xl px-5 py-20 text-center text-foreground-secondary font-sans">
+        Loading concepts...
+      </div>
+    }>
+      <ConceptsContent />
+    </Suspense>
   );
 }

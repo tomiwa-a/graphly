@@ -84,7 +84,7 @@ export function Hero({ totalConcepts = 9, totalPaths = 3 }: { totalConcepts?: nu
 
             {/* CTAs */}
             <div
-              className="mt-8 flex items-center gap-4"
+              className="mt-8 flex flex-wrap items-center gap-3 sm:gap-4"
               style={{
                 opacity: initiated ? 1 : 0,
                 transform: initiated ? "translateY(0)" : "translateY(12px)",
@@ -99,6 +99,12 @@ export function Hero({ totalConcepts = 9, totalPaths = 3 }: { totalConcepts?: nu
               >
                 Browse Concepts
                 <ArrowRight className="h-4 w-4 stroke-[2.2]" />
+              </Link>
+              <Link
+                href="/graph"
+                className="inline-flex h-12 items-center justify-center rounded-2xl border border-border bg-surface-card px-6 text-sm font-bold font-heading text-foreground shadow-button hover:bg-surface-hover hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 select-none cursor-pointer"
+              >
+                Interactive Graph
               </Link>
               <Link
                 href="/paths"

@@ -308,7 +308,7 @@ export default function Home() {
               {dynamicDomains.map((domain) => (
                 <Link
                   key={domain.name}
-                  href="/concepts"
+                  href={`/concepts?domain=${encodeURIComponent(domain.name)}`}
                   className="group rounded-2xl border border-border bg-surface-card p-5 shadow-card hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200 ease-graphy"
                 >
                   <p className="text-sm font-bold font-heading text-foreground group-hover:text-primary-dark transition-colors">
@@ -419,7 +419,7 @@ export default function Home() {
                     Start exploring
                   </Link>
                   <a
-                    href="https://github.com/your-org/graphy"
+                    href="https://github.com/tomiwa-a/graphy"
                     className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-border bg-surface-card px-6 text-sm font-bold font-heading text-foreground shadow-button hover:bg-surface-hover hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 select-none cursor-pointer"
                   >
                     <svg viewBox="0 0 24 24" className="h-4 w-4 fill-foreground" fill="currentColor">
