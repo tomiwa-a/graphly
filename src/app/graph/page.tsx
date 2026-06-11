@@ -109,7 +109,7 @@ function GraphView({
   onSelectNode,
 }: {
   focusSlug: string | null;
-  onSelectNode: (slug: string) => void;
+  onSelectNode: (slug: string | null) => void;
 }) {
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -178,6 +178,7 @@ function GraphView({
       setActiveChapter(null);
       setZoom(1);
       setPan({ x: 0, y: 0 });
+      onSelectNode(null);
     } else {
       setActiveChapter(chapterId);
       const box = chapterBoxes.find((b) => b.id === chapterId);
@@ -287,6 +288,7 @@ function GraphView({
                 stroke={isActive ? "#C0392B" : "rgba(45, 42, 38, 0.04)"}
                 strokeWidth={isActive ? 2 : 1.2}
                 strokeDasharray={isActive ? "none" : "3 3"}
+                pointerEvents="all"
                 className="hover:fill-primary-muted/20 hover:stroke-primary-dark/20 transition-all duration-300"
               />
               <text
@@ -408,7 +410,11 @@ function GraphView({
               className="cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
-                onSelectNode(concept.slug);
+                if (focusSlug === concept.slug) {
+                  onSelectNode(null);
+                } else {
+                  onSelectNode(concept.slug);
+                }
               }}
               onMouseEnter={() => setHoveredSlug(concept.slug)}
               onMouseLeave={() => setHoveredSlug(null)}
@@ -502,7 +508,7 @@ function MobileMetroLine({
   onSelectNode,
 }: {
   focusSlug: string | null;
-  onSelectNode: (slug: string) => void;
+  onSelectNode: (slug: string | null) => void;
 }) {
   const [completedSlugs, setCompletedSlugs] = useState<string[]>([]);
   const [openChapters, setOpenChapters] = useState<Record<string, boolean>>({
@@ -601,7 +607,11 @@ function MobileMetroLine({
                           key={`mobile-metro-${concept.slug}`}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onSelectNode(concept.slug);
+                            if (focusSlug === concept.slug) {
+                              onSelectNode(null);
+                            } else {
+                              onSelectNode(concept.slug);
+                            }
                           }}
                           className={cn(
                             "relative flex items-start gap-3 p-3 rounded-xl border bg-surface-card shadow-sm cursor-pointer transition-all duration-200 active:scale-[0.98]",
