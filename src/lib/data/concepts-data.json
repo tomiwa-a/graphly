@@ -45,7 +45,8 @@
     "seoDescription": "Understanding bits, binary representation, and bitwise operations — the foundation of high-performance data structures like Bloom filters and bitmap indexes.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/bits",
     "ogImage": null,
-    "citations": []
+    "citations": [],
+    "videoEmbed": null
   },
   {
     "slug": "bloom-filters",
@@ -92,7 +93,8 @@
     "seoDescription": "Understand Bloom filters — the probabilistic data structure with zero false negatives that powers cache shielding, malicious URL detection, and database query optimization.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/bloom-filters",
     "ogImage": null,
-    "citations": []
+    "citations": [],
+    "videoEmbed": null
   },
   {
     "slug": "caching-strategies",
@@ -160,7 +162,8 @@
     "seoDescription": "Master caching strategies — cache-aside, write-through, write-behind, and CDN caching. Learn TTL management, invalidation, and cache stampede prevention.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/caching-strategies",
     "ogImage": null,
-    "citations": []
+    "citations": [],
+    "videoEmbed": null
   },
   {
     "slug": "circuit-breakers",
@@ -222,7 +225,8 @@
     "seoDescription": "Learn how circuit breakers detect and isolate faulting downstream services, prevent cascading failures, and implement fallback strategies in production systems.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/circuit-breakers",
     "ogImage": null,
-    "citations": []
+    "citations": [],
+    "videoEmbed": null
   },
   {
     "slug": "hash-functions",
@@ -273,7 +277,8 @@
     "seoDescription": "Understand hash functions — how they map keys to integers, handle collisions, and power HashMaps, Bloom filters, and consistent hashing in distributed systems.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/hash-functions",
     "ogImage": null,
-    "citations": []
+    "citations": [],
+    "videoEmbed": null
   },
   {
     "slug": "http",
@@ -345,7 +350,8 @@
         "page_range": "3-28",
         "external_link": "https://www.oreilly.com/library/view/http-the-definitive/1565925092/"
       }
-    ]
+    ],
+    "videoEmbed": null
   },
   {
     "slug": "idempotency",
@@ -416,7 +422,8 @@
     "seoDescription": "Learn how idempotency keys mathematically prevent double-billing and duplicate resource creation in HTTP POST networks.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/idempotency",
     "ogImage": null,
-    "citations": []
+    "citations": [],
+    "videoEmbed": null
   },
   {
     "slug": "indexes",
@@ -476,7 +483,8 @@
     "seoDescription": "Learn how database indexes work under the hood — B-trees, composite indexes, query planning, and the read/write performance tradeoffs every backend engineer must understand.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/indexes",
     "ogImage": null,
-    "citations": []
+    "citations": [],
+    "videoEmbed": null
   },
   {
     "slug": "message-queues",
@@ -537,6 +545,7 @@
     "seoDescription": "Understand message queues — how producers and consumers decouple services, handle failures, and build resilient asynchronous systems with RabbitMQ, SQS, and BullMQ.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/message-queues",
     "ogImage": null,
-    "citations": []
+    "citations": [],
+    "videoEmbed": null
   }
 ]

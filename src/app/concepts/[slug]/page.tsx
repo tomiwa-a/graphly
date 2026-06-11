@@ -11,6 +11,7 @@ import { Reveal } from "@/components/reveal";
 import { SITE_URL } from "@/lib/constants";
 import { MarkdownRenderer } from "@/components/ui/markdown";
 import { CitationCard } from "@/components/ui/citation-card";
+import { renderFullMarkdown } from "@/lib/markdown-utils";
 
 const diffStyles: Record<string, string> = {
   beginner: "bg-success-light text-success-dark",
@@ -159,17 +160,48 @@ export default async function ConceptPage({
             </header>
           </Reveal>
 
-          {/* Body sections */}
-          {concept.sections.map((section) => (
-            <Reveal key={section.id}>
-              <section id={section.id} className="mb-10 scroll-mt-24">
-                <h2 className="text-xl font-medium font-heading text-foreground tracking-[-0.02em] mb-3">
-                  {section.title}
+          {/* Video walkthrough player if configured */}
+          {concept.videoEmbed && (
+            <Reveal>
+              <div className="mb-10">
+                <h2 className="text-xl font-medium font-heading text-foreground tracking-[-0.02em] mb-4">
+                  Video Walkthrough
                 </h2>
-                <MarkdownRenderer content={section.content} />
-              </section>
+                <div className="video-container relative w-full aspect-video rounded-2xl overflow-hidden border border-[var(--color-border)] shadow-lg bg-black">
+                  <iframe
+                    src={
+                      concept.videoEmbed.platform === "youtube"
+                        ? `https://www.youtube.com/embed/${concept.videoEmbed.id}`
+                        : concept.videoEmbed.platform === "loom"
+                        ? `https://www.loom.com/embed/${concept.videoEmbed.id}`
+                        : `https://player.vimeo.com/video/${concept.videoEmbed.id}`
+                    }
+                    title={concept.videoEmbed.title || "Walkthrough video"}
+                    className="absolute inset-0 w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
             </Reveal>
-          ))}
+          )}
+
+          {/* Body sections */}
+          {await Promise.all(
+            concept.sections.map(async (section) => {
+              const html = await renderFullMarkdown(section.content);
+              return (
+                <Reveal key={section.id}>
+                  <section id={section.id} className="mb-10 scroll-mt-24">
+                    <h2 className="text-xl font-medium font-heading text-foreground tracking-[-0.02em] mb-3">
+                      {section.title}
+                    </h2>
+                    <MarkdownRenderer content={section.content} initialHtml={html} />
+                  </section>
+                </Reveal>
+              );
+            })
+          )}
 
           {/* Prerequisites */}
           {prerequisiteConcepts.length > 0 && (

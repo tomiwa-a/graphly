@@ -20,6 +20,12 @@ export interface Citation {
   external_link?: string;
 }
 
+export interface VideoEmbed {
+  platform: "youtube" | "loom" | "vimeo";
+  id: string;
+  title?: string;
+}
+
 export interface Concept {
   slug: string;
   chapterId: string;
@@ -38,6 +44,7 @@ export interface Concept {
   canonicalUrl: string | null;
   ogImage: string | null;
   citations: Citation[];
+  videoEmbed: VideoEmbed | null;
 }
 
 import conceptsData from "./concepts-data.json";

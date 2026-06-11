@@ -1,86 +1,59 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-
-const languageMap: Record<string, string> = {
-  go: "go", typescript: "typescript", python: "python",
-  js: "javascript", ts: "typescript", py: "python",
-  sql: "sql", bash: "bash", json: "json",
-  yaml: "yaml", rust: "rust", csharp: "csharp", java: "java",
-};
-
-function escapeHtml(str: string) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+import { useEffect, useRef } from "react";
 
 export function MarkdownRenderer({ content, initialHtml }: { content: string; initialHtml?: string }) {
-  const [html, setHtml] = useState<string | null>(initialHtml ?? null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const highlighterRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    const container = containerRef.current;
+    if (!container) return;
 
-    async function render() {
-      const { renderFullMarkdown } = await import("@/lib/markdown-utils");
-      if (cancelled) return;
+    const handleContainerClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
 
-      const fullHtml = await renderFullMarkdown(content);
-      if (cancelled) return;
-
-      // Highlight code blocks with Shiki
-      const { createHighlighter } = await import("shiki");
-      if (cancelled) return;
-
-      if (!highlighterRef.current) {
-        highlighterRef.current = await createHighlighter({
-          themes: ["github-dark"],
-          langs: [
-            "go", "typescript", "python", "java", "csharp",
-            "javascript", "tsx", "json", "bash", "sql",
-            "yaml", "markdown", "rust", "php", "kotlin", "ruby",
-          ],
-        });
+      // Copy Code button clicked
+      if (target.classList.contains("copy-code-btn")) {
+        const code = target.getAttribute("data-code");
+        if (code) {
+          navigator.clipboard.writeText(code).then(() => {
+            const originalText = target.textContent || "Copy";
+            target.textContent = "Copied!";
+            const originalBg = target.style.backgroundColor;
+            target.style.backgroundColor = "#10b981"; // success color
+            target.style.color = "#ffffff";
+            setTimeout(() => {
+              target.textContent = originalText;
+              target.style.backgroundColor = originalBg;
+              target.style.color = "";
+            }, 2000);
+          });
+        }
       }
 
-      if (cancelled) return;
+      // Toggle Line Numbers button clicked
+      if (target.classList.contains("toggle-line-numbers-btn")) {
+        const containerBlock = target.closest(".code-block-container");
+        const codeContent = containerBlock?.querySelector(".code-block-content");
+        if (codeContent) {
+          codeContent.classList.toggle("show-line-numbers");
+        }
+      }
+    };
 
-      const hl = highlighterRef.current;
-      const highlighted = fullHtml.replace(
-        /<pre class="shiki"[^>]*><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g,
-        (_, lang, code) => {
-          const decoded = code
-            .replace(/&amp;/g, "&").replace(/&lt;/g, "<")
-            .replace(/&gt;/g, ">").replace(/&quot;/g, '"')
-            .replace(/&#39;/g, "'");
-          try {
-            return hl.codeToHtml(decoded, {
-              lang: languageMap[lang] ?? lang,
-              theme: "github-dark",
-            });
-          } catch {
-            return `<pre class="shiki" style="background-color:#24292e;color:#e1e4e8;padding:1rem;border-radius:1rem;overflow-x:auto;margin:1rem 0;border:1px solid var(--color-border)"><code class="language-${lang}">${escapeHtml(decoded)}</code></pre>`;
-          }
-        },
-      );
+    container.addEventListener("click", handleContainerClick);
+    return () => {
+      container.removeEventListener("click", handleContainerClick);
+    };
+  }, []);
 
-      if (!cancelled) setHtml(highlighted);
-    }
-
-    render();
-    return () => { cancelled = true; };
-  }, [content]);
-
-  if (html === null) {
-    return <p className="text-foreground-secondary whitespace-pre-wrap">{content}</p>;
-  }
+  const displayHtml = initialHtml || `<p class="text-foreground-secondary whitespace-pre-wrap">${content}</p>`;
 
   return (
-    <div className="markdown-body" dangerouslySetInnerHTML={{ __html: html }} />
+    <div
+      ref={containerRef}
+      className="markdown-body"
+      dangerouslySetInnerHTML={{ __html: displayHtml }}
+    />
   );
 }

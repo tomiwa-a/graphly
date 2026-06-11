@@ -1,201 +1,110 @@
-## Markdown Features Demo
+---
+title: "Markdown System Test Playground"
+summary: "Interactive test playground showcasing Phase 3 and Phase 4 systems in action."
+video_embed:
+  platform: "youtube"
+  id: "dQw4w9WgXcQ"
+  title: "Graphy Walkthrough Video"
+---
 
-This file exercises all the markdown features available in Graphy's renderer.
+# Interactive Markdown Systems Test
 
-## Text Formatting
+Welcome to the **Graphy Markdown Compiler** playground. This document is rendered entirely on the server using build-time HTML compilations, resulting in a lightweight, high-performance page with interactive client-side overlays.
 
-**Bold text** and *italic text* and ***bold italic***. You can also use `inline code` with backticks.
+---
 
-## Links and Images
+## 1. Code Blocks (Phase 4 Step 1)
 
-Links work like [this link to Google](https://google.com). Images use the standard markdown syntax.
+These blocks are parsed and highlighted at build-time using **Shiki**. Use the copy button to copy the snippet, or toggle the line numbers by clicking the `123` button in the headers.
 
-## Blockquotes
+### TypeScript with Line Highlights (lines 2 and 5)
 
-> This is a standard blockquote. It should render with a left border and italic styling.
->
-> Multi-line blockquotes are supported too.
-
-## Admonitions
-
-> [!NOTE]
-> This is a note admonition. Use it for general information that users should be aware of.
-
-> [!TIP]
-> This is a tip admonition. Use it for helpful advice and best practices.
-
-> [!WARNING]
-> This is a warning admonition. Use it for important caveats and potential pitfalls.
-
-> [!CAUTION]
-> This is a caution admonition. Use it for serious consequences and dangerous operations.
-
-## Lists
-
-### Unordered
-
-- Item one
-- Item two
-- Item three
-  - Nested item
-  - Another nested item
-
-### Ordered
-
-1. First step
-2. Second step
-3. Third step
-   1. Sub-step A
-   2. Sub-step B
-
-## Code Blocks
-
-### JavaScript
-
-```javascript
-function fibonacci(n) {
-  if (n <= 1) return n;
-  return fibonacci(n - 1) + fibonacci(n - 2);
-}
-
-const result = fibonacci(10);
-console.log(result); // 55
-```
-
-### TypeScript
-
-```typescript
-interface User {
+```typescript {2,5}
+interface DatabaseNode {
   id: string;
-  name: string;
-  email: string;
-  createdAt: Date;
+  role: "leader" | "follower";
+  syncLagMs: number;
 }
 
-async function fetchUser(id: string): Promise<User> {
-  const res = await fetch(`/api/users/${id}`);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+function checkHealth(node: DatabaseNode): boolean {
+  return node.syncLagMs < 1000;
 }
 ```
 
-### Go
+### Go with Line Highlights (lines 3 and 6-7)
 
-```go
+```go {3,6-7}
 package main
 
-import (
-    "fmt"
-    "net/http"
-)
-
-func handler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
-}
+import "fmt"
 
 func main() {
-    http.HandleFunc("/", handler)
-    http.ListenAndServe(":8080", nil)
+    message := "Graphy is theory-first!"
+    fmt.Println(message)
 }
 ```
 
-### Python
+---
 
-```python
-from dataclasses import dataclass
-from typing import List
+## 2. Interactive SVG & Mermaid Diagrams
 
+Here is a raw SVG system architecture flowchart. It is center-aligned, responsive, and styled with high-contrast borders and a subtle shadow.
 
-@dataclass
-class Task:
-    id: int
-    title: str
-    completed: bool = False
+<svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Client Node -->
+  <rect x="10" y="30" width="100" height="60" rx="10" fill="#0ea5e9" stroke="#0284c7" stroke-width="2" />
+  <text x="60" y="65" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Client</text>
 
+  <!-- Arrow 1 -->
+  <path d="M 110 60 L 190 60" stroke="#94a3b8" stroke-width="3" fill="none" marker-end="url(#arrow)" />
+  <text x="150" y="50" fill="#94a3b8" font-family="sans-serif" font-size="10" text-anchor="middle">HTTP/2</text>
 
-class TaskManager:
-    def __init__(self) -> None:
-        self.tasks: List[Task] = []
-        self._next_id = 1
+  <!-- Load Balancer Node -->
+  <rect x="200" y="30" width="150" height="60" rx="10" fill="#10b981" stroke="#059669" stroke-width="2" />
+  <text x="275" y="65" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle">Load Balancer</text>
 
-    def add(self, title: str) -> Task:
-        task = Task(id=self._next_id, title=title)
-        self.tasks.append(task)
-        self._next_id += 1
-        return task
-```
+  <!-- Arrow 2 -->
+  <path d="M 350 60 L 480 60" stroke="#94a3b8" stroke-width="3" fill="none" />
+  <text x="415" y="50" fill="#94a3b8" font-family="sans-serif" font-size="10" text-anchor="middle">gRPC</text>
 
-### SQL
+  <!-- Backend Servers -->
+  <rect x="490" y="10" width="100" height="40" rx="5" fill="#6366f1" stroke="#4f46e5" stroke-width="2" />
+  <text x="540" y="35" fill="#ffffff" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">API Node A</text>
 
-```sql
-SELECT
-    u.name,
-    COUNT(o.id) AS order_count,
-    SUM(o.total) AS total_spent
-FROM users u
-LEFT JOIN orders o ON o.user_id = u.id
-WHERE u.created_at >= '2024-01-01'
-GROUP BY u.id, u.name
-HAVING COUNT(o.id) > 0
-ORDER BY total_spent DESC
-LIMIT 10;
-```
+  <rect x="490" y="70" width="100" height="40" rx="5" fill="#6366f1" stroke="#4f46e5" stroke-width="2" />
+  <text x="540" y="95" fill="#ffffff" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">API Node B</text>
 
-### Bash
+  <!-- Branch lines -->
+  <path d="M 450 60 L 450 30 L 490 30" stroke="#94a3b8" stroke-width="2" fill="none" />
+  <path d="M 450 60 L 450 90 L 490 90" stroke="#94a3b8" stroke-width="2" fill="none" />
+</svg>
 
-```bash
-#!/bin/bash
-# Deploy script
+---
 
-set -euo pipefail
+## 3. Video Embeds (Phase 3 Shortcode)
 
-APP_NAME="graphy"
-REGION="us-east-1"
+Below is an inline supplement video loaded dynamically using our shortcode:
 
-echo "Building $APP_NAME..."
-npm run build
+[[video platform="youtube" id="dQw4w9WgXcQ" title="Never Gonna Give You Up"]]
 
-echo "Deploying to $REGION..."
-aws s3 sync out/ "s3://$APP_NAME-prod/" --delete
-aws cloudfront create-invalidation \
-    --distribution-id "$CLOUDFRONT_DIST_ID" \
-    --paths "/*"
+---
 
-echo "Done!"
-```
+## 4. Inline Images & Captions
 
-## Tables
+Images are compiled into semantic markup with responsive constraints and block captions:
 
-| Method | Path          | Status | Description          |
-|--------|---------------|--------|----------------------|
-| GET    | /users        | 200    | List all users       |
-| POST   | /users        | 201    | Create a user        |
-| GET    | /users/:id    | 200    | Get user by ID       |
-| PUT    | /users/:id    | 200    | Update a user        |
-| DELETE | /users/:id    | 204    | Delete a user        |
+![A premium visualization of distributed message queuing topologies.](https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80)
 
-## Citations
+---
 
-Citations are defined in the YAML frontmatter and rendered separately. This is a citation placeholder — citations render as a card section at the bottom of the page.
+## 5. Rich Markdown & Task Checklists
 
-## Mixed Content
+Verify formatting, blockquotes, admonitions, and standard checklists:
 
-Here is a paragraph with **bold**, *italic*, `code`, and a [link](https://example.com) all in one sentence.
+- [x] Phase 1: Chapter-Grouped Directories
+- [x] Phase 2: Admonitions & Tables
+- [ ] Phase 3: High-contrast SVGs & Video Shortcodes
+- [ ] Phase 4: Shiki Highlight & Playgrounds
 
 > [!TIP]
-> You can combine admonitions with **inline formatting** and `code references` inside them.
->
-> ```javascript
-> // Code inside an admonition
-> console.log("this works");
-> ```
-
-| Feature      | Status | Notes                     |
-|--------------|--------|---------------------------|
-| Bold/Italic  | ✅     | Standard markdown         |
-| Code blocks  | ✅     | Syntax highlighted        |
-| Tables       | ✅     | GFM tables                |
-| Admonitions  | ✅     | NOTE, TIP, WARNING, CAUTION |
-| Lists        | ✅     | Ordered and unordered     |
-| Blockquotes  | ✅     | Standard blockquotes      |
-| Links        | ✅     | External links            |
+> Hover over any code block to reveal the interactive Copy/Line-number controls.

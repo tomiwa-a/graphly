@@ -104,6 +104,7 @@ function loadConcepts() {
             : null,
         ogImage: data.og_image || null,
         citations: data.citations || [],
+        videoEmbed: data.video_embed || null,
       });
     }
   }

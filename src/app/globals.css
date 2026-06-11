@@ -98,18 +98,88 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Markdown renderer styles */
 .markdown-body .shiki {
-  margin: 1rem 0;
-  padding: 1rem;
-  border-radius: 1rem;
-  overflow-x: auto;
-  border: 1px solid var(--color-border);
-  background-color: #24292e !important;
-  color: #e1e4e8 !important;
+  background-color: transparent !important;
+  margin: 0;
+  padding: 0;
 }
 .markdown-body .shiki code {
   font-family: var(--font-mono);
   font-size: 0.875rem;
-  line-height: 1.5;
+  line-height: 1.6;
+}
+.markdown-body .code-block-container {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+.markdown-body .code-block-content {
+  counter-reset: line;
+}
+.markdown-body .code-block-content .line {
+  display: block;
+  min-height: 1.5rem;
+  padding-right: 1rem;
+}
+.markdown-body .code-block-content.show-line-numbers .line {
+  padding-left: 3rem;
+  position: relative;
+}
+.markdown-body .code-block-content.show-line-numbers .line::before {
+  counter-increment: line;
+  content: counter(line);
+  position: absolute;
+  left: 0.5rem;
+  width: 1.75rem;
+  text-align: right;
+  color: var(--color-foreground-muted, #6a737d);
+  user-select: none;
+  font-size: 0.75rem;
+  border-right: 1px solid var(--color-border);
+  padding-right: 0.5rem;
+}
+.markdown-body .line.highlighted-line {
+  background-color: rgba(251, 191, 36, 0.08) !important;
+  border-left: 3px solid #f59e0b !important;
+  margin-left: -1rem;
+  padding-left: 1rem;
+}
+.markdown-body .code-block-content.show-line-numbers .line.highlighted-line {
+  margin-left: -1rem;
+  padding-left: 3rem;
+}
+.markdown-body .code-block-content.show-line-numbers .line.highlighted-line::before {
+  left: 0.5rem;
+}
+/* SVG rendering */
+.markdown-body svg {
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem auto;
+  display: block;
+  background-color: var(--color-surface-muted, #1f2428);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+/* Figures & Captions */
+.markdown-body figure {
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+.markdown-body figcaption {
+  font-size: 0.825rem;
+  font-family: var(--font-sans);
+  color: var(--color-foreground-secondary);
+  font-style: italic;
+  text-align: center;
+}
+/* Video container styling */
+.markdown-body .video-container, .video-container {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  background-color: #000;
 }
 /* Admonition styles */
 .markdown-body .admonition p {
