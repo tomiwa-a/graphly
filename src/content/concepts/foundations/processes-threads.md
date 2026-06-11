@@ -8,7 +8,7 @@ domain: Foundations
 estimatedMinutes: 10
 prerequisites: [virtual-memory]
 related: [file-descriptors]
-seo_title: "Processes & Threads Explained | Graphy"
+seo_title: "Processes & Threads Explained | Graphly"
 seo_description: "Learn the difference between OS processes and threads, how context switching works, CPU-bound vs I/O-bound work, and how goroutines and the GIL affect concurrency."
 canonical_url: "/concepts/processes-threads"
 code_examples:

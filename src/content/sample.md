@@ -1,10 +1,10 @@
 ---
 title: "Ultimate Markdown Systems Playground"
-summary: "A comprehensive test catalog of all markdown features available in Graphy."
+summary: "A comprehensive test catalog of all markdown features available in Graphly."
 video_embed:
   platform: "youtube"
   id: "dQw4w9WgXcQ"
-  title: "Graphy Walkthrough Video"
+  title: "Graphly Walkthrough Video"
 citations:
   - title: "HTTP: The Definitive Guide"
     author: "David Gourley, Brian Totty"
@@ -15,7 +15,7 @@ citations:
 
 # Ultimate Markdown Playground
 
-This page acts as a comprehensive sandbox exercising all markdown parser features, layout rules, and Interactive Client Overlays available in Graphy.
+This page acts as a comprehensive sandbox exercising all markdown parser features, layout rules, and Interactive Client Overlays available in Graphly.
 
 ---
 
@@ -93,7 +93,7 @@ package main
 import "fmt"
 
 func main() {
-    message := "Graphy handles concurrency beautifully!"
+    message := "Graphly handles concurrency beautifully!"
     fmt.Println(message)
 }
 ```

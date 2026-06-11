@@ -8,7 +8,7 @@ domain: Foundations
 estimatedMinutes: 10
 prerequisites: [processes-threads]
 related: [virtual-memory]
-seo_title: "File Descriptors Explained | Graphy"
+seo_title: "File Descriptors Explained | Graphly"
 seo_description: "Understand Unix file descriptors: how stdin/stdout/stderr work, why high-traffic servers exhaust fd limits, how epoll enables I/O multiplexing, and how to diagnose fd leaks."
 canonical_url: "/concepts/file-descriptors"
 code_examples:

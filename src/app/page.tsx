@@ -157,7 +157,7 @@ export default function Home() {
                   online course.
                 </h2>
                 <p className="mt-4 text-base leading-relaxed text-foreground-secondary font-sans font-medium max-w-sm">
-                  Graphy is a knowledge graph, not a playlist. Jump in anywhere,
+                  Graphly is a knowledge graph, not a playlist. Jump in anywhere,
                   follow connections, and build understanding at your own pace.
                 </p>
               </div>
@@ -324,13 +324,13 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ── Why Graphy — Value Props ── */}
+      {/* ── Why Graphly — Value Props ── */}
       <section className="border-t border-border bg-surface-muted">
         <div className="mx-auto max-w-6xl px-5 py-20 sm:py-24">
           <Reveal>
             <div className="max-w-2xl">
               <p className="text-xs font-bold tracking-[0.15em] text-foreground-secondary uppercase font-heading">
-                Why Graphy
+                Why Graphly
               </p>
               <h2 className="mt-2 text-3xl font-medium tracking-[-0.03em] text-foreground font-heading sm:text-4xl">
                 Built for how engineers
@@ -352,7 +352,7 @@ export default function Home() {
                   Non-linear by design
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-foreground-secondary font-sans">
-                  Real knowledge isn&apos;t linear. Graphy maps prerequisites and
+                  Real knowledge isn&apos;t linear. Graphly maps prerequisites and
                   connections so you see how everything fits together.
                 </p>
               </div>
@@ -408,7 +408,7 @@ export default function Home() {
                   </h2>
                 </div>
                 <p className="mt-4 text-base leading-relaxed text-foreground-secondary font-sans font-medium max-w-md">
-                  Graphy is free and open source. Contribute new concepts, fix
+                  Graphly is free and open source. Contribute new concepts, fix
                   explanations, or add implementations in your favorite language.
                 </p>
                 <div className="mt-6 flex items-center gap-4">
@@ -419,7 +419,9 @@ export default function Home() {
                     Start exploring
                   </Link>
                   <a
-                    href="https://github.com/tomiwa-a/graphy"
+                    href="https://github.com/tomiwa-a/graphly"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-border bg-surface-card px-6 text-sm font-bold font-heading text-foreground shadow-button hover:bg-surface-hover hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 select-none cursor-pointer"
                   >
                     <svg viewBox="0 0 24 24" className="h-4 w-4 fill-foreground" fill="currentColor">

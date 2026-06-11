@@ -23,8 +23,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s — Graphy",
-    default: "Graphy — Backend Engineering Knowledge Graph",
+    template: "%s — Graphly",
+    default: "Graphly — Backend Engineering Knowledge Graph",
   },
   description:
     "Learn backend engineering through a connected knowledge graph. Explore concepts, prerequisites, multi-language examples.",

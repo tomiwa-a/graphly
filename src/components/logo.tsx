@@ -26,7 +26,7 @@ export function LogoFull({ className }: { className?: string }) {
     <span className={cn("inline-flex items-center gap-2", className)}>
       <LogoMark className="h-5 w-5" />
       <span className="text-base font-medium tracking-tight text-foreground">
-        Graphy
+        Graphly
       </span>
     </span>
   );

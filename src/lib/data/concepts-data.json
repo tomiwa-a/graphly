@@ -532,7 +532,7 @@
         "code": "package main\n\nimport (\n  \"fmt\"\n  \"os\"\n)\n\nfunc readConfig(path string) ([]byte, error) {\n  f, err := os.Open(path)\n  if err != nil {\n    return nil, err\n  }\n  defer f.Close() // fd is freed when the function returns\n\n  buf := make([]byte, 4096)\n  n, err := f.Read(buf)\n  if err != nil {\n    return nil, err\n  }\n  return buf[:n], nil\n}\n\nfunc main() {\n  data, err := readConfig(\"/etc/hostname\")\n  if err != nil {\n    fmt.Fprintln(os.Stderr, err)\n    os.Exit(1)\n  }\n  fmt.Printf(\"hostname: %s\\n\", data)\n}\n"
       }
     ],
-    "seoTitle": "File Descriptors Explained | Graphy",
+    "seoTitle": "File Descriptors Explained | Graphly",
     "seoDescription": "Understand Unix file descriptors: how stdin/stdout/stderr work, why high-traffic servers exhaust fd limits, how epoll enables I/O multiplexing, and how to diagnose fd leaks.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/file-descriptors",
     "ogImage": null,
@@ -1204,7 +1204,7 @@
         "code": "# List all running processes\nps aux\n\n# Show threads inside a process (Linux)\nps -T -p <pid>\n\n# See how many OS threads a Go program uses\ncat /proc/<pid>/status | grep Threads\n"
       }
     ],
-    "seoTitle": "Processes & Threads Explained | Graphy",
+    "seoTitle": "Processes & Threads Explained | Graphly",
     "seoDescription": "Learn the difference between OS processes and threads, how context switching works, CPU-bound vs I/O-bound work, and how goroutines and the GIL affect concurrency.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/processes-threads",
     "ogImage": null,

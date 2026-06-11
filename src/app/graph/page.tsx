@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { concepts } from "@/lib/data/concepts";
 import { chapters, type Chapter } from "@/lib/data/chapters";
@@ -736,8 +737,9 @@ function ListView() {
   );
 }
 
-export default function GraphPage() {
-  const [view, setView] = useState<"graph" | "journey" | "list">("journey");
+function GraphPageContent() {
+  const searchParams = useSearchParams();
+  const [view, setView] = useState<"graph" | "journey" | "list">("graph");
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [syllabus, setSyllabus] = useState<ReturnType<typeof GraphEngine.compileSyllabus>>([]);
   const [startSlug, setStartSlug] = useState("bits");
@@ -746,6 +748,13 @@ export default function GraphPage() {
   const selectedConcept = selectedSlug
     ? concepts.find((c) => c.slug === selectedSlug)
     : null;
+
+  useEffect(() => {
+    const tab = searchParams.get("tab") || searchParams.get("view");
+    if (tab === "journey" || tab === "list" || tab === "graph") {
+      setView(tab);
+    }
+  }, [searchParams]);
 
   // Initialize default journey timeline on mount
   useEffect(() => {
@@ -1029,5 +1038,17 @@ export default function GraphPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function GraphPage() {
+  return (
+    <Suspense fallback={
+      <div className="mx-auto max-w-6xl px-5 py-20 text-center text-foreground-secondary font-sans">
+        Loading knowledge graph...
+      </div>
+    }>
+      <GraphPageContent />
+    </Suspense>
   );
 }
