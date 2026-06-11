@@ -234,7 +234,7 @@ function GraphView({
         className="w-full h-[450px] sm:h-[580px]"
         style={{
           transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
-          transformOrigin: "center",
+          transformOrigin: "0 0",
           transition: "transform 300ms ease",
         }}
       >
@@ -481,7 +481,7 @@ function GraphView({
                 x={pos.x}
                 y={pos.y + (isNodeHovered || isFocused ? 24 : 20)}
                 textAnchor="middle"
-                className={`text-[9px] font-sans ${completed ? "font-bold fill-primary-dark" : "fill-foreground-secondary"} ${isNodeHovered && "fill-foreground font-bold"}`}
+                className={`text-[9px] font-sans ${completed ? "font-bold fill-white" : isNodeHovered ? "fill-foreground font-bold" : "fill-foreground-secondary"}`}
                 style={{ pointerEvents: "none" }}
               >
                 {concept.title.length > 16
@@ -885,127 +885,146 @@ export default function GraphPage() {
 
           {/* Side panel for Graph selection detail */}
           <div className="lg:col-span-1">
-            {selectedConcept ? (
-              <Reveal>
-                <div className="rounded-[24px] border border-border bg-surface-card p-6 shadow-card sticky top-24 space-y-4">
-                  <div>
-                    <p className="text-xs font-bold tracking-[0.15em] text-foreground-secondary uppercase font-heading mb-1">
-                      Selected
-                    </p>
-                    <h2 className="text-xl font-medium font-heading text-foreground">
-                      {selectedConcept.title}
-                    </h2>
-                    <p className="mt-2 text-sm leading-relaxed text-foreground-secondary font-sans">
-                      {selectedConcept.summary}
-                    </p>
-                  </div>
-
-                  {/* Dynamic Prerequisite Warning Banner inside Side Panel */}
-                  <PrerequisiteWarningBanner
-                    slug={selectedConcept.slug}
-                    prerequisites={selectedConcept.prerequisites}
-                  />
-
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold font-heading ${
-                        selectedConcept.difficulty === "beginner"
-                          ? "bg-success-light text-success-dark"
-                          : selectedConcept.difficulty === "intermediate"
-                          ? "bg-warning-light text-warning-dark"
-                          : "bg-destructive-light text-destructive-dark"
-                      }`}
-                    >
-                      {selectedConcept.difficulty.charAt(0).toUpperCase() +
-                        selectedConcept.difficulty.slice(1)}
-                    </span>
-                    <span className="text-xs text-foreground-secondary font-sans">
-                      {selectedConcept.domain}
-                    </span>
-                    <span className="h-1 w-1 rounded-full bg-foreground-muted" />
-                    <span className="text-xs text-foreground-secondary font-sans">
-                      {selectedConcept.estimatedMinutes}m
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-2 pt-1 border-t border-border/40">
-                    {selectedConcept.prerequisites.length > 0 && (
-                      <p className="text-xs text-foreground-secondary font-sans">
-                        <span className="font-medium">Requires:</span>{" "}
-                        {selectedConcept.prerequisites
-                          .map(
-                            (p) =>
-                              concepts.find((cc) => cc.slug === p)?.title ?? p
-                          )
-                          .join(", ")}
+            <div className="sticky top-24 space-y-6">
+              {selectedConcept ? (
+                <Reveal>
+                  <div className="rounded-[24px] border border-border bg-surface-card p-6 shadow-card space-y-4">
+                    <div>
+                      <p className="text-xs font-bold tracking-[0.15em] text-foreground-secondary uppercase font-heading mb-1">
+                        Selected
                       </p>
-                    )}
-                    {selectedConcept.related.length > 0 && (
-                      <p className="text-xs text-foreground-secondary font-sans">
-                        <span className="font-medium">Related:</span>{" "}
-                        {selectedConcept.related
-                          .map(
-                            (p) =>
-                              concepts.find((cc) => cc.slug === p)?.title ?? p
-                          )
-                          .join(", ")}
+                      <h2 className="text-xl font-medium font-heading text-foreground">
+                        {selectedConcept.title}
+                      </h2>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground-secondary font-sans">
+                        {selectedConcept.summary}
                       </p>
-                    )}
+                    </div>
+
+                    {/* Dynamic Prerequisite Warning Banner inside Side Panel */}
+                    <PrerequisiteWarningBanner
+                      slug={selectedConcept.slug}
+                      prerequisites={selectedConcept.prerequisites}
+                    />
+
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold font-heading ${
+                          selectedConcept.difficulty === "beginner"
+                            ? "bg-success-light text-success-dark"
+                            : selectedConcept.difficulty === "intermediate"
+                            ? "bg-warning-light text-warning-dark"
+                            : "bg-destructive-light text-destructive-dark"
+                        }`}
+                      >
+                        {selectedConcept.difficulty.charAt(0).toUpperCase() +
+                          selectedConcept.difficulty.slice(1)}
+                      </span>
+                      <span className="text-xs text-foreground-secondary font-sans">
+                        {selectedConcept.domain}
+                      </span>
+                      <span className="h-1 w-1 rounded-full bg-foreground-muted" />
+                      <span className="text-xs text-foreground-secondary font-sans">
+                        {selectedConcept.estimatedMinutes}m
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-2 pt-1 border-t border-border/40">
+                      {selectedConcept.prerequisites.length > 0 && (
+                        <p className="text-xs text-foreground-secondary font-sans">
+                          <span className="font-medium">Requires:</span>{" "}
+                          {selectedConcept.prerequisites
+                            .map(
+                              (p) =>
+                                concepts.find((cc) => cc.slug === p)?.title ?? p
+                            )
+                            .join(", ")}
+                        </p>
+                      )}
+                      {selectedConcept.related.length > 0 && (
+                        <p className="text-xs text-foreground-secondary font-sans">
+                          <span className="font-medium">Related:</span>{" "}
+                          {selectedConcept.related
+                            .map(
+                              (p) =>
+                                concepts.find((cc) => cc.slug === p)?.title ?? p
+                            )
+                            .join(", ")}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex gap-3 pt-3 border-t border-border/40">
+                      <Link
+                        href={`/concepts/${selectedConcept.slug}`}
+                        className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-bold font-heading text-primary-dark shadow-button hover:bg-primary/90 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 cursor-pointer"
+                      >
+                        Open concept →
+                      </Link>
+                      <button
+                        onClick={() => setSelectedSlug(null)}
+                        className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface-card px-4 text-sm font-heading text-foreground-secondary hover:text-foreground hover:bg-surface-hover transition-all duration-200 cursor-pointer"
+                      >
+                        Deselect
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-3 pt-3 border-t border-border/40">
-                    <Link
-                      href={`/concepts/${selectedConcept.slug}`}
-                      className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-bold font-heading text-primary-dark shadow-button hover:bg-primary/90 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 cursor-pointer"
-                    >
-                      Open concept →
-                    </Link>
-                    <button
-                      onClick={() => setSelectedSlug(null)}
-                      className="inline-flex h-10 items-center justify-center rounded-xl border border-border bg-surface-card px-4 text-sm font-heading text-foreground-secondary hover:text-foreground hover:bg-surface-hover transition-all duration-200 cursor-pointer"
-                    >
-                      Deselect
-                    </button>
-                  </div>
+                </Reveal>
+              ) : (
+                <div className="rounded-[24px] border border-border bg-surface-card p-6 shadow-card">
+                  <p className="text-sm text-foreground-secondary font-sans">
+                    Click a node in the graph view to see its details here.
+                  </p>
                 </div>
-              </Reveal>
-            ) : (
+              )}
+
+              {/* Dynamic Persistent Legend Card */}
               <div className="rounded-[24px] border border-border bg-surface-card p-6 shadow-card">
-                <p className="text-sm text-foreground-secondary font-sans">
-                  Click a node in the graph view to see its details here.
-                </p>
-                <div className="mt-4 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-6 border-t border-[#C0392B]/30" />
-                    <span className="text-xs text-foreground-muted font-sans">
-                      Prerequisite
+                <h3 className="text-xs font-bold tracking-[0.15em] text-foreground-secondary uppercase font-heading mb-4">
+                  Graph Legend
+                </h3>
+                <div className="space-y-3.5">
+                  <div className="flex items-center gap-3">
+                    <span className="h-0.5 w-6 bg-[#C0392B]/60 rounded" />
+                    <span className="text-xs text-foreground-secondary font-sans font-medium">
+                      Prerequisite connection (solid)
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="h-3 w-6 border-t border-dashed border-[#C0392B]/20" />
-                    <span className="text-xs text-foreground-muted font-sans">
-                      Related
+                  <div className="flex items-center gap-3">
+                    <span className="h-0.5 w-6 border-t border-dashed border-[#C0392B]/40" />
+                    <span className="text-xs text-foreground-secondary font-sans font-medium">
+                      Related connection (dashed)
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-success-dark" />
-                    <span className="text-xs text-foreground-muted font-sans">
-                      Beginner
+                  <div className="flex items-center gap-3">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#00b894] ring-2 ring-[#00b894]/20" />
+                    <span className="text-xs text-foreground-secondary font-sans font-medium">
+                      Beginner Concept
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-warning-dark" />
-                    <span className="text-xs text-foreground-muted font-sans">
-                      Intermediate
+                  <div className="flex items-center gap-3">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#e17055] ring-2 ring-[#e17055]/20" />
+                    <span className="text-xs text-foreground-secondary font-sans font-medium">
+                      Intermediate Concept
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-destructive-dark" />
-                    <span className="text-xs text-foreground-muted font-sans">
-                      Advanced
+                  <div className="flex items-center gap-3">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#d63031] ring-2 ring-[#d63031]/20" />
+                    <span className="text-xs text-foreground-secondary font-sans font-medium">
+                      Advanced Concept
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="h-4 w-4 rounded-full bg-[#C0392B] flex items-center justify-center shadow-sm">
+                      <svg className="h-2.5 w-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      </svg>
+                    </div>
+                    <span className="text-xs text-foreground-secondary font-sans font-medium">
+                      Mastered / Completed Concept
                     </span>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       )}
