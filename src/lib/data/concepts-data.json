@@ -229,6 +229,108 @@
     "videoEmbed": null
   },
   {
+    "slug": "file-descriptors",
+    "chapterId": "foundations",
+    "level": "topic",
+    "title": "Filesystems & File Descriptors",
+    "summary": "How operating systems abstract files, network connections, and pipes as stream numbers called File Descriptors.",
+    "difficulty": "beginner",
+    "domain": "Foundations",
+    "estimatedMinutes": 9,
+    "prerequisites": [
+      "processes-threads"
+    ],
+    "related": [
+      "http"
+    ],
+    "sections": [
+      {
+        "id": "the-concept",
+        "title": "The Concept",
+        "content": "In UNIX-like operating systems (including Linux and macOS), almost all input/output streams are abstracted as files. Whether you are reading a database file, writing to standard output, listening on a TCP network socket, or pipe-streaming data between processes, you communicate with the OS using **File Descriptors (FDs)**.\n\nA File Descriptor is simply a non-negative integer (like `3`, `4`, or `101`) assigned by the OS representing an entry in the process's open-file table.\n\n---"
+      },
+      {
+        "id": "practical-analogy",
+        "title": "Practical Analogy",
+        "content": "Think of File Descriptors as the **Post Office Box Key**:\n\n* When your program opens a file or creates a TCP socket, it requests access from the OS.\n* The OS doesn't hand the process the physical file or socket cables. Instead, it places the open connection inside **PO Box 3** and hands your process the key labeled **`3`**.\n* Whenever your program wants to send or write data, it goes to the OS post office, shows the key `3`, and says \"put this mail inside box 3\". Your process doesn't need to know where the physical box or target file sits on the hard drive; the post office (OS) handles the routing.\n\n---"
+      },
+      {
+        "id": "why-it-matters-in-backend-systems",
+        "title": "Why it matters in Backend Systems",
+        "content": "1. **Connection Limits (\"Too many open files\")**: Sockets are file descriptors. If your server is handling 10,000 concurrent websocket connections, it is using 10,000 file descriptors. If your operating system process has a soft limit of `1024` descriptors (the default on many systems), your application will crash with `EMFILE: Too many open files` errors.\n2. **Standard I/O Streams**: Every process starts with three default file descriptors:\n   * **`0`**: Standard Input (`stdin`)\n   * **`1`**: Standard Output (`stdout`)\n   * **`2`**: Standard Error (`stderr`)\n3. **Fault Isolation**: File descriptors are scoped to individual processes. Process A cannot hijack or write to Process B's file descriptors without authorization."
+      }
+    ],
+    "codeExamples": [
+      {
+        "language": "Go",
+        "title": "Raw file descriptor access in Go",
+        "code": "package main\nimport (\n    \"fmt\"\n    \"os\"\n)\n\nfunc main() {\n    file, err := os.Open(\"example.txt\")\n    if err != nil {\n        return\n    }\n    defer file.Close()\n\n    // Obtain raw file descriptor index from operating system\n    fd := file.Fd()\n    fmt.Printf(\"File descriptor index: %d\\n\", fd)\n}\n"
+      },
+      {
+        "language": "Python",
+        "title": "Manipulating file descriptors in Python",
+        "code": "import os\n\n# Open file and get descriptor\nfd = os.open(\"test.txt\", os.O_WRONLY | os.O_CREAT)\nprint(f\"File descriptor: {fd}\")\n\n# Write using raw descriptor index\nos.write(fd, b\"Writing directly to FD\\n\")\nos.close(fd)\n"
+      }
+    ],
+    "seoTitle": "Filesystems and File Descriptors (FD) Explained simply",
+    "seoDescription": "Learn how Linux/UNIX treats everything as a file using File Descriptors, limits on socket descriptors, and practical analogies.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/file-descriptors",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
+    "slug": "grpc",
+    "chapterId": "api-design",
+    "level": "topic",
+    "title": "gRPC (Remote Procedure Call)",
+    "summary": "A high-performance microservice communication framework using Protocol Buffers and persistent HTTP/2 streams.",
+    "difficulty": "intermediate",
+    "domain": "API Design",
+    "estimatedMinutes": 11,
+    "prerequisites": [
+      "http"
+    ],
+    "related": [
+      "idempotency"
+    ],
+    "sections": [
+      {
+        "id": "the-concept",
+        "title": "The Concept",
+        "content": "In web development, we are used to building REST APIs where servers exchange JSON text strings over separate HTTP requests. While JSON is human-readable, it is slow to serialize, takes up significant bandwidth, and lacks compile-time type verification.\n\n**gRPC** is an alternative communication framework built specifically for internal microservices:\n1. **Interface Definition Language (IDL)**: You write a simple schema contract file (`.proto`) defining the database methods, request parameters, and return types.\n2. **Code Generation**: A compiler (`protoc`) compiles that schema file into helper classes (stubs) in Go, Python, TypeScript, etc.\n3. **HTTP/2 Transport**: Data is serialized into a highly optimized binary format (Protocol Buffers) and streamed bidirectionally over a persistent HTTP/2 connection.\n\n---"
+      },
+      {
+        "id": "practical-analogy",
+        "title": "Practical Analogy",
+        "content": "Think of gRPC as **Calling a Local Team Member**:\n\n* In standard REST APIs, if service A wants information from service B, it must convert data to a JSON string, write HTTP headers, route the payload, and parse the JSON string on the other side. This is like writing a formal, formatted letter and sending it through the mail post.\n* **gRPC** abstracts the network. Calling an API on a remote server looks and behaves exactly like calling a local function inside your own code: `userService.getUser(id)`. \n* Under the hood, gRPC serializes data into tiny binary packages and streams them down a persistent pipeline (HTTP/2). It is like speaking directly to your colleague sitting at the desk next to you.\n\n---"
+      },
+      {
+        "id": "why-it-matters-in-backend-systems",
+        "title": "Why it matters in Backend Systems",
+        "content": "1. **Performance & Serialization Speed**: Protocol Buffers serialize and parse up to 6x faster than JSON and occupy a fraction of the bandwidth, reducing CPU usage and network overhead in microservice grids.\n2. **Strict Type Contracts**: Since code stubs are generated from a shared `.proto` schema file, compile-time errors will trigger immediately if service A changes a payload parameter without informing service B.\n3. **Streaming Support**: gRPC natively supports streaming APIs (client-side streaming, server-side streaming, and full bidirectional streams) making it perfect for real-time dashboards, metrics, and chat pipelines."
+      }
+    ],
+    "codeExamples": [
+      {
+        "language": "Go",
+        "title": "Simple gRPC Server stub in Go",
+        "code": "package main\n\nimport (\n    \"context\"\n    \"net\"\n    \"google.golang.org/grpc\"\n)\n\ntype Server struct {\n    UnimplementedUserServer\n}\n\nfunc (s *Server) GetUser(ctx context.Context, req *UserRequest) (*UserResponse, error) {\n    return &UserResponse{Id: req.Id, Name: \"Alice\"}, nil\n}\n\nfunc main() {\n    lis, _ := net.Listen(\"tcp\", \":50051\")\n    s := grpc.NewServer()\n    RegisterUserServer(s, &Server{})\n    s.Serve(lis)\n}\n"
+      },
+      {
+        "language": "TypeScript",
+        "title": "Proto client definition in TypeScript",
+        "code": "// Simple Protocol Buffer schema representation\nconst protoSchema = `\n  syntax = \"proto3\";\n\n  message UserRequest {\n    string id = 1;\n  }\n\n  message UserResponse {\n    string id = 1;\n    string name = 2;\n  }\n\n  service UserService {\n    rpc GetUser (UserRequest) returns (UserResponse);\n  }\n`;\nconsole.log(\"Protobuf interface compiled for TypeScript client stub\");\n"
+      }
+    ],
+    "seoTitle": "gRPC and Protocol Buffers Explained Simply",
+    "seoDescription": "Learn how gRPC abstracts network communications, utilizing Protocol Buffers and HTTP/2 stream multiplexing for microservices.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/grpc",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
     "slug": "hash-functions",
     "chapterId": "foundations",
     "level": "topic",
@@ -487,6 +589,57 @@
     "videoEmbed": null
   },
   {
+    "slug": "lsm-trees",
+    "chapterId": "databases",
+    "level": "topic",
+    "title": "LSM-Trees (Log-Structured Merge-Trees)",
+    "summary": "A write-optimized storage engine architecture that handles heavy write traffic by buffering updates in memory and writing them sequentially to disk.",
+    "difficulty": "advanced",
+    "domain": "Databases",
+    "estimatedMinutes": 12,
+    "prerequisites": [
+      "virtual-memory"
+    ],
+    "related": [
+      "indexes"
+    ],
+    "sections": [
+      {
+        "id": "the-concept",
+        "title": "The Concept",
+        "content": "Traditional databases (like PostgreSQL) store data in **B-Trees**. B-Trees require modifying database files in place, resulting in random disk writes. While B-Trees enable fast read lookups, random writes are a bottleneck under heavy write traffic.\n\nA **Log-Structured Merge-Tree (LSM-Tree)** is a storage engine structure designed to prioritize write speed:\n1. All incoming writes (`PUT`/`DELETE`) are written sequentially to a Write-Ahead Log (WAL) for durability and stored in a memory-buffered sorted tree called a **Memtable**.\n2. Once the Memtable is full, it is flushed to disk as a sorted, immutable **SSTable (Sorted String Table)**.\n3. Because SSTables are immutable, background processes periodically clean, merge, and discard obsolete keys in a cycle called **Compaction**.\n\n---"
+      },
+      {
+        "id": "practical-analogy",
+        "title": "Practical Analogy",
+        "content": "Think of LSM-Trees as the **Library Notepad System**:\n\n* If a library receives 100 new book returns a minute, finding the exact shelf location for every book and filing them one-by-one is slow and exhausting (random writes).\n* Instead, the librarian writes every book receipt sequentially in a pocket **Notepad (Memtable)**. Writing in the notepad is immediate.\n* Once the notepad is full, they slide it onto a desk shelf as an **immutable notebook (SSTable)**.\n* When a reader wants to search for a book, the librarian searches the pocket notepad first, then scans the immutable notebooks on the shelf.\n* At the end of the day, when the shelves get crowded, the librarian merges the notebooks, removes duplicate check-ins, and cleans up the library files (**Compaction**).\n\n---"
+      },
+      {
+        "id": "why-it-matters-in-backend-systems",
+        "title": "Why it matters in Backend Systems",
+        "content": "1. **High-Write Databases**: Databases built for high-ingestion loads (like Cassandra, RocksDB, InfluxDB, and ScyllaDB) utilize LSM-Trees to sustain millions of writes per second.\n2. **Reduced Disk Write Amplification**: LSM-Trees write data sequentially, which is significantly faster on SSDs and preserves drive lifespan by avoiding repetitive random sector updates.\n3. **Read Penalties (Read Amplification)**: The tradeoff for fast writes is slower reads. To fetch a record, the engine must look in the Memtable and multiple SSTables. Databases use **Bloom Filters** to quickly determine if a key does *not* exist in an SSTable, optimizing lookup path speeds."
+      }
+    ],
+    "codeExamples": [
+      {
+        "language": "Go",
+        "title": "Simple Memtable simulation in Go",
+        "code": "package main\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\ntype Memtable struct {\n    mu   sync.Mutex\n    data map[string]string\n}\n\nfunc (m *Memtable) Put(key, value string) {\n    m.mu.Lock()\n    defer m.mu.Unlock()\n    m.data[key] = value // Buffer writes in memory first\n}\n\nfunc main() {\n    mem := &Memtable{data: make(map[string]string)}\n    mem.Put(\"user_102\", \"active\")\n    fmt.Println(\"Write buffered in Memtable memory\")\n}\n"
+      },
+      {
+        "language": "Python",
+        "title": "SSTable structured write simulation in Python",
+        "code": "import time\n\n# Simulating flushing memory buffer to disk as sorted string table (SSTable)\nmemtable_buffer = {\"user_b\": \"active\", \"user_a\": \"suspended\"}\n\n# Sort by key before writing sequentially\nsorted_keys = sorted(memtable_buffer.keys())\nwith open(\"sstable_flush.db\", \"a\") as f:\n    for k in sorted_keys:\n        f.write(f\"{k}:{memtable_buffer[k]}\\n\")\nprint(\"SSTable flushed sequentially to disk\")\n"
+      }
+    ],
+    "seoTitle": "LSM-Trees: Write-Optimized Storage Engines Explained Simply",
+    "seoDescription": "Learn how Log-Structured Merge-Trees (LSM-Trees) structure writes in Memtables and SSTables, with background compaction cycles.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/lsm-trees",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
     "slug": "message-queues",
     "chapterId": "reliability",
     "level": "topic",
@@ -544,6 +697,157 @@
     "seoTitle": "Message Queues: Decoupling Services with Async Messaging",
     "seoDescription": "Understand message queues — how producers and consumers decouple services, handle failures, and build resilient asynchronous systems with RabbitMQ, SQS, and BullMQ.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/message-queues",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
+    "slug": "processes-threads",
+    "chapterId": "foundations",
+    "level": "topic",
+    "title": "Processes vs. Threads",
+    "summary": "How operating systems isolate memory and execute tasks concurrently using processes and threads.",
+    "difficulty": "beginner",
+    "domain": "Foundations",
+    "estimatedMinutes": 10,
+    "prerequisites": [],
+    "related": [
+      "virtual-memory"
+    ],
+    "sections": [
+      {
+        "id": "the-concept",
+        "title": "The Concept",
+        "content": "Operating systems schedule and execute your code using two fundamental units of concurrency:\n\n* **Process**: A container representing a running instance of a program. It is completely isolated from other processes, possessing its own virtual memory space, file descriptor tables, and security context.\n* **Thread**: A sequence of execution steps scheduled by the operating system kernel *inside* a process. A single process can spawn thousands of threads.\n\n---"
+      },
+      {
+        "id": "practical-analogy",
+        "title": "Practical Analogy",
+        "content": "Think of your system as a large business district:\n\n* A **Process** is a **Factory Building**. It has its own private address space (the factory floor), private storage rooms, and utility connections. Because they are completely separate, if one factory catches fire (crashes), the adjacent factories continue operating without issues.\n* A **Thread** is a **Worker** inside that factory. All workers share the same factory floor, tools, raw materials, and files. They can coordinate instantly because they don't have to walk out of the building. However, if a worker makes a catastrophic error (like throwing a Null Pointer), it can ruin the entire factory (crash the process).\n\n---"
+      },
+      {
+        "id": "why-it-matters-in-backend-systems",
+        "title": "Why it matters in Backend Systems",
+        "content": "1. **Isolation & Security**: Web servers run user requests inside threads or isolated processes. For instance, PHP-FPM spawns separate processes for requests to isolate faults. Node.js and Go use concurrent threads/coroutines.\n2. **Context Switching**: The CPU switches between running tasks. Switching between processes is slow because it requires changing page tables (address spaces). Switching between threads in the same process is much faster because they share memory.\n3. **Data Sharing**: Threads share global memory, which makes concurrency fast but introduces race conditions. We must use locks, mutexes, or channels to coordinate thread access."
+      }
+    ],
+    "codeExamples": [
+      {
+        "language": "Go",
+        "title": "Goroutines as lightweight threads",
+        "code": "package main\nimport (\n    \"fmt\"\n    \"sync\"\n)\n\nfunc worker(id int, wg *sync.WaitGroup) {\n    defer wg.Done()\n    fmt.Printf(\"Worker %d starting\\n\", id)\n}\n\nfunc main() {\n    var wg sync.WaitGroup\n    for i := 1; i <= 3; i++ {\n        wg.Add(1)\n        go worker(i, &wg) // concurrency in threads/goroutines\n    }\n    wg.Wait()\n}\n"
+      },
+      {
+        "language": "TypeScript",
+        "title": "Spawning workers in Node.js",
+        "code": "import { Worker, isMainThread, workerData } from 'worker_threads';\n\nif (isMainThread) {\n  // Spawn a separate thread sharing the engine context\n  const worker = new Worker(__filename, { workerData: 'Hello Thread!' });\n  worker.on('message', (msg) => console.log(`Received: ${msg}`));\n} else {\n  console.log(`Thread received: ${workerData}`);\n}\n"
+      }
+    ],
+    "seoTitle": "Processes vs Threads: Concurrent Execution for Backend Engineers",
+    "seoDescription": "Learn the difference between operating system processes and threads, their memory models, context switching, and real-world analogies.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/processes-threads",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
+    "slug": "vector-clocks",
+    "chapterId": "reliability",
+    "level": "topic",
+    "title": "Vector Clocks",
+    "summary": "Determining event ordering and resolving data conflicts in distributed systems without relying on physical clocks.",
+    "difficulty": "advanced",
+    "domain": "Reliability",
+    "estimatedMinutes": 12,
+    "prerequisites": [
+      "processes-threads"
+    ],
+    "related": [
+      "message-queues"
+    ],
+    "sections": [
+      {
+        "id": "the-concept",
+        "title": "The Concept",
+        "content": "In a centralized system, ordering events is easy: look at the database clock. However, in a distributed database cluster where data is replicated across multiple servers around the world, physical clocks cannot be trusted. Clock drift means one server's clock is always slightly ahead or behind another, making it impossible to determine which write happened first.\n\n**Vector Clocks** are logical clocks used to track causal relationships and determine event ordering:\n1. Every node in the system keeps an array of counters (clocks) representing all known nodes.\n2. When a node performs a local operation, it increments its own counter in its vector array.\n3. When a node sends a message, it attaches its vector clock array.\n4. The receiving node merges the incoming array with its local clock by taking the maximum value of each counter, establishing a causal \"happened-before\" timeline.\n\n---"
+      },
+      {
+        "id": "practical-analogy",
+        "title": "Practical Analogy",
+        "content": "Think of Vector Clocks as the **WhatsApp Group Chat Scrollback**:\n\n* You cannot rely on the physical clocks on your friends' phones because their settings might be off. If your friend's phone is set 1 hour behind, their message shouldn't magically appear at the top of the chat scrollback history.\n* Instead, messages are ordered by **replies (causality)**. You know *Message B* happened after *Message A* because *Message B* is explicitly written as a reply to *Message A*.\n* Each participant keeps a mental tally of \"how many messages I've seen from each friend\". This tally is your **Vector Clock**. When you receive a reply, you update your tally. If you receive a reply referencing a message number you haven't seen yet, your phone knows it has missed something.\n\n---"
+      },
+      {
+        "id": "why-it-matters-in-backend-systems",
+        "title": "Why it matters in Backend Systems",
+        "content": "1. **Conflict Resolution**: Databases like DynamoDB and Riak use vector clocks to detect concurrent writes. If two clients edit the same record on different servers concurrently, the database can use vector clocks to flag the conflict and let the application resolve it (e.g. merge cart items).\n2. **Causal Consistency**: Vector clocks prevent bizarre user scenarios (such as seeing a reply to a forum post *before* the original post is displayed) by ensuring events are loaded in the order they were causally created.\n3. **No NTP Server Dependency**: By relying on event counters rather than physical seconds, systems remain highly reliable even if Network Time Protocol (NTP) servers drift or experience network latency."
+      }
+    ],
+    "codeExamples": [
+      {
+        "language": "Go",
+        "title": "Vector clock representation in Go",
+        "code": "package main\nimport \"fmt\"\n\ntype VectorClock map[string]uint64\n\nfunc (vc VectorClock) Increment(nodeId string) {\n    vc[nodeId]++\n}\n\nfunc main() {\n    vc := make(VectorClock)\n    vc.Increment(\"node_A\")\n    vc.Increment(\"node_A\")\n    vc.Increment(\"node_B\")\n\n    fmt.Printf(\"Vector clock state: %v\\n\", vc)\n}\n"
+      },
+      {
+        "language": "Python",
+        "title": "Causal event comparison in Python",
+        "code": "# Simulating two clock states to detect concurrent edits/conflicts\nclock_a = {\"node_1\": 2, \"node_2\": 1}\nclock_b = {\"node_1\": 1, \"node_2\": 2}\n\n# If neither clock is strictly greater than the other, we have a conflict\ndef is_conflict(vc1, vc2):\n    # simple comparison helper\n    return not (all(vc1[k] <= vc2[k] for k in vc1) or all(vc2[k] <= vc1[k] for k in vc2))\n\nprint(f\"Is there a database conflict? {is_conflict(clock_a, clock_b)}\") # True\n"
+      }
+    ],
+    "seoTitle": "Vector Clocks Explained Simply for Backend Engineers",
+    "seoDescription": "Learn how Vector Clocks establish causal consistency and resolve conflicts in distributed database clusters.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/vector-clocks",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
+    "slug": "virtual-memory",
+    "chapterId": "foundations",
+    "level": "topic",
+    "title": "Virtual Memory",
+    "summary": "How page tables and address translations provide memory isolation and security between running applications.",
+    "difficulty": "intermediate",
+    "domain": "Foundations",
+    "estimatedMinutes": 11,
+    "prerequisites": [
+      "processes-threads"
+    ],
+    "related": [
+      "indexes"
+    ],
+    "sections": [
+      {
+        "id": "the-concept",
+        "title": "The Concept",
+        "content": "Every process on your computer runs under the illusion that it has exclusive access to a contiguous, massive block of memory (e.g., 0 to $2^{64}$ bytes). This is called **Virtual Memory**. \n\nProcesses cannot read or write to physical RAM directly. Instead, they interact with virtual addresses. Under the hood, hardware in the CPU (the Memory Management Unit, or MMU) maps these virtual addresses to actual physical slots in physical RAM using a translation database called a **Page Table**.\n\n---"
+      },
+      {
+        "id": "practical-analogy",
+        "title": "Practical Analogy",
+        "content": "Think of Virtual Memory as the **Hotel Front Desk Room Assignment**:\n\n* Each guest checking into the hotel (a process) is given a room key and told their room number is between `1` and `100,000`. To the guest, it feels like they have the entire hotel layout to themselves.\n* In reality, the hotel front desk (the Memory Management Unit / Page Table) maps the guest's virtual room number to a physical room somewhere in the building. \n* Virtual rooms `101` and `102` might map to physical room `504` in Building A and physical room `912` in Building B. The guest doesn't know and doesn't care. If guest A tries to peek into guest B's room, the front desk catches it and throws an alarm (**Segmentation Fault**).\n\n---"
+      },
+      {
+        "id": "why-it-matters-in-backend-systems",
+        "title": "Why it matters in Backend Systems",
+        "content": "1. **Isolation & Fault Safety**: Because virtual memory address spaces are separate, a bug in process A (like writing past array bounds) can never corrupt or overwrite memory inside process B (like database buffers).\n2. **Efficient RAM Sharing (Overcommit)**: The OS doesn't allocate physical RAM until the program actually writes data. This allows servers to spin up many processes that declare high virtual memory footprint but occupy very little actual physical RAM.\n3. **Memory Mapped Files (`mmap`)**: High-performance storage engines (like database index files) map file descriptors directly to virtual memory addresses. Writing data to memory translates directly to disk writes behind the scenes, bypassing expensive read/write system calls."
+      }
+    ],
+    "codeExamples": [
+      {
+        "language": "Go",
+        "title": "Virtual address comparison in Go",
+        "code": "package main\nimport \"fmt\"\n\nfunc main() {\n    x := 42\n    // This outputs the virtual memory address of 'x' inside the process\n    fmt.Printf(\"Virtual memory address of x: %p\\n\", &x)\n}\n"
+      },
+      {
+        "language": "TypeScript",
+        "title": "Allocating array memory in Node.js",
+        "code": "// Node.js allocates a contiguous block of virtual memory\nconst buffer = Buffer.alloc(1024 * 1024); // 1MB virtual buffer\nconsole.log(`Buffer allocated in virtual memory space`);\n"
+      }
+    ],
+    "seoTitle": "Virtual Memory Explained Simply for Backend Developers",
+    "seoDescription": "Learn how the Memory Management Unit (MMU) maps virtual address spaces to physical RAM, page tables, and memory protection.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/virtual-memory",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
