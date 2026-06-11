@@ -8,75 +8,68 @@ export interface GraphEdge {
   reason: string;
 }
 
-// Statically define semantic relationship reasons to tell the story of the connections
-export const graphEdges: GraphEdge[] = [
-  {
-    from: "http",
-    to: "idempotency",
-    type: "requires",
-    reason: "Because HTTP networks are unreliable and client retries are common, POST endpoints must be idempotent to prevent duplicate processing (e.g. double billing)."
-  },
-  {
-    from: "http",
-    to: "indexes",
-    type: "requires",
-    reason: "HTTP requests targeting REST/GraphQL read endpoints inevitably query database tables. Indexes are required to prevent full table scans on every client request."
-  },
-  {
-    from: "http",
-    to: "message-queues",
-    type: "requires",
-    reason: "To keep HTTP response times low (under 100ms), long-running write requests must be decoupled. HTTP handlers immediately queue tasks and return a 202 Accepted response."
-  },
-  {
-    from: "http",
-    to: "caching-strategies",
-    type: "requires",
-    reason: "HTTP caching headers (ETag, Cache-Control) coordinate directly with client-side, CDN, and server-side cache-aside layers to eliminate redundant hits."
-  },
-  {
-    from: "idempotency",
-    to: "circuit-breakers",
-    type: "requires",
-    reason: "Circuit breakers prevent cascading failures by tripping on timeouts. In distributed systems, retrying tripped requests safely requires idempotency keys."
-  },
-  {
-    from: "idempotency",
-    to: "message-queues",
-    type: "related",
-    reason: "Message queues guarantee at-least-once delivery, meaning consumers will occasionally receive duplicate messages. Consumers must be idempotent to process them safely."
-  },
-  {
-    from: "indexes",
-    to: "caching-strategies",
-    type: "related",
-    reason: "Both indexes and cache-aside storage trade memory footprint for query speed. A cache miss typically results in an indexed database lookup."
-  },
-  {
-    from: "circuit-breakers",
-    to: "message-queues",
-    type: "related",
-    reason: "When a downstream service is down and the circuit breaker trips, background message queues store messages to be re-processed once the circuit closes."
-  },
-  {
-    from: "bits",
-    to: "hash-functions",
-    type: "requires",
-    reason: "Hash functions use bitwise operations (left/right bit shifts, XOR, bit masking) to scramble and compress variable-length input keys into a uniform distribution."
-  },
-  {
-    from: "hash-functions",
-    to: "bloom-filters",
-    type: "requires",
-    reason: "Bloom filters run a key through multiple independent hash functions to determine which bit offsets to toggle in their internal array."
-  },
-  {
-    from: "bloom-filters",
-    to: "caching-strategies",
-    type: "requires",
-    reason: "Bloom filters serve as high-performance 'cache shields'. By verifying that an item is 'definitely not' in the set, they immediately stop cache penetration attacks."
-  }
-];
+// Custom detailed reasons for connections to tell the story of the transitions
+const customReasons: Record<string, string> = {
+  "http->idempotency": "Because HTTP networks are unreliable and client retries are common, POST endpoints must be idempotent to prevent duplicate processing (e.g. double billing).",
+  "http->indexes": "HTTP requests targeting REST/GraphQL read endpoints inevitably query database tables. Indexes are required to prevent full table scans on every client request.",
+  "http->message-queues": "To keep HTTP response times low (under 100ms), long-running write requests must be decoupled. HTTP handlers immediately queue tasks and return a 202 Accepted response.",
+  "http->caching-strategies": "HTTP caching headers (ETag, Cache-Control) coordinate directly with client-side, CDN, and server-side cache-aside layers to eliminate redundant hits.",
+  "idempotency->circuit-breakers": "Circuit breakers prevent cascading failures by tripping on timeouts. In distributed systems, retrying tripped requests safely requires idempotency keys.",
+  "idempotency->message-queues": "Message queues guarantee at-least-once delivery, meaning consumers will occasionally receive duplicate messages. Consumers must be idempotent to process them safely.",
+  "indexes->caching-strategies": "Both indexes and cache-aside storage trade memory footprint for query speed. A cache miss typically results in an indexed database lookup.",
+  "circuit-breakers->message-queues": "When a downstream service is down and the circuit breaker trips, background message queues store messages to be re-processed once the circuit closes.",
+  "bits->hash-functions": "Hash functions use bitwise operations (left/right bit shifts, XOR, bit masking) to scramble and compress variable-length input keys into a uniform distribution.",
+  "hash-functions->bloom-filters": "Bloom filters run a key through multiple independent hash functions to determine which bit offsets to toggle in their internal array.",
+  "bloom-filters->caching-strategies": "Bloom filters serve as high-performance 'cache shields'. By verifying that an item is 'definitely not' in the set, they immediately stop cache penetration attacks."
+};
+
+export const graphEdges: GraphEdge[] = (() => {
+  const list: GraphEdge[] = [];
+  const requiresPairs = new Set<string>();
+
+  // 1. Gather all prerequisite requires edges
+  concepts.forEach((concept) => {
+    concept.prerequisites.forEach((prereq) => {
+      const key = `${prereq}->${concept.slug}`;
+      const fromConcept = concepts.find((c) => c.slug === prereq);
+      const reason = customReasons[key] || `Because ${fromConcept?.title || prereq} is a prerequisite to understanding ${concept.title}.`;
+      list.push({
+        from: prereq,
+        to: concept.slug,
+        type: "requires",
+        reason
+      });
+      requiresPairs.add(key);
+      requiresPairs.add(`${concept.slug}->${prereq}`);
+    });
+  });
+
+  // 2. Gather all related edges (if not already covered by a requires edge)
+  const seenRelatedPairs = new Set<string>();
+  concepts.forEach((concept) => {
+    concept.related.forEach((rel) => {
+      const pairKey = `${concept.slug}->${rel}`;
+      const revPairKey = `${rel}->${concept.slug}`;
+      if (!requiresPairs.has(pairKey) && !requiresPairs.has(revPairKey)) {
+        const [first, second] = [concept.slug, rel].sort();
+        const dupKey = `${first}->${second}`;
+        if (!seenRelatedPairs.has(dupKey)) {
+          const reason = customReasons[pairKey] || customReasons[revPairKey] || `Related concept exploring concurrent ideas in backend engineering.`;
+          list.push({
+            from: concept.slug,
+            to: rel,
+            type: "related",
+            reason
+          });
+          seenRelatedPairs.add(dupKey);
+        }
+      }
+    });
+  });
+
+  return list;
+})();
+
 
 export class GraphEngine {
   /**

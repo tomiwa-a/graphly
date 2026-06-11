@@ -17,32 +17,46 @@ import { cn } from "@/lib/utils";
 type NodePosition = { x: number; y: number };
 
 const nodePositions: Record<string, NodePosition> = {
-  http: { x: 140, y: 180 },
-  bits: { x: 140, y: 310 },
-  "hash-functions": { x: 260, y: 310 },
-  idempotency: { x: 380, y: 90 },
-  indexes: { x: 380, y: 220 },
-  "bloom-filters": { x: 500, y: 310 },
-  "circuit-breakers": { x: 500, y: 90 },
-  "message-queues": { x: 500, y: 200 },
-  "caching-strategies": { x: 620, y: 260 },
+  // Foundations
+  bits: { x: 80, y: 100 },
+  "processes-threads": { x: 80, y: 220 },
+  "virtual-memory": { x: 80, y: 340 },
+  "file-descriptors": { x: 80, y: 460 },
+  "hash-functions": { x: 220, y: 150 },
+  http: { x: 220, y: 320 },
+
+  // API Design
+  idempotency: { x: 410, y: 100 },
+  grpc: { x: 410, y: 200 },
+
+  // Infrastructure
+  containerization: { x: 410, y: 320 },
+  docker: { x: 410, y: 400 },
+  kubernetes: { x: 410, y: 480 },
+
+  // Reliability & Scale
+  "circuit-breakers": { x: 590, y: 100 },
+  "vector-clocks": { x: 720, y: 80 },
+  "message-queues": { x: 720, y: 180 },
+
+  // Database Systems
+  indexes: { x: 590, y: 300 },
+  "bloom-filters": { x: 590, y: 420 },
+  "lsm-trees": { x: 720, y: 300 },
+  "change-data-capture": { x: 720, y: 420 },
+
+  // Caching Infrastructure
+  "caching-strategies": { x: 860, y: 360 }
 };
 
 const chapterBoxes = [
-  { id: "foundations", title: "Foundations", x: 70, y: 130, w: 230, h: 220 },
-  { id: "api-design", title: "API Design", x: 330, y: 40, w: 100, h: 100 },
-  { id: "databases", title: "Database Systems", x: 330, y: 170, w: 260, h: 190 },
-  { id: "reliability", title: "Reliability & Scale", x: 450, y: 40, w: 100, h: 210 },
-  { id: "caching", title: "Caching Infrastructure", x: 570, y: 210, w: 100, h: 100 },
+  { id: "foundations", title: "Foundations", x: 30, y: 40, w: 260, h: 470 },
+  { id: "api-design", title: "API Design", x: 320, y: 40, w: 180, h: 220 },
+  { id: "infrastructure", title: "Infrastructure", x: 320, y: 280, w: 180, h: 230 },
+  { id: "reliability", title: "Reliability & Scale", x: 530, y: 40, w: 240, h: 200 },
+  { id: "databases", title: "Database Systems", x: 530, y: 260, w: 240, h: 250 },
+  { id: "caching", title: "Caching Infrastructure", x: 800, y: 290, w: 120, h: 140 }
 ];
-
-const chapterViews: Record<string, { zoom: number; pan: { x: number; y: number } }> = {
-  foundations: { zoom: 1.3, pan: { x: 100, y: -80 } },
-  "api-design": { zoom: 1.7, pan: { x: 50, y: 100 } },
-  databases: { zoom: 1.3, pan: { x: -120, y: -100 } },
-  reliability: { zoom: 1.4, pan: { x: -250, y: 40 } },
-  caching: { zoom: 1.7, pan: { x: -350, y: -120 } },
-};
 
 const diffColor: Record<string, string> = {
   beginner: "#00b894",
@@ -50,19 +64,44 @@ const diffColor: Record<string, string> = {
   advanced: "#d63031",
 };
 
-const edges = [
-  { from: "http", to: "idempotency", type: "requires" as const },
-  { from: "http", to: "indexes", type: "requires" as const },
-  { from: "http", to: "message-queues", type: "requires" as const },
-  { from: "http", to: "caching-strategies", type: "requires" as const },
-  { from: "idempotency", to: "circuit-breakers", type: "requires" as const },
-  { from: "idempotency", to: "message-queues", type: "related" as const },
-  { from: "indexes", to: "caching-strategies", type: "related" as const },
-  { from: "circuit-breakers", to: "message-queues", type: "related" as const },
-  { from: "bits", to: "hash-functions", type: "requires" as const },
-  { from: "hash-functions", to: "bloom-filters", type: "requires" as const },
-  { from: "bloom-filters", to: "caching-strategies", type: "requires" as const },
-];
+const edges = (() => {
+  const list: { from: string; to: string; type: "requires" | "related" }[] = [];
+  const requiresPairs = new Set<string>();
+
+  concepts.forEach((concept) => {
+    concept.prerequisites.forEach((prereq) => {
+      list.push({
+        from: prereq,
+        to: concept.slug,
+        type: "requires"
+      });
+      requiresPairs.add(`${prereq}->${concept.slug}`);
+      requiresPairs.add(`${concept.slug}->${prereq}`);
+    });
+  });
+
+  const seenRelatedPairs = new Set<string>();
+  concepts.forEach((concept) => {
+    concept.related.forEach((rel) => {
+      const pairKey = `${concept.slug}->${rel}`;
+      const revPairKey = `${rel}->${concept.slug}`;
+      if (!requiresPairs.has(pairKey) && !requiresPairs.has(revPairKey)) {
+        const [first, second] = [concept.slug, rel].sort();
+        const dupKey = `${first}->${second}`;
+        if (!seenRelatedPairs.has(dupKey)) {
+          list.push({
+            from: concept.slug,
+            to: rel,
+            type: "related"
+          });
+          seenRelatedPairs.add(dupKey);
+        }
+      }
+    });
+  });
+
+  return list;
+})();
 
 function GraphView({
   focusSlug,
@@ -140,10 +179,15 @@ function GraphView({
       setPan({ x: 0, y: 0 });
     } else {
       setActiveChapter(chapterId);
-      const view = chapterViews[chapterId];
-      if (view) {
-        setZoom(view.zoom);
-        setPan(view.pan);
+      const box = chapterBoxes.find((b) => b.id === chapterId);
+      if (box) {
+        const nextZoom = Math.min(Math.min(960 / (box.w + 60), 540 / (box.h + 60)), 1.8);
+        const cx = box.x + box.w / 2;
+        const cy = box.y + box.h / 2;
+        const panX = (960 / 2) / nextZoom - cx;
+        const panY = (540 / 2) / nextZoom - cy;
+        setZoom(nextZoom);
+        setPan({ x: panX, y: panY });
       }
     }
   };
@@ -186,8 +230,8 @@ function GraphView({
       </div>
 
       <svg
-        viewBox="0 0 720 400"
-        className="w-full h-[400px] sm:h-[500px]"
+        viewBox="0 0 960 540"
+        className="w-full h-[450px] sm:h-[580px]"
         style={{
           transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
           transformOrigin: "center",
@@ -208,8 +252,8 @@ function GraphView({
           </pattern>
         </defs>
         <rect
-          width="720"
-          height="400"
+          width="960"
+          height="540"
           fill="url(#dots)"
           className="cursor-grab"
           onClick={handleCanvasClick}

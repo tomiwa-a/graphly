@@ -3,15 +3,15 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import Link from "next/link";
-import { concepts } from "@/lib/data/concepts";
+import { concepts, getAllDomains } from "@/lib/data/concepts";
 import searchIndex from "@/lib/data/search-index.json";
 import { ConceptCard } from "@/components/concepts/concept-card";
 import { Reveal } from "@/components/reveal";
 
-const domains = ["All", "API Design", "Databases", "Reliability", "Foundations", "Queues", "Caching"];
 const difficulties = ["All", "Beginner", "Intermediate", "Advanced"];
 
 export default function SearchPage() {
+  const domains = useMemo(() => ["All", ...getAllDomains().sort()], []);
   const [query, setQuery] = useState("");
   const [domain, setDomain] = useState("All");
   const [difficulty, setDifficulty] = useState("All");
