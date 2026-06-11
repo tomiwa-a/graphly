@@ -2,6 +2,8 @@ import { Hero } from "@/components/hero";
 import { Reveal } from "@/components/reveal";
 import { LogoMark } from "@/components/logo";
 import Link from "next/link";
+import { concepts as allConcepts } from "@/lib/data/concepts";
+import { paths as allPaths } from "@/lib/data/paths";
 import {
   IconIdempotency,
   IconIndexes,
@@ -122,6 +124,20 @@ const domains = [
 ];
 
 export default function Home() {
+  const totalConcepts = allConcepts.length;
+  const totalPaths = allPaths.length;
+
+  const domainCountsMap = allConcepts.reduce((acc, c) => {
+    const d = c.domain || "Foundations";
+    acc[d] = (acc[d] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const dynamicDomains = Object.entries(domainCountsMap).map(([name, count]) => ({
+    name,
+    count
+  })).sort((a, b) => b.count - a.count);
+
   return (
     <>
       <Hero />
@@ -289,7 +305,7 @@ export default function Home() {
               </p>
             </div>
             <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {domains.map((domain) => (
+              {dynamicDomains.map((domain) => (
                 <Link
                   key={domain.name}
                   href="/concepts"
@@ -299,7 +315,7 @@ export default function Home() {
                     {domain.name}
                   </p>
                   <p className="mt-1 text-xs text-foreground-secondary font-sans">
-                    {domain.count} concepts
+                    {domain.count} {domain.count === 1 ? 'concept' : 'concepts'}
                   </p>
                 </Link>
               ))}
@@ -416,10 +432,10 @@ export default function Home() {
               <div className="hidden lg:flex justify-end">
                 <div className="text-right">
                   <p className="text-sm font-medium text-foreground-secondary font-sans">
-                    50+ concepts across 5 languages
+                    {totalConcepts} concepts across 5 languages
                   </p>
                   <p className="mt-1 text-sm font-medium text-foreground-secondary font-sans">
-                    10 structured learning paths
+                    {totalPaths} structured learning paths
                   </p>
                   <p className="mt-1 text-sm font-medium text-foreground-secondary font-sans">
                     Community-driven & always growing
