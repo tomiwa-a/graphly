@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-export function Hero() {
+export function Hero({ totalConcepts = 9, totalPaths = 3 }: { totalConcepts?: number; totalPaths?: number }) {
   const [initiated, setInitiated] = useState(false);
 
   useEffect(() => {
@@ -118,7 +118,7 @@ export function Hero() {
               }}
             >
               <p className="text-sm font-medium text-foreground-secondary font-sans">
-                50+ concepts · 5 languages · 10 paths
+                {totalConcepts} concepts · 5 languages · {totalPaths} paths
               </p>
             </div>
           </div>

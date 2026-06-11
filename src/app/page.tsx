@@ -140,7 +140,7 @@ export default function Home() {
 
   return (
     <>
-      <Hero />
+      <Hero totalConcepts={totalConcepts} totalPaths={totalPaths} />
 
       {/* ── How It Works ── */}
       <section className="border-b border-border bg-surface">

@@ -1,6 +1,11 @@
 import { LogoFull } from "@/components/logo";
+import { concepts } from "@/lib/data/concepts";
+import { paths } from "@/lib/data/paths";
 
 export function Footer() {
+  const totalConcepts = concepts.length;
+  const totalPaths = paths.length;
+
   return (
     <footer className="border-t border-border bg-surface font-sans text-foreground">
       <div className="mx-auto max-w-6xl px-5">
@@ -23,7 +28,8 @@ export function Footer() {
               {[
                 { href: "/concepts", label: "Concepts" },
                 { href: "/paths", label: "Learning Paths" },
-                { href: "/languages", label: "Languages" },
+                { href: "/graph", label: "Knowledge Graph" },
+                { href: "/search", label: "Search" },
               ].map((link) => (
                 <li key={link.href}>
                   <a
@@ -43,9 +49,9 @@ export function Footer() {
               Project
             </h4>
             <p className="text-sm font-medium text-foreground-secondary font-sans mb-5">
-              50+ concepts across 5 languages.
+              {totalConcepts} concepts across 5 languages.
               <br />
-              10 structured learning paths.
+              {totalPaths} structured learning paths.
             </p>
             <a
               href="https://github.com/your-org/graphy"
