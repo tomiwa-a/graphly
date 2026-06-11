@@ -72,7 +72,7 @@ export default function SearchPage() {
 
       {/* Search input */}
       <Reveal delay={60}>
-        <div className="relative mb-6">
+        <div id="tour-search-input" className="relative mb-6">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" />
           <input
             ref={inputRef}

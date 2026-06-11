@@ -8,7 +8,6 @@ import { chapters, type Chapter } from "@/lib/data/chapters";
 import { Reveal } from "@/components/reveal";
 import { ZoomIn, ZoomOut, Maximize2, List, Grid3X3, Compass, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { JourneyBuilder } from "@/components/graph/journey-builder";
-import { ProductTour } from "@/components/graph/product-tour";
 import { SubwayTimeline } from "@/components/graph/subway-timeline";
 import { AdvisoryDetours } from "@/components/graph/advisory-detours";
 import { ProgressMasteryCard, ResetProgressButton } from "@/components/graph/progress-mastery-card";
@@ -756,7 +755,6 @@ function GraphPageContent() {
   const [syllabus, setSyllabus] = useState<ReturnType<typeof GraphEngine.compileSyllabus>>([]);
   const [startSlug, setStartSlug] = useState("bits");
   const [targetSlug, setTargetSlug] = useState("caching-strategies");
-  const [isTourOpen, setIsTourOpen] = useState(false);
 
   const selectedConcept = selectedSlug
     ? concepts.find((c) => c.slug === selectedSlug)
@@ -775,41 +773,25 @@ function GraphPageContent() {
     setSyllabus(defaultSyllabus);
   }, []);
 
-  // Onboarding tour first-time prompt checker
+  // Listen to Global Tour event triggers
   useEffect(() => {
-    const tourSeen = localStorage.getItem("graphly-tour-completed");
-    const forceTour = searchParams.get("tour") === "true" || searchParams.get("startTour") === "true";
-    if (forceTour) {
-      setIsTourOpen(true);
-    } else if (!tourSeen) {
-      const t = setTimeout(() => setIsTourOpen(true), 1200);
-      return () => clearTimeout(t);
-    }
-  }, [searchParams]);
+    const handleTourSelect = (e: Event) => {
+      const slug = (e as CustomEvent).detail;
+      setSelectedSlug(slug);
+    };
+    const handleTourSetView = (e: Event) => {
+      const v = (e as CustomEvent).detail;
+      setView(v);
+    };
 
-  const handleTourStepChange = (stepIndex: number) => {
-    // Dynamic page state triggers to guide user onboarding seamlessly
-    if (stepIndex === 1) { // Navigation modes spotlight
-      setView("graph");
-      setSelectedSlug(null);
-    } else if (stepIndex === 2) { // Connected canvas spotlight
-      setView("graph");
-      setSelectedSlug(null);
-    } else if (stepIndex === 3) { // Concept Details Sidebar spotlight
-      setView("graph");
-      setSelectedSlug("bits"); // Highlight and select "Bits & Binary" to populate sidebar info
-    } else if (stepIndex === 4) { // Graph Legend spotlight
-      setView("graph");
-    } else if (stepIndex === 5) { // Journey Mode Tab spotlight
-      setView("journey");
-    }
-  };
+    window.addEventListener("graphly-tour-select", handleTourSelect);
+    window.addEventListener("graphly-tour-setview", handleTourSetView);
 
-  const handleTourClose = () => {
-    setIsTourOpen(false);
-    setSelectedSlug(null);
-    setView("graph");
-  };
+    return () => {
+      window.removeEventListener("graphly-tour-select", handleTourSelect);
+      window.removeEventListener("graphly-tour-setview", handleTourSetView);
+    };
+  }, []);
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
@@ -825,7 +807,7 @@ function GraphPageContent() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
-              onClick={() => setIsTourOpen(true)}
+              onClick={() => window.dispatchEvent(new CustomEvent("graphly-tour-trigger"))}
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-primary-dark/20 bg-primary-light text-primary-dark hover:bg-primary-light/80 text-sm font-heading font-bold cursor-pointer transition-all shadow-button mr-1.5"
             >
               <Sparkles className="h-4 w-4 stroke-[2.2]" />
@@ -1095,11 +1077,6 @@ function GraphPageContent() {
           </div>
         </div>
       )}
-      <ProductTour
-        isOpen={isTourOpen}
-        onStepChange={handleTourStepChange}
-        onClose={handleTourClose}
-      />
     </div>
   );
 }

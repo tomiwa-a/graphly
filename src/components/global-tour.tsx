@@ -1,64 +1,103 @@
 "use client";
 
 import { useEffect, useState, useRef, useMemo } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, X, Sparkles, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TourStep {
   title: string;
   description: string;
+  page: string;
   selector?: string;
   position?: "top" | "bottom" | "left" | "right";
+  action?: () => void;
 }
 
 const TOUR_STEPS: TourStep[] = [
   {
     title: "Welcome to Graphly! 🕸️",
-    description: "Let's take a quick 1-minute interactive tour to show you how to navigate prerequisite dependencies and build custom learning tracks.",
+    description: "Let's take a quick guided tour around the platform to learn how to navigate prerequisite dependencies and build custom learning tracks.",
+    page: "/",
   },
   {
-    title: "1. Navigation Modes",
-    description: "Toggle between different layout modes. Use Graph View to explore the visual subway map, or switch to Journey Mode to compile a custom prerequisite path.",
-    selector: "#tour-tabs",
+    title: "1. Let's Get Started",
+    description: "These CTAs let you browse all concepts, view guided paths, or explore the visual knowledge graph. Let's look at the concepts first.",
+    page: "/",
+    selector: "#tour-hero-cta",
     position: "bottom",
   },
   {
-    title: "2. The Connected Canvas",
-    description: "This is the interactive learning map. Click a concept node to view its summary. Green nodes represent beginner topics, orange are intermediate, and red are advanced. Mastered topics turn solid red.",
+    title: "2. Concepts Catalog",
+    description: "This lists all backend engineering concepts grouped by chapters. Click any card to read its textbook-grounded explanation and prerequisites.",
+    page: "/concepts",
+    selector: "#tour-concepts-grid",
+    position: "top",
+  },
+  {
+    title: "3. Domain Search",
+    description: "Looking for a specific topic? Use search to filter by domain tags (Foundations, Databases, Reliability, Caching) or query topic names.",
+    page: "/search",
+    selector: "#tour-search-input",
+    position: "bottom",
+  },
+  {
+    title: "4. Guided Paths",
+    description: "If you prefer structured tracks, follow our curated sequences. They group concepts from fundamentals to advanced distributed systems.",
+    page: "/paths",
+    selector: "#tour-paths-grid",
+    position: "top",
+  },
+  {
+    title: "5. The Knowledge Graph",
+    description: "This is the interactive 2D subway map of backend systems. It maps prerequisite connections so you see how concepts link. Click a node to view its summary.",
+    page: "/graph",
     selector: "#tour-canvas",
     position: "right",
+    action: () => {
+      window.dispatchEvent(new CustomEvent("graphly-tour-setview", { detail: "graph" }));
+      window.dispatchEvent(new CustomEvent("graphly-tour-select", { detail: null }));
+    }
   },
   {
-    title: "3. Concept Details & Code",
-    description: "Once selected, this panel breaks down the topic's core problems, prerequisite checks, and direct literature references. You can also switch language tabs for inline code examples!",
+    title: "6. Concept Selection & Zoom",
+    description: "Clicking a node highlights it, shows details, and loads multi-language code examples. Double-clicking zoom-centers a chapter box.",
+    page: "/graph",
     selector: "#tour-sidebar",
     position: "left",
+    action: () => {
+      window.dispatchEvent(new CustomEvent("graphly-tour-setview", { detail: "graph" }));
+      window.dispatchEvent(new CustomEvent("graphly-tour-select", { detail: "bits" }));
+    }
   },
   {
-    title: "4. Color & Connection Keys",
-    description: "Quickly identify concept difficulty and prerequisite lines. Solid red lines represent direct prerequisite paths, while dashed red lines denote related systems concepts.",
+    title: "7. Color & Connection Keys",
+    description: "Quickly identify concept difficulty and prerequisites. Solid red lines represent direct prerequisite paths, while dashed red lines denote related concepts.",
+    page: "/graph",
     selector: "#tour-legend",
     position: "left",
-  },
-  {
-    title: "5. Journey Mode Tab",
-    description: "Ready to study a track? Select Journey Mode to automatically calculate and compile the shortest path between any starting point and final goal.",
-    selector: "#tour-tabs",
-    position: "bottom",
+    action: () => {
+      window.dispatchEvent(new CustomEvent("graphly-tour-setview", { detail: "graph" }));
+      window.dispatchEvent(new CustomEvent("graphly-tour-select", { detail: null }));
+    }
   },
   {
     title: "You're All Set! 🚀",
-    description: "That's it! You now know how to explore Graphly. Click 'Get Started' to begin your systems design journey.",
+    description: "You now know how to explore Graphly. Click 'Get Started' to begin your systems design journey.",
+    page: "/graph",
+    action: () => {
+      window.dispatchEvent(new CustomEvent("graphly-tour-setview", { detail: "graph" }));
+      window.dispatchEvent(new CustomEvent("graphly-tour-select", { detail: null }));
+    }
   },
 ];
 
-interface ProductTourProps {
-  onStepChange: (stepIndex: number) => void;
-  onClose: () => void;
-  isOpen: boolean;
-}
+export function GlobalTour() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps) {
+  const [isActive, setIsActive] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [spotlightRect, setSpotlightRect] = useState<{
     top: number;
@@ -66,16 +105,75 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
     width: number;
     height: number;
   } | null>(null);
-
-  const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number } | null>(null);
 
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const currentStep = TOUR_STEPS[activeStep];
 
-  // Calculate spotlight position of target element
+  // Initialize and check localStorage
+  useEffect(() => {
+    const tourActive = localStorage.getItem("graphly-global-tour-active") === "true";
+    const tourStepStr = localStorage.getItem("graphly-global-tour-step");
+    const tourCompleted = localStorage.getItem("graphly-global-tour-completed") === "true";
+
+    const forceTour = searchParams.get("startTour") === "true" || searchParams.get("tour") === "true";
+
+    if (forceTour) {
+      localStorage.setItem("graphly-global-tour-active", "true");
+      localStorage.setItem("graphly-global-tour-step", "0");
+      setIsActive(true);
+      setActiveStep(0);
+      router.push("/");
+    } else if (tourActive && tourStepStr !== null) {
+      setIsActive(true);
+      setActiveStep(parseInt(tourStepStr, 10));
+    } else if (!tourCompleted && pathname === "/") {
+      // Auto-open after 1.5 seconds on landing page for new visitors
+      const t = setTimeout(() => {
+        localStorage.setItem("graphly-global-tour-active", "true");
+        localStorage.setItem("graphly-global-tour-step", "0");
+        setIsActive(true);
+        setActiveStep(0);
+      }, 1500);
+      return () => clearTimeout(t);
+    }
+
+    // Listen for manual trigger events (e.g. from footer)
+    const handleTrigger = () => {
+      localStorage.setItem("graphly-global-tour-active", "true");
+      localStorage.setItem("graphly-global-tour-step", "0");
+      setIsActive(true);
+      setActiveStep(0);
+      router.push("/");
+    };
+    window.addEventListener("graphly-tour-trigger", handleTrigger);
+    return () => window.removeEventListener("graphly-tour-trigger", handleTrigger);
+  }, [searchParams]);
+
+  // Adjust active step if user manually browses to another page during tour
+  useEffect(() => {
+    if (!isActive) return;
+
+    const expectedPage = currentStep?.page;
+    if (expectedPage && pathname !== expectedPage) {
+      const matchingStepIndex = TOUR_STEPS.findIndex((s) => s.page === pathname);
+      if (matchingStepIndex !== -1) {
+        setActiveStep(matchingStepIndex);
+        localStorage.setItem("graphly-global-tour-step", String(matchingStepIndex));
+      }
+    }
+  }, [pathname, isActive]);
+
+  // Calculate spotlight position
   const updateSpotlight = () => {
-    if (!isOpen) return;
-    const selector = TOUR_STEPS[activeStep]?.selector;
+    if (!isActive) return;
+
+    // Trigger step action if defined
+    if (currentStep?.action) {
+      currentStep.action();
+    }
+
+    const selector = currentStep?.selector;
     if (!selector) {
       setSpotlightRect(null);
       setTooltipPos(null);
@@ -85,7 +183,6 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
     const el = document.querySelector(selector);
     if (el) {
       const rect = el.getBoundingClientRect();
-      // Add a small padding margin around the highlighted element
       const padding = 8;
       const nextRect = {
         top: Math.max(0, rect.top - padding),
@@ -94,9 +191,8 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
         height: rect.height + padding * 2,
       };
       setSpotlightRect(nextRect);
-      
-      // Calculate tooltip position
-      const position = TOUR_STEPS[activeStep].position || "bottom";
+
+      const position = currentStep.position || "bottom";
       const tooltipWidth = 320;
       const tooltipHeight = 180;
       const gap = 24;
@@ -118,7 +214,6 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
         left = nextRect.left + nextRect.width + gap;
       }
 
-      // Viewport boundaries check (avoid rendering offscreen)
       const paddingEdge = 16;
       left = Math.max(paddingEdge, Math.min(window.innerWidth - tooltipWidth - paddingEdge, left));
       top = Math.max(paddingEdge, Math.min(window.innerHeight - tooltipHeight - paddingEdge, top));
@@ -130,64 +225,108 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
     }
   };
 
-  // Run spotlight update when activeStep changes or when screen scrolls/resizes
+  // Perform spotlight calculation. Polls DOM on page changes to wait for hydration.
   useEffect(() => {
+    if (!isActive) return;
+
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+    }
+
+    // Run immediately
     updateSpotlight();
-    onStepChange(activeStep);
+
+    // Setup polling for page transition hydration
+    let count = 0;
+    pollIntervalRef.current = setInterval(() => {
+      updateSpotlight();
+      count++;
+      if (count > 20) { // stop polling after 2 seconds
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+        }
+      }
+    }, 100);
 
     window.addEventListener("resize", updateSpotlight);
     window.addEventListener("scroll", updateSpotlight, true);
 
     return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+      }
       window.removeEventListener("resize", updateSpotlight);
       window.removeEventListener("scroll", updateSpotlight, true);
     };
-  }, [activeStep, isOpen]);
-
-  // Restart step when tour opens
-  useEffect(() => {
-    if (isOpen) {
-      setActiveStep(0);
-    }
-  }, [isOpen]);
+  }, [activeStep, isActive, pathname]);
 
   const handleNext = () => {
-    if (activeStep < TOUR_STEPS.length - 1) {
-      setActiveStep(activeStep + 1);
+    const nextIdx = activeStep + 1;
+    if (nextIdx < TOUR_STEPS.length) {
+      const nextStep = TOUR_STEPS[nextIdx];
+      localStorage.setItem("graphly-global-tour-step", String(nextIdx));
+      
+      if (nextStep.page !== pathname) {
+        router.push(nextStep.page);
+      } else {
+        setActiveStep(nextIdx);
+      }
     } else {
-      localStorage.setItem("graphly-tour-completed", "true");
-      onClose();
+      handleComplete();
     }
   };
 
   const handleBack = () => {
-    if (activeStep > 0) {
-      setActiveStep(activeStep - 1);
+    const prevIdx = activeStep - 1;
+    if (prevIdx >= 0) {
+      const prevStep = TOUR_STEPS[prevIdx];
+      localStorage.setItem("graphly-global-tour-step", String(prevIdx));
+
+      if (prevStep.page !== pathname) {
+        router.push(prevStep.page);
+      } else {
+        setActiveStep(prevIdx);
+      }
     }
   };
 
   const handleSkip = () => {
-    localStorage.setItem("graphly-tour-completed", "true");
-    onClose();
+    localStorage.setItem("graphly-global-tour-completed", "true");
+    localStorage.removeItem("graphly-global-tour-active");
+    localStorage.removeItem("graphly-global-tour-step");
+    setIsActive(false);
+    
+    // Clear page triggers
+    window.dispatchEvent(new CustomEvent("graphly-tour-select", { detail: null }));
+    window.dispatchEvent(new CustomEvent("graphly-tour-setview", { detail: "graph" }));
   };
 
-  // Compute curved arrow points for the active step
+  const handleComplete = () => {
+    localStorage.setItem("graphly-global-tour-completed", "true");
+    localStorage.removeItem("graphly-global-tour-active");
+    localStorage.removeItem("graphly-global-tour-step");
+    setIsActive(false);
+
+    // Clear page triggers
+    window.dispatchEvent(new CustomEvent("graphly-tour-select", { detail: null }));
+    window.dispatchEvent(new CustomEvent("graphly-tour-setview", { detail: "graph" }));
+  };
+
   const arrowPath = useMemo(() => {
     if (!spotlightRect || !tooltipPos) return null;
 
     const sx = spotlightRect.left + spotlightRect.width / 2;
     const sy = spotlightRect.top + spotlightRect.height / 2;
-    const tx = tooltipPos.left + 160; // center of tooltip card (width 320)
-    const ty = tooltipPos.top + 90;   // center of tooltip card (height ~180)
+    const tx = tooltipPos.left + 160;
+    const ty = tooltipPos.top + 90;
 
-    const position = TOUR_STEPS[activeStep].position || "bottom";
+    const position = currentStep.position || "bottom";
 
     let x1 = tx;
     let y1 = ty;
     let x2 = sx;
     let y2 = sy;
 
-    // Anchor points relative to boundaries
     if (position === "bottom") {
       x1 = tx;
       y1 = tooltipPos.top;
@@ -210,30 +349,29 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
       y2 = sy;
     }
 
-    // Determine quadratic bezier curve control point (slightly offset for natural curve)
     let cx = (x1 + x2) / 2;
     let cy = (y1 + y2) / 2;
 
     if (position === "bottom" || position === "top") {
-      cx += 25; // bend horizontally
+      cx += 25;
     } else {
-      cy -= 20; // bend vertically
+      cy -= 20;
     }
 
     return `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
   }, [spotlightRect, tooltipPos, activeStep]);
 
-  if (!isOpen) return null;
+  if (!isActive) return null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden select-none">
-      {/* Background Mask/Scrim with Spotlight cutout */}
+      {/* Scrim Overlay */}
       <div className="absolute inset-0 pointer-events-auto bg-foreground/50 backdrop-blur-[1px] transition-all duration-300" />
 
-      {/* Spotlight highlight element */}
+      {/* Spotlight highlight */}
       {spotlightRect && (
         <div
-          className="fixed rounded-2xl border-2 border-primary-dark shadow-[0_0_0_9999px_rgba(45,42,38,0.65)] transition-all duration-300 pointer-events-none"
+          className="fixed rounded-2xl border-2 border-primary-dark shadow-[0_0_0_9999px_rgba(45, 42, 38, 0.65)] transition-all duration-300 pointer-events-none"
           style={{
             top: `${spotlightRect.top}px`,
             left: `${spotlightRect.left}px`,
@@ -243,12 +381,12 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
         />
       )}
 
-      {/* Curved Arrow SVG overlay */}
+      {/* Curved Arrow Overlay */}
       {spotlightRect && arrowPath && (
         <svg className="fixed inset-0 w-full h-full pointer-events-none z-50">
           <defs>
             <marker
-              id="tour-arrowhead"
+              id="global-tour-arrowhead"
               viewBox="0 0 10 10"
               refX="6"
               refY="5"
@@ -266,14 +404,13 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
             strokeWidth="2"
             strokeDasharray="4 4"
             className="animate-dash-flow"
-            markerEnd="url(#tour-arrowhead)"
+            markerEnd="url(#global-tour-arrowhead)"
           />
         </svg>
       )}
 
-      {/* Tooltip dialog card */}
+      {/* Tooltip Dialog Card */}
       <div
-        ref={tooltipRef}
         className={cn(
           "fixed z-50 w-[320px] rounded-[24px] border border-border bg-surface-card p-6 shadow-modal transition-all duration-300 flex flex-col justify-between",
           !spotlightRect && "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -287,7 +424,6 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
             : undefined
         }
       >
-        {/* Card Header */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex items-center gap-1.5 text-primary-dark">
             {activeStep === 0 || activeStep === TOUR_STEPS.length - 1 ? (
@@ -310,12 +446,10 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
           </button>
         </div>
 
-        {/* Card Body */}
         <p className="text-sm leading-relaxed text-foreground-secondary font-sans font-medium mb-6">
           {currentStep.description}
         </p>
 
-        {/* Card Footer / Controls */}
         <div className="flex items-center justify-between border-t border-border/40 pt-4 mt-auto">
           {activeStep > 0 && activeStep < TOUR_STEPS.length - 1 ? (
             <button
@@ -334,11 +468,10 @@ export function ProductTour({ onStepChange, onClose, isOpen }: ProductTourProps)
             </button>
           )}
 
-          {/* Step indicators */}
           <div className="flex gap-1.5">
             {TOUR_STEPS.map((_, idx) => (
               <span
-                key={`dot-${idx}`}
+                key={`global-dot-${idx}`}
                 className={cn(
                   "h-1.5 w-1.5 rounded-full transition-all duration-300",
                   idx === activeStep ? "bg-primary-dark w-3" : "bg-foreground-dim"

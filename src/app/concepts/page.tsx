@@ -54,7 +54,7 @@ function ConceptsContent() {
         </div>
       </Reveal>
 
-      <div className="space-y-12">
+      <div id="tour-concepts-grid" className="space-y-12">
         {chapters.map((chapter, idx) => {
           const chapterConcepts = filtered.filter((c) => c.chapterId === chapter.id);
           if (chapterConcepts.length === 0) return null;

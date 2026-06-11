@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Fredoka, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import { BodyLayout } from "@/components/layout/body-layout";
 import { EntranceCurtain } from "@/components/entrance-curtain";
+import { GlobalTour } from "@/components/global-tour";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -51,6 +53,9 @@ export default function RootLayout({
     <html lang="en" className={`${fredoka.variable} ${plusJakartaSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen antialiased bg-surface text-foreground font-sans">
         <EntranceCurtain />
+        <Suspense fallback={null}>
+          <GlobalTour />
+        </Suspense>
         <BodyLayout>{children}</BodyLayout>
       </body>
     </html>

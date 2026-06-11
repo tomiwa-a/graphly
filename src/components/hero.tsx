@@ -85,6 +85,7 @@ export function Hero({ totalConcepts = 9, totalPaths = 3 }: { totalConcepts?: nu
 
             {/* CTAs */}
             <div
+              id="tour-hero-cta"
               className="mt-8 flex flex-wrap items-center gap-3 sm:gap-4"
               style={{
                 opacity: initiated ? 1 : 0,

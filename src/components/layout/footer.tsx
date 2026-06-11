@@ -1,3 +1,5 @@
+"use client";
+
 import { LogoFull } from "@/components/logo";
 import { concepts } from "@/lib/data/concepts";
 import { paths } from "@/lib/data/paths";
@@ -40,6 +42,14 @@ export function Footer() {
                   </a>
                 </li>
               ))}
+              <li>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent("graphly-tour-trigger"))}
+                  className="text-sm font-semibold font-heading text-foreground-secondary hover:text-foreground transition-colors cursor-pointer text-left"
+                >
+                  Interactive Guide Tour
+                </button>
+              </li>
             </ul>
           </div>
 

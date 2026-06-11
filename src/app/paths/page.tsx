@@ -28,7 +28,7 @@ export default function PathsPage() {
         </div>
       </Reveal>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div id="tour-paths-grid" className="grid gap-6 sm:grid-cols-2">
         {paths.map((path, i) => (
           <Reveal key={path.slug} delay={i * 80}>
             <PathCard
