@@ -10,7 +10,7 @@ export const ADMONITION_COLORS: Record<string, { border: string; bg: string; lab
 export type AdmonitionType = keyof typeof ADMONITION_COLORS;
 
 // Admonition regex: matches > [!TYPE]\n followed by > body lines (but not another > [!TYPE])
-const ADMONITION_RE = /^> \[!(\w+)\]\n((?:^> (?!\[!\w+\]).*\n?)*)/gm;
+const ADMONITION_RE = /^> \[!(\w+)\]\n((?:^>(?!\s*\[!\w+\]).*\n?)*)/gm;
 const PLACEHOLDER_PREFIX = "<!-- ADM";
 const PLACEHOLDER_SUFFIX = " -->";
 
@@ -49,13 +49,13 @@ export function renderAdmonitionHtml(type: AdmonitionType, bodyHtml: string): st
 export function processBodyContent(body: string): string {
   return body
     .split("\n")
-    .map((l) => l.replace(/^> /, "").replace(/^>$/, ""))
+    .map((l) => l.replace(/^> ?/, ""))
     .join("\n")
     .trim();
 }
 
 export function codeBlockFallback(code: string, lang: string): string {
-  return `<pre class="shiki" style="background-color:#24292e;padding:1rem;border-radius:1rem;overflow-x:auto;margin:1rem 0;border:1px solid var(--color-border)"><code class="language-${lang}">${code}</code></pre>`;
+  return `<pre class="shiki" style="background-color:#24292e;color:#e1e4e8;padding:1rem;border-radius:1rem;overflow-x:auto;margin:1rem 0;border:1px solid var(--color-border)"><code class="language-${lang}">${code}</code></pre>`;
 }
 
 export async function renderFullMarkdown(text: string): Promise<string> {
