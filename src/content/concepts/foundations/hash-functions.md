@@ -31,38 +31,30 @@ Here is how a hash function translates keys to locate memory slots:
   <!-- Inputs -->
   <rect x="20" y="30" width="100" height="40" rx="5" fill="#2e3440" stroke="#4c566a" stroke-width="2" />
   <text x="70" y="55" fill="#eceff4" font-family="sans-serif" font-size="12" text-anchor="middle">"Alice"</text>
-
   <rect x="20" y="100" width="100" height="40" rx="5" fill="#2e3440" stroke="#4c566a" stroke-width="2" />
   <text x="70" y="125" fill="#eceff4" font-family="sans-serif" font-size="12" text-anchor="middle">"Bob"</text>
-
   <rect x="20" y="170" width="100" height="40" rx="5" fill="#2e3440" stroke="#4c566a" stroke-width="2" />
   <text x="70" y="195" fill="#eceff4" font-family="sans-serif" font-size="12" text-anchor="middle">"Charlie"</text>
-
   <!-- Connectors -->
   <path d="M 120 50 L 200 120" stroke="#88c0d0" stroke-width="2" fill="none" />
   <path d="M 120 120 L 200 120" stroke="#88c0d0" stroke-width="2" fill="none" />
   <path d="M 120 190 L 200 120" stroke="#88c0d0" stroke-width="2" fill="none" />
-
   <!-- Hash Function -->
   <rect x="200" y="90" width="160" height="60" rx="8" fill="#88c0d0" stroke="#81a1c1" stroke-width="2" />
   <text x="280" y="120" fill="#2e3440" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Hash Function</text>
   <text x="280" y="138" fill="#4c566a" font-family="sans-serif" font-size="10" text-anchor="middle">hash(key) % Buckets</text>
-
   <!-- Connectors 2 -->
   <path d="M 360 120 L 460 50" stroke="#a3be8c" stroke-width="2" fill="none" />
   <path d="M 360 120 L 460 120" stroke="#bf616a" stroke-width="2" fill="none" />
   <path d="M 360 120 L 460 120" stroke="#bf616a" stroke-width="2" fill="none" />
-
   <!-- Buckets -->
   <g transform="translate(460, 20)">
     <rect x="0" y="0" width="100" height="40" rx="4" fill="#2e3440" stroke="#a3be8c" stroke-width="2" />
     <text x="10" y="25" fill="#eceff4" font-family="sans-serif" font-size="11">Index 01: [Alice]</text>
-
     <rect x="0" y="50" width="100" height="60" rx="4" fill="#3b4252" stroke="#bf616a" stroke-width="2" />
     <text x="10" y="70" fill="#eceff4" font-family="sans-serif" font-size="11">Index 02:</text>
     <text x="10" y="85" fill="#d8dee9" font-family="sans-serif" font-size="10">[Bob]</text>
     <text x="10" y="100" fill="#bf616a" font-family="sans-serif" font-size="10">[Charlie] (Collision!)</text>
-
     <rect x="0" y="130" width="100" height="40" rx="4" fill="#2e3440" stroke="#4c566a" stroke-width="1" />
     <text x="10" y="155" fill="#4c566a" font-family="sans-serif" font-size="11">Index 03: Empty</text>
   </g>
@@ -92,7 +84,7 @@ You can easily go from input to output, but it must be mathematically impossible
 
 A **Collision** occurs when two completely different inputs yield the identical hash output. 
 
-This is governed by the **Pigeonhole Principle**: If you have 10 pigeons but only 9 nesting holes, at least one hole must contain more than one pigeon. Because the possible inputs to a hash function are infinite (any string of any length) but the output hash range is finite (e.g. $2^{32}$ combinations for a 32-bit integer), collisions are mathematically guaranteed to happen.
+This is governed by the **Pigeonhole Principle**: If you have 10 pigeons but only 9 nesting holes, at least one hole must contain more than one pigeon. Because the possible inputs to a hash function are infinite (any string of any length) but the output hash range is finite (e.g. 2<sup>32</sup> combinations for a 32-bit integer), collisions are mathematically guaranteed to happen.
 
 ### Resolution Strategies
 * **Separate Chaining**: If keys collide at Index 2, store them inside a linked list nested under Index 2. 
