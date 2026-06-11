@@ -108,9 +108,13 @@ export function CodeBlock({ examples, className }: CodeBlockProps) {
         <div className="flex gap-1.5">
           {examples.map((ex, i) => {
             const isActive = i === activeIndex;
+            const hasDuplicateLang = examples.filter((e) => e.language === ex.language).length > 1;
+            const label = hasDuplicateLang && ex.title
+              ? ex.title
+              : ex.language.charAt(0).toUpperCase() + ex.language.slice(1);
             return (
               <button
-                key={ex.language}
+                key={i}
                 onClick={() => setActiveIndex(i)}
                 className={cn(
                   "px-3 py-1 text-xs font-bold font-heading transition-all duration-200 rounded-lg select-none cursor-pointer",
@@ -119,7 +123,7 @@ export function CodeBlock({ examples, className }: CodeBlockProps) {
                     : "text-foreground-secondary hover:text-foreground border border-transparent"
                 )}
               >
-                {ex.language.charAt(0).toUpperCase() + ex.language.slice(1)}
+                {label}
               </button>
             );
           })}

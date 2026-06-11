@@ -19,7 +19,7 @@ code_examples: []
 Before diving into the mathematics, we must draw a clear line between the function and the structure:
 
 * **Hash Function**: A pure mathematical algorithm. It takes raw input data of any size (like a string, a file, or an object) and translates it into a fixed-size number (e.g., a 32-bit integer). It holds no data; it is just a translator.
-* **Hash Table (HashMap)**: A data structure that stores key-value pairs in memory. It *uses* a hash function to convert keys into indices of a physical array, allowing you to store and read values in near-instant ($O(1)$) time.
+* **Hash Table (HashMap)**: A data structure that stores key-value pairs in memory. It *uses* a hash function to convert keys into indices of a physical array, allowing you to store and read values in near-instant (`O(1)`) time.
 
 ---
 
@@ -97,13 +97,13 @@ This is governed by the **Pigeonhole Principle**: If you have 10 pigeons but onl
 Backend engineers choose hash functions based on a critical tradeoff: **Execution Speed vs. Cryptographic Security**.
 
 ### Fast Hash Functions (Non-Cryptographic)
-* *Algorithms*: MurmurHash, FNV-1a, xxHash.
+* *Algorithms*: [MurmurHash](https://en.wikipedia.org/wiki/MurmurHash), [FNV-1a](https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function), [xxHash](https://en.wikipedia.org/wiki/XXHash).
 * *Use Case*: Router load balancers, database index lookups, cache keys.
 * **Pros**: Incredibly fast. Can compute hashes for millions of requests per second with negligible CPU usage.
-* **Cons**: Vulnerable to **Hash Collision DoS (Denial of Service)** attacks. An attacker can craft a list of payload keys that purposefully collide on the same array index, turning a fast $O(1)$ lookup hash table into a slow $O(N)$ linked list, consuming 100% CPU and crashing the API server.
+* **Cons**: Vulnerable to **Hash Collision DoS (Denial of Service)** attacks. An attacker can craft a list of payload keys that purposefully collide on the same array index, turning a fast `O(1)` lookup hash table into a slow `O(N)` linked list, consuming 100% CPU and crashing the API server.
 
 ### Slow Hash Functions (Cryptographic & Key Derivation)
-* *Algorithms*: bcrypt, Argon2, PBKDF2, SHA-256.
+* *Algorithms*: [bcrypt](https://auth0.com/blog/hashing-in-action-understanding-bcrypt/), [Argon2](https://en.wikipedia.org/wiki/Argon2), [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2), [SHA-256](https://en.wikipedia.org/wiki/SHA-2).
 * *Use Case*: Password hashing, credential storage, integrity checks.
 * **Pros**: Incredibly secure. They are designed to be computationally expensive (taking 100ms+ per hash) and utilize salt values.
 * **Cons**: Heavy CPU cost. Running a slow hash function inside a cache lookup index would instantly bottleneck database throughput and slow the application to a crawl.

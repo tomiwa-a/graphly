@@ -155,6 +155,13 @@ export async function renderFullMarkdown(text: string): Promise<string> {
     `;
   };
 
+  customRenderer.link = ({ href, title, text }) => {
+    const isExternal = href && !href.startsWith("/") && !href.startsWith("#");
+    const targetAttr = isExternal ? ' target="_blank" rel="noopener noreferrer"' : "";
+    const titleAttr = title ? ` title="${title}"` : "";
+    return `<a href="${href}"${targetAttr}${titleAttr}>${text}</a>`;
+  };
+
   customRenderer.code = ({ text, lang }) => {
     const cleanLangMeta = lang || "";
     const langWord = cleanLangMeta.split(" ")[0] || "text";

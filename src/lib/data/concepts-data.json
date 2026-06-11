@@ -166,6 +166,68 @@
     "videoEmbed": null
   },
   {
+    "slug": "change-data-capture",
+    "chapterId": "databases",
+    "level": "topic",
+    "title": "Change Data Capture",
+    "summary": "How systems listen to a database's internal changelog to react to every insert, update, and delete without polling the database directly.",
+    "difficulty": "intermediate",
+    "domain": "Databases",
+    "estimatedMinutes": 10,
+    "prerequisites": [
+      "indexes",
+      "message-queues"
+    ],
+    "related": [
+      "lsm-trees",
+      "message-queues"
+    ],
+    "sections": [
+      {
+        "id": "the-polling-problem",
+        "title": "The Polling Problem",
+        "content": "Suppose you have a `users` table in your primary Postgres database, and you need to keep an Elasticsearch search index in sync. The naive approach is to poll: every 10 seconds, query for rows updated in the last 10 seconds and re-index them.\n\nThis works until it doesn't. You miss updates that happen between polls. Deletes are invisible. You add load to your database continuously. And at high volume, a 10-second lag is often too much.\n\n**Change Data Capture (CDC)** solves this by reading the database's own internal record of every write, the same log the database already uses internally for crash recovery.\n\n---"
+      },
+      {
+        "id": "how-databases-record-writes",
+        "title": "How Databases Record Writes",
+        "content": "Before any write commits, most production databases append it to a **Write-Ahead Log (WAL)**. The WAL is append-only and sequential, which is why it is fast. If the database crashes mid-write, it replays the WAL on restart to recover. Replication between a primary and its replicas also works by streaming this log.\n\nCDC tools tap into this same stream. Instead of querying the table, they read the log and emit an event for every change: an insert with the new row's data, an update with before and after values, or a delete with the deleted row's identifier.\n\n<svg viewBox=\"0 0 600 220\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: var(--color-surface-muted, #1f2428); border-radius: 0.75rem; border: 1px solid var(--color-border); padding: 1rem; width: 100%;\">\n  <text x=\"300\" y=\"22\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">CDC Pipeline</text>\n  <!-- Database -->\n  <rect x=\"20\" y=\"50\" width=\"110\" height=\"52\" rx=\"6\" fill=\"#2e3440\" stroke=\"#88c0d0\" stroke-width=\"2\"/>\n  <text x=\"75\" y=\"72\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">Postgres</text>\n  <text x=\"75\" y=\"88\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">WAL (write-ahead log)</text>\n  <!-- Arrow 1 -->\n  <path d=\"M 130 76 L 175 76\" stroke=\"#88c0d0\" stroke-width=\"2\" fill=\"none\" marker-end=\"url(#arr1)\"/>\n  <defs>\n    <marker id=\"arr1\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n      <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#88c0d0\"/>\n    </marker>\n  </defs>\n  <!-- CDC Tool -->\n  <rect x=\"178\" y=\"50\" width=\"120\" height=\"52\" rx=\"6\" fill=\"#3b4252\" stroke=\"#ebcb8b\" stroke-width=\"2\"/>\n  <text x=\"238\" y=\"72\" fill=\"#ebcb8b\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">Debezium</text>\n  <text x=\"238\" y=\"88\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">reads WAL, emits events</text>\n  <!-- Arrow 2 -->\n  <path d=\"M 298 76 L 343 76\" stroke=\"#88c0d0\" stroke-width=\"2\" fill=\"none\" marker-end=\"url(#arr2)\"/>\n  <defs>\n    <marker id=\"arr2\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n      <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#88c0d0\"/>\n    </marker>\n  </defs>\n  <!-- Kafka -->\n  <rect x=\"346\" y=\"50\" width=\"110\" height=\"52\" rx=\"6\" fill=\"#3b4252\" stroke=\"#81a1c1\" stroke-width=\"1\"/>\n  <text x=\"401\" y=\"72\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">Kafka</text>\n  <text x=\"401\" y=\"88\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">change event stream</text>\n  <!-- Consumers branching out -->\n  <path d=\"M 456 65 L 510 50\" stroke=\"#a3be8c\" stroke-width=\"1.5\" fill=\"none\" marker-end=\"url(#arr3)\"/>\n  <path d=\"M 456 76 L 510 76\" stroke=\"#a3be8c\" stroke-width=\"1.5\" fill=\"none\" marker-end=\"url(#arr4)\"/>\n  <path d=\"M 456 88 L 510 102\" stroke=\"#a3be8c\" stroke-width=\"1.5\" fill=\"none\" marker-end=\"url(#arr5)\"/>\n  <defs>\n    <marker id=\"arr3\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n      <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#a3be8c\"/>\n    </marker>\n    <marker id=\"arr4\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n      <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#a3be8c\"/>\n    </marker>\n    <marker id=\"arr5\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n      <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#a3be8c\"/>\n    </marker>\n  </defs>\n  <rect x=\"513\" y=\"36\" width=\"68\" height=\"24\" rx=\"4\" fill=\"#2e3440\" stroke=\"#a3be8c\" stroke-width=\"1\"/>\n  <text x=\"547\" y=\"52\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Elasticsearch</text>\n  <rect x=\"513\" y=\"64\" width=\"68\" height=\"24\" rx=\"4\" fill=\"#2e3440\" stroke=\"#a3be8c\" stroke-width=\"1\"/>\n  <text x=\"547\" y=\"80\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Data warehouse</text>\n  <rect x=\"513\" y=\"92\" width=\"68\" height=\"24\" rx=\"4\" fill=\"#2e3440\" stroke=\"#a3be8c\" stroke-width=\"1\"/>\n  <text x=\"547\" y=\"108\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Cache eviction</text>\n  <!-- Bottom note -->\n  <text x=\"300\" y=\"160\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">No polling. Every insert, update, and delete flows through as an event.</text>\n  <text x=\"300\" y=\"175\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Consumers are decoupled — adding a new one doesn't change the database or Debezium config.</text>\n</svg>\n\n---"
+      },
+      {
+        "id": "what-a-cdc-event-looks-like",
+        "title": "What a CDC Event Looks Like",
+        "content": "Each event carries the operation type and the full row data before and after the change. A Debezium event for an updated user might look like:\n\n```json\n{\n  \"op\": \"u\",\n  \"before\": { \"id\": 42, \"email\": \"alice@old.com\" },\n  \"after\":  { \"id\": 42, \"email\": \"alice@new.com\" },\n  \"source\": { \"table\": \"users\", \"lsn\": 190234 }\n}\n```\n\nConsumers subscribe to the topic for their table and react however they need: reindex the document, invalidate a cache key, update a replica in another region.\n\n---"
+      },
+      {
+        "id": "common-use-cases",
+        "title": "Common Use Cases",
+        "content": "**Search index sync**: Keep Elasticsearch or Algolia in sync with your database without dual-writes or polling. Every row change flows into the search index automatically.\n\n**Data warehouse replication**: Stream production database changes into a data warehouse (Snowflake, BigQuery) for analytics. No nightly batch jobs.\n\n**Cache invalidation**: When a row updates, immediately evict the corresponding cache key. More reliable than TTL-based expiry.\n\n**Audit logs**: Record every change to sensitive data (user records, payment data) in a tamper-evident log, without modifying the application code.\n\n**Cross-service sync**: In a microservices architecture, one service's database changes can trigger updates in another service's own database, without the two services coupling directly to each other.\n\n---"
+      },
+      {
+        "id": "the-transactional-outbox-pattern",
+        "title": "The Transactional Outbox Pattern",
+        "content": "A related pattern worth knowing: sometimes you want to write to your database *and* publish a message to a queue atomically. If the service crashes between the two, you end up in an inconsistent state.\n\nThe [Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html) pattern solves this by writing the message into an `outbox` table in the same database transaction as your main write. A CDC consumer then reads the outbox table and publishes to the message queue. Since everything lives in the same database transaction, it is either all committed or all rolled back.\n\n---"
+      },
+      {
+        "id": "tools",
+        "title": "Tools",
+        "content": "[Debezium](https://debezium.io/) is the most widely used open-source CDC connector, built on top of Kafka Connect. [AWS DMS](https://aws.amazon.com/dms/) (Database Migration Service) supports CDC for migrations. [PlanetScale's Vitess](https://vitess.io/) has built-in CDC. For Postgres specifically, the `pg_logical` extension and `pgoutput` plugin power most CDC implementations.\n\n---"
+      },
+      {
+        "id": "further-reading",
+        "title": "Further Reading",
+        "content": "- [Change Data Capture explained (Confluent)](https://www.confluent.io/learn/change-data-capture/) — Confluent's overview of CDC patterns and Kafka integration\n- [Debezium documentation](https://debezium.io/documentation/) — how to set up CDC from Postgres, MySQL, or MongoDB\n- [The Transactional Outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html) — atomically combining a database write with an event publication\n- [Postgres WAL explained](https://www.crunchydata.com/blog/what-is-a-postgresql-wal) — Crunchy Data's explanation of how Postgres's write-ahead log works"
+      }
+    ],
+    "codeExamples": [],
+    "seoTitle": "Change Data Capture (CDC) Explained: Database Changelogs and Event Streaming",
+    "seoDescription": "Learn how Change Data Capture works by reading database write-ahead logs, and why it's used for data sync, event streaming, and real-time analytics pipelines.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/change-data-capture",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
     "slug": "circuit-breakers",
     "chapterId": "reliability",
     "level": "topic",
@@ -224,6 +286,124 @@
     "seoTitle": "Circuit Breakers: Preventing Cascading Failures in Distributed Systems",
     "seoDescription": "Learn how circuit breakers detect and isolate faulting downstream services, prevent cascading failures, and implement fallback strategies in production systems.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/circuit-breakers",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
+    "slug": "containerization",
+    "chapterId": "infrastructure",
+    "level": "topic",
+    "title": "Containerization",
+    "summary": "How containers package software with everything it needs to run, making deployments consistent across any machine.",
+    "difficulty": "beginner",
+    "domain": "Infrastructure",
+    "estimatedMinutes": 8,
+    "prerequisites": [
+      "virtual-memory",
+      "processes-threads"
+    ],
+    "related": [
+      "docker",
+      "kubernetes"
+    ],
+    "sections": [
+      {
+        "id": "the-deployment-problem",
+        "title": "The Deployment Problem",
+        "content": "Imagine you write a service on your laptop: Node 20, a specific version of libssl, environment variables set just right. It works perfectly. You ship it to a production server running Ubuntu 22, and it immediately crashes because the server has Node 18 and a different libssl version.\n\nThis is the classic \"it works on my machine\" problem. Before containers, teams solved it by writing lengthy setup scripts, maintaining identical server configurations by hand, or shipping entire virtual machines. All of these are slow, fragile, or expensive.\n\nContainers solve it by bundling the application together with its entire environment into a single portable unit.\n\n---"
+      },
+      {
+        "id": "what-a-container-actually-is",
+        "title": "What a Container Actually Is",
+        "content": "A container is a **running process that is isolated from the rest of the system**. It has its own filesystem, its own network interface, and its own view of the process table. From inside the container, it looks like it is the only thing running on the machine.\n\nCritically, containers are not virtual machines. A VM emulates an entire hardware layer and runs a complete operating system on top. A container shares the host machine's operating system kernel but is kept isolated using two Linux kernel features:\n\n* **Namespaces** — control what a process can *see*. A container gets its own namespace for the filesystem, network interfaces, process IDs, and users. So a process inside a container sees `/` as its root, has its own `eth0`, and its PIDs start at 1, even though from the host's perspective it is just process 4827.\n* **cgroups (control groups)** — control what a process can *use*. The kernel enforces limits on how much CPU time, memory, and disk I/O the container's processes can consume.\n\n<svg viewBox=\"0 0 580 230\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: var(--color-surface-muted, #1f2428); border-radius: 0.75rem; border: 1px solid var(--color-border); padding: 1rem; width: 100%;\">\n  <text x=\"290\" y=\"22\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">VM vs Container</text>\n  <!-- VM column -->\n  <text x=\"130\" y=\"44\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">Virtual Machine</text>\n  <rect x=\"30\" y=\"54\" width=\"200\" height=\"32\" rx=\"4\" fill=\"#3b4252\" stroke=\"#81a1c1\" stroke-width=\"1\"/>\n  <text x=\"130\" y=\"75\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">App + its dependencies</text>\n  <rect x=\"30\" y=\"90\" width=\"200\" height=\"28\" rx=\"4\" fill=\"#3b4252\" stroke=\"#81a1c1\" stroke-width=\"1\"/>\n  <text x=\"130\" y=\"109\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Guest OS (full kernel)</text>\n  <rect x=\"30\" y=\"122\" width=\"200\" height=\"28\" rx=\"4\" fill=\"#3b4252\" stroke=\"#81a1c1\" stroke-width=\"1\"/>\n  <text x=\"130\" y=\"141\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Hypervisor (e.g. VMware)</text>\n  <rect x=\"30\" y=\"154\" width=\"200\" height=\"28\" rx=\"4\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"130\" y=\"173\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Host OS + Hardware</text>\n  <text x=\"130\" y=\"210\" fill=\"#bf616a\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Heavy: GBs of disk, slow to start</text>\n  <!-- Container column -->\n  <text x=\"440\" y=\"44\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">Container</text>\n  <rect x=\"340\" y=\"54\" width=\"200\" height=\"32\" rx=\"4\" fill=\"#3b4252\" stroke=\"#a3be8c\" stroke-width=\"2\"/>\n  <text x=\"440\" y=\"75\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">App + its dependencies</text>\n  <rect x=\"340\" y=\"90\" width=\"200\" height=\"56\" rx=\"4\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"440\" y=\"114\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Shared Host OS Kernel</text>\n  <text x=\"440\" y=\"130\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">(namespaces + cgroups)</text>\n  <rect x=\"340\" y=\"150\" width=\"200\" height=\"32\" rx=\"4\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"440\" y=\"171\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Host Hardware</text>\n  <text x=\"440\" y=\"210\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Light: MBs of disk, starts in seconds</text>\n</svg>\n\nBecause containers skip the guest OS entirely, they are dramatically smaller (megabytes vs gigabytes) and start in milliseconds instead of minutes.\n\n---"
+      },
+      {
+        "id": "container-images",
+        "title": "Container Images",
+        "content": "A container image is the blueprint — the read-only snapshot of the filesystem that a container starts from. You define the image with a `Dockerfile` (in Docker's case), listing what base system to start from, what files to add, and what command to run.\n\nImages are built in **layers**. Each instruction in a Dockerfile adds a new layer on top of the previous ones. Layers are content-addressed and cached, so if only your app code changes, only that layer needs to be rebuilt and transferred — the operating system and dependency layers are reused.\n\nWhen you run an image, the container runtime adds a writable layer on top. Any changes the container makes (log files, temp files) go into that layer and are discarded when the container stops.\n\n---"
+      },
+      {
+        "id": "why-it-matters",
+        "title": "Why It Matters",
+        "content": "* **Consistency**: The same image runs identically on your laptop, a CI server, and a production cluster. The environment is part of the artifact.\n* **Fast deployments**: Starting a container is nearly instant. You can start dozens of them in the time a VM would finish booting.\n* **Isolation**: Containers cannot accidentally affect each other's processes or files. Dependencies for one service do not conflict with another's.\n* **Scalability**: Because containers are lightweight and fast to start, orchestrators like [Kubernetes](https://kubernetes.io/docs/concepts/overview/) can spin up or kill them automatically in response to traffic.\n\n---"
+      },
+      {
+        "id": "further-reading",
+        "title": "Further Reading",
+        "content": "- [What is a container? (Google Cloud)](https://cloud.google.com/learn/what-are-containers) — a clear, practical overview of the core concept\n- [Containers vs VMs explained](https://www.atlassian.com/microservices/cloud-computing/containers-vs-vms) — Atlassian's breakdown of the key differences\n- [Linux namespaces explained](https://www.redhat.com/en/blog/7-linux-namespaces) — how the kernel isolation actually works"
+      }
+    ],
+    "codeExamples": [],
+    "seoTitle": "Containerization Explained: What Containers Are and Why They Matter",
+    "seoDescription": "Learn what containerization is, how containers differ from virtual machines, and why they became the standard way to ship backend software.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/containerization",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
+    "slug": "docker",
+    "chapterId": "infrastructure",
+    "level": "topic",
+    "title": "Docker",
+    "summary": "The tool that made containers practical: how Docker packages, distributes, and runs containers with a simple developer workflow.",
+    "difficulty": "beginner",
+    "domain": "Infrastructure",
+    "estimatedMinutes": 10,
+    "prerequisites": [
+      "containerization"
+    ],
+    "related": [
+      "kubernetes"
+    ],
+    "sections": [
+      {
+        "id": "what-docker-is",
+        "title": "What Docker Is",
+        "content": "[Docker](https://www.docker.com/) is the tool that made containers mainstream. Before Docker (2013), Linux containers existed but required deep kernel knowledge to set up. Docker wrapped them in a simple CLI and an image format that anyone could use.\n\nThe core Docker workflow is three steps: **build** an image, **push** it to a registry, **run** it anywhere.\n\n---"
+      },
+      {
+        "id": "the-dockerfile",
+        "title": "The Dockerfile",
+        "content": "A `Dockerfile` is a plain text recipe that describes how to build an image. Docker reads it top to bottom, executing each instruction and saving the result as a new layer.\n\n<svg viewBox=\"0 0 560 190\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: var(--color-surface-muted, #1f2428); border-radius: 0.75rem; border: 1px solid var(--color-border); padding: 1rem; width: 100%;\">\n  <text x=\"280\" y=\"22\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">Image layers built from a Dockerfile</text>\n  <!-- Layer stack (bottom to top visually) -->\n  <rect x=\"60\" y=\"148\" width=\"440\" height=\"28\" rx=\"4\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"280\" y=\"166\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Layer 1: FROM node:20-alpine  (base OS + Node runtime — pulled from registry, cached)</text>\n  <rect x=\"60\" y=\"116\" width=\"440\" height=\"28\" rx=\"4\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"280\" y=\"134\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Layer 2: COPY package.json + RUN npm ci  (dependencies — cached until package.json changes)</text>\n  <rect x=\"60\" y=\"84\" width=\"440\" height=\"28\" rx=\"4\" fill=\"#3b4252\" stroke=\"#81a1c1\" stroke-width=\"1\"/>\n  <text x=\"280\" y=\"102\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Layer 3: COPY . .  (your app code — rebuilt on every code change)</text>\n  <rect x=\"60\" y=\"52\" width=\"440\" height=\"28\" rx=\"4\" fill=\"#3b4252\" stroke=\"#a3be8c\" stroke-width=\"2\"/>\n  <text x=\"280\" y=\"70\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\" font-weight=\"bold\">Writable layer: runtime writes (logs, temp files) — discarded when container stops</text>\n  <!-- Arrow -->\n  <text x=\"16\" y=\"100\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">build</text>\n  <text x=\"16\" y=\"110\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">order</text>\n  <path d=\"M 20 148 L 20 52\" stroke=\"#4c566a\" stroke-width=\"1.5\" fill=\"none\" marker-end=\"url(#up)\"/>\n  <defs>\n    <marker id=\"up\" markerWidth=\"8\" markerHeight=\"8\" refX=\"3\" refY=\"6\" orient=\"auto\">\n      <path d=\"M0,6 L3,0 L6,6 z\" fill=\"#4c566a\"/>\n    </marker>\n  </defs>\n</svg>\n\nThe order of instructions matters for caching. Copying `package.json` before the rest of your source files means the `npm ci` layer gets cached and skipped on every rebuild where only your code changed. This keeps builds fast.\n\n---"
+      },
+      {
+        "id": "images-and-registries",
+        "title": "Images and Registries",
+        "content": "An image is just a stack of layers plus some metadata (what command to run, what port to expose). Once built, you **tag** it and **push** it to a registry — a storage server for images.\n\n[Docker Hub](https://hub.docker.com/) is the public default. Companies typically run a private registry (AWS ECR, Google Artifact Registry, or a self-hosted Harbor) so images stay internal.\n\nWhen a server pulls an image, it only downloads the layers it doesn't already have. If the base Node image is already cached locally, only your application layers transfer.\n\n---"
+      },
+      {
+        "id": "running-containers",
+        "title": "Running Containers",
+        "content": "`docker run` takes an image and starts a container from it. Key options engineers use daily:\n\n* `-d` — run detached (in the background)\n* `-p 3000:3000` — map port 3000 on the host to port 3000 inside the container\n* `-e DATABASE_URL=...` — inject environment variables\n* `--name my-api` — give the container a name instead of the random default\n* `-v /data:/app/data` — mount a host directory into the container (for persistent data)\n\nA container runs until its main process exits. If the process crashes, the container stops. Docker has a `--restart always` flag that will restart it automatically, but in production you'd normally hand this responsibility to an orchestrator like Kubernetes.\n\n---"
+      },
+      {
+        "id": "docker-compose",
+        "title": "Docker Compose",
+        "content": "For local development with multiple services (an API, a database, a cache), [Docker Compose](https://docs.docker.com/compose/) lets you define them all in a single `docker-compose.yml` and start everything with one command: `docker compose up`. Each service gets its own container and they share a private network, so they can reach each other by name.\n\n---"
+      },
+      {
+        "id": "further-reading",
+        "title": "Further Reading",
+        "content": "- [Docker getting started guide](https://docs.docker.com/get-started/) — the official tutorial, genuinely well-written\n- [Dockerfile best practices](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/) — how to write efficient, cache-friendly Dockerfiles\n- [Docker in 100 seconds (Fireship)](https://www.youtube.com/watch?v=Gjnup-PuquQ) — the fastest useful overview you will find\n- [Docker Compose overview](https://docs.docker.com/compose/) — orchestrating multi-service local environments"
+      }
+    ],
+    "codeExamples": [
+      {
+        "language": "dockerfile",
+        "title": "A minimal Dockerfile",
+        "code": "# Start from an official base image (Node 20 on Alpine Linux)\nFROM node:20-alpine\n\n# Set the working directory inside the container\nWORKDIR /app\n\n# Copy dependency files first (cached as a separate layer)\nCOPY package*.json ./\nRUN npm ci --only=production\n\n# Copy the rest of the application code\nCOPY . .\n\n# Expose the port the app listens on\nEXPOSE 3000\n\n# The command to run when the container starts\nCMD [\"node\", \"server.js\"]\n"
+      },
+      {
+        "language": "bash",
+        "title": "Common Docker commands",
+        "code": "# Build an image from the current directory\ndocker build -t my-api:latest .\n\n# Run a container from that image (detached, port mapped)\ndocker run -d -p 3000:3000 --name my-api my-api:latest\n\n# View running containers\ndocker ps\n\n# Stream logs from a running container\ndocker logs -f my-api\n\n# Open a shell inside a running container\ndocker exec -it my-api sh\n\n# Stop and remove\ndocker stop my-api && docker rm my-api\n"
+      }
+    ],
+    "seoTitle": "Docker Explained: Images, Containers, and the Build-Ship-Run Model",
+    "seoDescription": "Learn how Docker works: building images from Dockerfiles, running containers, and pushing to registries. Written for backend engineers, not DevOps specialists.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/docker",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -350,7 +530,7 @@
       {
         "id": "hash-function-vs-hash-table",
         "title": "Hash Function vs. Hash Table",
-        "content": "Before diving into the mathematics, we must draw a clear line between the function and the structure:\n\n* **Hash Function**: A pure mathematical algorithm. It takes raw input data of any size (like a string, a file, or an object) and translates it into a fixed-size number (e.g., a 32-bit integer). It holds no data; it is just a translator.\n* **Hash Table (HashMap)**: A data structure that stores key-value pairs in memory. It *uses* a hash function to convert keys into indices of a physical array, allowing you to store and read values in near-instant ($O(1)$) time.\n\n---"
+        "content": "Before diving into the mathematics, we must draw a clear line between the function and the structure:\n\n* **Hash Function**: A pure mathematical algorithm. It takes raw input data of any size (like a string, a file, or an object) and translates it into a fixed-size number (e.g., a 32-bit integer). It holds no data; it is just a translator.\n* **Hash Table (HashMap)**: A data structure that stores key-value pairs in memory. It *uses* a hash function to convert keys into indices of a physical array, allowing you to store and read values in near-instant (`O(1)`) time.\n\n---"
       },
       {
         "id": "the-hashing-pipeline",
@@ -370,7 +550,7 @@
       {
         "id": "hashing-tradeoffs-fast-vs-slow-functions",
         "title": "Hashing Tradeoffs: Fast vs. Slow Functions",
-        "content": "Backend engineers choose hash functions based on a critical tradeoff: **Execution Speed vs. Cryptographic Security**.\n\n### Fast Hash Functions (Non-Cryptographic)\n* *Algorithms*: MurmurHash, FNV-1a, xxHash.\n* *Use Case*: Router load balancers, database index lookups, cache keys.\n* **Pros**: Incredibly fast. Can compute hashes for millions of requests per second with negligible CPU usage.\n* **Cons**: Vulnerable to **Hash Collision DoS (Denial of Service)** attacks. An attacker can craft a list of payload keys that purposefully collide on the same array index, turning a fast $O(1)$ lookup hash table into a slow $O(N)$ linked list, consuming 100% CPU and crashing the API server.\n\n### Slow Hash Functions (Cryptographic & Key Derivation)\n* *Algorithms*: bcrypt, Argon2, PBKDF2, SHA-256.\n* *Use Case*: Password hashing, credential storage, integrity checks.\n* **Pros**: Incredibly secure. They are designed to be computationally expensive (taking 100ms+ per hash) and utilize salt values.\n* **Cons**: Heavy CPU cost. Running a slow hash function inside a cache lookup index would instantly bottleneck database throughput and slow the application to a crawl."
+        "content": "Backend engineers choose hash functions based on a critical tradeoff: **Execution Speed vs. Cryptographic Security**.\n\n### Fast Hash Functions (Non-Cryptographic)\n* *Algorithms*: [MurmurHash](https://en.wikipedia.org/wiki/MurmurHash), [FNV-1a](https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function), [xxHash](https://en.wikipedia.org/wiki/XXHash).\n* *Use Case*: Router load balancers, database index lookups, cache keys.\n* **Pros**: Incredibly fast. Can compute hashes for millions of requests per second with negligible CPU usage.\n* **Cons**: Vulnerable to **Hash Collision DoS (Denial of Service)** attacks. An attacker can craft a list of payload keys that purposefully collide on the same array index, turning a fast `O(1)` lookup hash table into a slow `O(N)` linked list, consuming 100% CPU and crashing the API server.\n\n### Slow Hash Functions (Cryptographic & Key Derivation)\n* *Algorithms*: [bcrypt](https://auth0.com/blog/hashing-in-action-understanding-bcrypt/), [Argon2](https://en.wikipedia.org/wiki/Argon2), [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2), [SHA-256](https://en.wikipedia.org/wiki/SHA-2).\n* *Use Case*: Password hashing, credential storage, integrity checks.\n* **Pros**: Incredibly secure. They are designed to be computationally expensive (taking 100ms+ per hash) and utilize salt values.\n* **Cons**: Heavy CPU cost. Running a slow hash function inside a cache lookup index would instantly bottleneck database throughput and slow the application to a crawl."
       }
     ],
     "codeExamples": [],
@@ -539,50 +719,118 @@
       "http"
     ],
     "related": [
-      "caching-strategies"
+      "caching-strategies",
+      "lsm-trees"
     ],
     "sections": [
       {
-        "id": "what-it-is",
-        "title": "What it is",
-        "content": "A database index is a data structure (usually a B-tree) that allows the database to find rows without scanning the entire table. It works like the index at the back of a textbook — instead of reading every page, you look up the topic and jump to the right page."
+        "id": "the-problem-full-table-scans",
+        "title": "The Problem: Full Table Scans",
+        "content": "Imagine a `users` table with 50 million rows. You run `SELECT * FROM users WHERE email = 'alice@example.com'`. Without an index, the database has no choice: it reads **every single row**, top to bottom, comparing the email column until it finds a match. This is called a **full table scan**.\n\nOn small tables this is fine. On anything production-scale, it is catastrophic. A query that should take 2ms ends up taking 8 seconds and locks up your entire API.\n\nAn index gives the database a shortcut: a pre-sorted lookup structure it can use to jump directly to the right rows, the same way you use the index at the back of a textbook.\n\n---"
       },
       {
-        "id": "why-it-matters",
-        "title": "Why it matters",
-        "content": "Without indexes, every query scans every row in the table (a full table scan). On a table with millions of rows, this is catastrophically slow. A well-placed index turns a 5-second query into a 5-millisecond query."
+        "id": "how-an-index-works",
+        "title": "How an Index Works",
+        "content": "When you create an index on a column, the database builds a **separate data structure** that stores the indexed column values in sorted order, with each entry pointing back to the physical row location on disk.\n\n<svg viewBox=\"0 0 640 280\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: var(--color-surface-muted, #1f2428); border-radius: 0.75rem; border: 1px solid var(--color-border); padding: 1rem; width: 100%;\">\n  <!-- Users Table -->\n  <text x=\"30\" y=\"26\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"12\" font-weight=\"bold\">users table (unsorted)</text>\n  <rect x=\"20\" y=\"36\" width=\"200\" height=\"30\" rx=\"3\" fill=\"#3b4252\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"30\" y=\"55\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" font-weight=\"bold\">id</text>\n  <text x=\"80\" y=\"55\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" font-weight=\"bold\">email</text>\n  <text x=\"170\" y=\"55\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" font-weight=\"bold\">row</text>\n  <rect x=\"20\" y=\"66\" width=\"200\" height=\"26\" rx=\"0\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"30\" y=\"83\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">1</text>\n  <text x=\"80\" y=\"83\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">charlie@…</text>\n  <text x=\"170\" y=\"83\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">#1</text>\n  <rect x=\"20\" y=\"92\" width=\"200\" height=\"26\" rx=\"0\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"30\" y=\"109\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">2</text>\n  <text x=\"80\" y=\"109\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">alice@…</text>\n  <text x=\"170\" y=\"109\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">#2</text>\n  <rect x=\"20\" y=\"118\" width=\"200\" height=\"26\" rx=\"0\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"30\" y=\"135\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">3</text>\n  <text x=\"80\" y=\"135\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">bob@…</text>\n  <text x=\"170\" y=\"135\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">#3</text>\n  <rect x=\"20\" y=\"144\" width=\"200\" height=\"26\" rx=\"0\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"30\" y=\"161\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">4</text>\n  <text x=\"80\" y=\"161\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">diana@…</text>\n  <text x=\"170\" y=\"161\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">#4</text>\n  <!-- Scan label -->\n  <text x=\"20\" y=\"200\" fill=\"#bf616a\" font-family=\"sans-serif\" font-size=\"10\">Without index: scan all 4 rows</text>\n  <!-- Arrow -->\n  <path d=\"M 240 130 L 310 130\" stroke=\"#88c0d0\" stroke-width=\"2\" fill=\"none\" marker-end=\"url(#arrow)\"/>\n  <text x=\"248\" y=\"122\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"10\">index on</text>\n  <text x=\"248\" y=\"134\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"10\">email →</text>\n  <defs>\n    <marker id=\"arrow\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n      <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#88c0d0\"/>\n    </marker>\n  </defs>\n  <!-- Index structure -->\n  <text x=\"320\" y=\"26\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"12\" font-weight=\"bold\">email index (sorted)</text>\n  <rect x=\"310\" y=\"36\" width=\"200\" height=\"30\" rx=\"3\" fill=\"#3b4252\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"320\" y=\"55\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" font-weight=\"bold\">email (sorted)</text>\n  <text x=\"460\" y=\"55\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" font-weight=\"bold\">→ row</text>\n  <rect x=\"310\" y=\"66\" width=\"200\" height=\"26\" rx=\"0\" fill=\"#2e3440\" stroke=\"#a3be8c\" stroke-width=\"1\"/>\n  <text x=\"320\" y=\"83\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">alice@…</text>\n  <text x=\"460\" y=\"83\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">#2</text>\n  <rect x=\"310\" y=\"92\" width=\"200\" height=\"26\" rx=\"0\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"320\" y=\"109\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">bob@…</text>\n  <text x=\"460\" y=\"109\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">#3</text>\n  <rect x=\"310\" y=\"118\" width=\"200\" height=\"26\" rx=\"0\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"320\" y=\"135\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">charlie@…</text>\n  <text x=\"460\" y=\"135\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">#1</text>\n  <rect x=\"310\" y=\"144\" width=\"200\" height=\"26\" rx=\"0\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"320\" y=\"161\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\">diana@…</text>\n  <text x=\"460\" y=\"161\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">#4</text>\n  <text x=\"310\" y=\"200\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"10\">With index: binary search → 1 lookup</text>\n</svg>\n\nBecause the index is sorted, the database can use **binary search**, halving the search space on every step. On 50 million rows that's roughly 26 comparisons instead of 50 million.\n\n---"
       },
       {
-        "id": "how-it-works",
-        "title": "How it works",
-        "content": "When you create an index on a column, the database builds a sorted data structure pointing to the rows. For a B-tree index, lookups are O(log n). Composite indexes cover multiple columns and support queries that filter on those columns in order."
+        "id": "types-of-indexes",
+        "title": "Types of Indexes",
+        "content": "Most databases support several index structures. Each solves a different problem.\n\n### B-Tree Index (the default)\n\nThe [B-tree](https://en.wikipedia.org/wiki/B-tree) is the workhorse. PostgreSQL, MySQL, and SQLite all default to it. It stores values in a balanced tree so that lookups, range queries (`BETWEEN`, `>`, `<`), and sorted results all cost `O(log n)`.\n\nThe easiest way to picture it: you are looking up the name \"sarah\" in a sorted list of 8 names. Instead of reading from the top, you go to the middle first, ask \"is sarah before or after morgan?\", then halve again. Three steps gets you there.\n\n<svg viewBox=\"0 0 560 230\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: var(--color-surface-muted, #1f2428); border-radius: 0.75rem; border: 1px solid var(--color-border); padding: 1rem; width: 100%;\">\n  <text x=\"280\" y=\"22\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">Looking up \"sarah\" in a B-Tree</text>\n  <!-- Step labels -->\n  <text x=\"280\" y=\"44\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Each node asks: go left (smaller) or right (larger)?</text>\n  <!-- Root node -->\n  <rect x=\"195\" y=\"54\" width=\"170\" height=\"38\" rx=\"6\" fill=\"#3b4252\" stroke=\"#88c0d0\" stroke-width=\"2\"/>\n  <text x=\"280\" y=\"70\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"12\" text-anchor=\"middle\" font-weight=\"bold\">Start: \"morgan\"</text>\n  <text x=\"280\" y=\"84\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">sarah > morgan → go right</text>\n  <!-- Level 2 left (not taken) -->\n  <rect x=\"60\" y=\"128\" width=\"150\" height=\"34\" rx=\"5\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"135\" y=\"145\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\">alice … morgan</text>\n  <text x=\"135\" y=\"157\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">(not searched)</text>\n  <!-- Level 2 right (taken) -->\n  <rect x=\"340\" y=\"128\" width=\"160\" height=\"34\" rx=\"5\" fill=\"#3b4252\" stroke=\"#88c0d0\" stroke-width=\"2\"/>\n  <text x=\"420\" y=\"145\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">\"quinn\"</text>\n  <text x=\"420\" y=\"157\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">sarah > quinn → go right</text>\n  <!-- Connectors root → L2 -->\n  <path d=\"M 240 92 L 160 128\" stroke=\"#4c566a\" stroke-width=\"1.5\" fill=\"none\"/>\n  <path d=\"M 320 92 L 390 128\" stroke=\"#88c0d0\" stroke-width=\"2\" fill=\"none\"/>\n  <!-- Leaf nodes -->\n  <rect x=\"295\" y=\"196\" width=\"100\" height=\"28\" rx=\"4\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"345\" y=\"214\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">quinn … ryan</text>\n  <rect x=\"410\" y=\"196\" width=\"110\" height=\"28\" rx=\"4\" fill=\"#2e3440\" stroke=\"#a3be8c\" stroke-width=\"2\"/>\n  <text x=\"465\" y=\"210\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">sarah → #row</text>\n  <text x=\"465\" y=\"221\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">found in 3 steps</text>\n  <!-- Connectors L2 right → leaves -->\n  <path d=\"M 400 162 L 345 196\" stroke=\"#4c566a\" stroke-width=\"1\" fill=\"none\"/>\n  <path d=\"M 440 162 L 465 196\" stroke=\"#a3be8c\" stroke-width=\"2\" fill=\"none\"/>\n</svg>\n\n### Hash Index\n\nA [hash index](https://en.wikipedia.org/wiki/Hash_table) uses a hash function to map a key directly to a bucket, giving `O(1)` exact lookups. It is very fast for `WHERE email = 'alice@example.com'` but completely useless for range queries, since hashing destroys sort order. PostgreSQL supports hash indexes explicitly; in MySQL they are only available on Memory tables.\n\n### Composite Index\n\nA composite (multi-column) index covers more than one column. The order matters: a composite index on `(user_id, created_at)` can answer queries filtering on `user_id` alone, or `user_id AND created_at` together, but it cannot efficiently serve queries filtering on `created_at` alone. This is the **left-prefix rule**.\n\n### Partial Index\n\nA partial index covers only rows matching a `WHERE` clause. For example, `CREATE INDEX ON orders (created_at) WHERE status = 'pending'` builds a small index covering only pending orders. Useful when you almost always query a specific filtered subset of the table.\n\n### Full-Text Index\n\nDesigned for searching inside text fields, a full-text index builds an [inverted index](https://en.wikipedia.org/wiki/Inverted_index): a map from every word to the rows containing it. This is how Postgres `tsvector`, Elasticsearch, and Meilisearch work under the hood.\n\n---"
       },
       {
-        "id": "production-concerns",
-        "title": "Production concerns",
-        "content": "Every index slows down writes because the database must update the index on every INSERT, UPDATE, and DELETE. Indexes consume disk space. Too many indexes degrade write performance. Use EXPLAIN ANALYZE to verify your queries actually use the indexes you create."
+        "id": "the-write-penalty",
+        "title": "The Write Penalty",
+        "content": "Here is the cost that surprises many engineers: **every index you add makes writes slower**.\n\nWhen you `INSERT` a row, the database does not just append data to a table file. It must also insert a new entry into every index on that table, potentially rebalancing B-tree nodes in the process. The same applies to `UPDATE` and `DELETE`.\n\n<svg viewBox=\"0 0 600 200\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: var(--color-surface-muted, #1f2428); border-radius: 0.75rem; border: 1px solid var(--color-border); padding: 1rem; width: 100%;\">\n  <text x=\"300\" y=\"22\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">Cost of INSERT with indexes</text>\n  <!-- Step 1 -->\n  <rect x=\"20\" y=\"38\" width=\"130\" height=\"44\" rx=\"6\" fill=\"#2e3440\" stroke=\"#88c0d0\" stroke-width=\"2\"/>\n  <text x=\"85\" y=\"57\" fill=\"#eceff4\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">INSERT row</text>\n  <text x=\"85\" y=\"73\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">write to table file</text>\n  <!-- Arrow -->\n  <path d=\"M 150 60 L 180 60\" stroke=\"#4c566a\" stroke-width=\"1.5\" fill=\"none\" marker-end=\"url(#a2)\"/>\n  <defs>\n    <marker id=\"a2\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n      <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#4c566a\"/>\n    </marker>\n  </defs>\n  <!-- Index updates stacked -->\n  <rect x=\"183\" y=\"38\" width=\"130\" height=\"28\" rx=\"5\" fill=\"#3b4252\" stroke=\"#bf616a\" stroke-width=\"1\"/>\n  <text x=\"248\" y=\"57\" fill=\"#bf616a\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Update index #1 (email)</text>\n  <rect x=\"183\" y=\"72\" width=\"130\" height=\"28\" rx=\"5\" fill=\"#3b4252\" stroke=\"#bf616a\" stroke-width=\"1\"/>\n  <text x=\"248\" y=\"91\" fill=\"#bf616a\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Update index #2 (name)</text>\n  <rect x=\"183\" y=\"106\" width=\"130\" height=\"28\" rx=\"5\" fill=\"#3b4252\" stroke=\"#bf616a\" stroke-width=\"1\"/>\n  <text x=\"248\" y=\"125\" fill=\"#bf616a\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\">Update index #3 (created_at)</text>\n  <!-- Connectors to index boxes -->\n  <path d=\"M 150 52 L 183 52\" stroke=\"#bf616a\" stroke-width=\"1\" fill=\"none\"/>\n  <path d=\"M 150 52 L 165 52 L 165 86 L 183 86\" stroke=\"#bf616a\" stroke-width=\"1\" fill=\"none\"/>\n  <path d=\"M 150 52 L 165 52 L 165 120 L 183 120\" stroke=\"#bf616a\" stroke-width=\"1\" fill=\"none\"/>\n  <!-- Arrow to result -->\n  <path d=\"M 313 85 L 360 85\" stroke=\"#4c566a\" stroke-width=\"1.5\" fill=\"none\" marker-end=\"url(#a3)\"/>\n  <defs>\n    <marker id=\"a3\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\">\n      <path d=\"M0,0 L0,6 L8,3 z\" fill=\"#4c566a\"/>\n    </marker>\n  </defs>\n  <!-- Result -->\n  <rect x=\"362\" y=\"60\" width=\"200\" height=\"50\" rx=\"6\" fill=\"#3b4252\" stroke=\"#ebcb8b\" stroke-width=\"1.5\"/>\n  <text x=\"462\" y=\"80\" fill=\"#ebcb8b\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">3× write amplification</text>\n  <text x=\"462\" y=\"97\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">more indexes = slower INSERTs</text>\n</svg>\n\nThis is called **write amplification**: one logical write fans out into multiple physical writes. On write-heavy workloads (event pipelines, logging, high-frequency trading), too many indexes can make your database the bottleneck.\n\n**The rule:** only create an index when you have a measured slow query that needs it. Don't index speculatively.\n\n---"
       },
       {
-        "id": "common-mistakes",
-        "title": "Common mistakes",
-        "content": "Indexing every column \"just in case.\" Creating composite indexes in the wrong column order. Not analyzing query plans to verify index usage. Forgetting that indexes on low-cardinality columns (like boolean flags) are usually useless."
+        "id": "cons-at-a-glance",
+        "title": "Cons at a Glance",
+        "content": "- **Slower writes**: every `INSERT`, `UPDATE`, and `DELETE` must update all indexes on the table\n- **Extra disk space**: each index is its own data structure stored on disk; large tables with many indexes can double or triple storage requirements\n- **Index maintenance**: over time indexes can become bloated from deleted rows leaving dead entries. PostgreSQL `VACUUM`, for example, reclaims this space\n- **Wrong index, no benefit**: a composite index used in the wrong column order, or an index on a low-cardinality column (like a boolean `is_active`), does nothing. Always use `EXPLAIN ANALYZE` to confirm your queries actually hit the index\n\n---"
+      },
+      {
+        "id": "further-reading",
+        "title": "Further Reading",
+        "content": "- [Use the index, Luke](https://use-the-index-luke.com/) — the best free book on SQL indexes, written for developers not DBAs\n- [B-Trees and database indexes explained](https://planetscale.com/blog/btrees-and-database-indexes) — PlanetScale's deep-dive on how B-trees back real indexes\n- [Composite indexes and the left-prefix rule](https://dev.mysql.com/doc/refman/8.0/en/multiple-column-indexes.html) — how multi-column index ordering works\n- [Partial indexes in PostgreSQL](https://www.postgresql.org/docs/current/indexes-partial.html) — when and why to index only a subset of rows\n- [How PostgreSQL uses indexes](https://www.postgresql.org/docs/current/indexes.html) — a readable explanation of all index types in Postgres"
       }
     ],
     "codeExamples": [
       {
-        "language": "TypeScript",
-        "title": "Prisma index definition",
-        "code": "model User {\n  id    String @id @default(uuid())\n  email String @unique\n  name  String\n\n  @@index([email])\n  @@index([name, email])  // composite\n}\n"
-      },
-      {
-        "language": "Go",
-        "title": "SQL index creation",
-        "code": "_, err := db.Exec(`\n  CREATE INDEX CONCURRENTLY idx_users_email\n  ON users (email);\n\n  CREATE INDEX idx_orders_user_date\n  ON orders (user_id, created_at DESC);\n`)\n"
+        "language": "SQL",
+        "title": "Creating indexes",
+        "code": "-- Single-column index on a frequently queried field\nCREATE INDEX idx_users_email ON users (email);\n\n-- Composite index: supports filtering by user_id alone,\n-- or user_id + created_at together (left-prefix rule)\nCREATE INDEX idx_orders_user_date\n  ON orders (user_id, created_at DESC);\n\n-- Partial index: only indexes pending orders (much smaller)\nCREATE INDEX idx_orders_pending\n  ON orders (created_at)\n  WHERE status = 'pending';\n\n-- Check whether your query actually uses the index\nEXPLAIN ANALYZE\n  SELECT * FROM users WHERE email = 'alice@example.com';\n"
       }
     ],
     "seoTitle": "Database Indexes: B-Trees, Query Performance, and Tradeoffs",
-    "seoDescription": "Learn how database indexes work under the hood — B-trees, composite indexes, query planning, and the read/write performance tradeoffs every backend engineer must understand.",
+    "seoDescription": "Learn how database indexes work under the hood: B-trees, composite indexes, query planning, and the read/write performance tradeoffs every backend engineer must understand.",
     "canonicalUrl": "https://graphy.ellomas.com/concepts/indexes",
+    "ogImage": null,
+    "citations": [],
+    "videoEmbed": null
+  },
+  {
+    "slug": "kubernetes",
+    "chapterId": "infrastructure",
+    "level": "topic",
+    "title": "Kubernetes",
+    "summary": "How Kubernetes automates the deployment, scaling, and self-healing of containerized applications across a cluster of machines.",
+    "difficulty": "intermediate",
+    "domain": "Infrastructure",
+    "estimatedMinutes": 14,
+    "prerequisites": [
+      "docker"
+    ],
+    "related": [
+      "containerization",
+      "circuit-breakers"
+    ],
+    "sections": [
+      {
+        "id": "the-problem-docker-alone-cannot-solve",
+        "title": "The Problem Docker Alone Cannot Solve",
+        "content": "Docker is excellent for running a single container on a single machine. But real production systems run across tens or hundreds of machines, need to recover automatically from crashes, scale up under load, and deploy new versions without downtime. Docker by itself has no answer for any of this.\n\nThis is what **Kubernetes** (often abbreviated K8s) does. It is a platform for running containers at scale, deciding which machine each container goes on, restarting containers that crash, and routing traffic between them.\n\n---"
+      },
+      {
+        "id": "the-core-idea-desired-state",
+        "title": "The Core Idea: Desired State",
+        "content": "Kubernetes operates on a simple principle: you tell it what you *want* (three copies of my API running), and it continuously works to make reality match that description. If a server crashes and takes two of those copies with it, Kubernetes notices and schedules two replacement containers on healthy machines. You do not intervene manually.\n\nThis is called **declarative configuration**, and it is the key mental shift when moving to Kubernetes.\n\n---"
+      },
+      {
+        "id": "key-building-blocks",
+        "title": "Key Building Blocks",
+        "content": "<svg viewBox=\"0 0 580 260\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: var(--color-surface-muted, #1f2428); border-radius: 0.75rem; border: 1px solid var(--color-border); padding: 1rem; width: 100%;\">\n  <text x=\"290\" y=\"22\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"12\" font-weight=\"bold\" text-anchor=\"middle\">Kubernetes Cluster Structure</text>\n  <!-- Control Plane -->\n  <rect x=\"20\" y=\"34\" width=\"540\" height=\"52\" rx=\"6\" fill=\"#2e3440\" stroke=\"#88c0d0\" stroke-width=\"2\"/>\n  <text x=\"290\" y=\"53\" fill=\"#88c0d0\" font-family=\"sans-serif\" font-size=\"11\" text-anchor=\"middle\" font-weight=\"bold\">Control Plane</text>\n  <text x=\"110\" y=\"72\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">API Server</text>\n  <text x=\"230\" y=\"72\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Scheduler</text>\n  <text x=\"350\" y=\"72\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Controller Manager</text>\n  <text x=\"470\" y=\"72\" fill=\"#81a1c1\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">etcd (state store)</text>\n  <!-- Nodes -->\n  <rect x=\"20\" y=\"106\" width=\"168\" height=\"130\" rx=\"6\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"104\" y=\"124\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\" font-weight=\"bold\">Node 1</text>\n  <rect x=\"32\" y=\"132\" width=\"144\" height=\"36\" rx=\"4\" fill=\"#3b4252\" stroke=\"#a3be8c\" stroke-width=\"1\"/>\n  <text x=\"104\" y=\"146\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Pod: my-api (replica 1)</text>\n  <text x=\"104\" y=\"158\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"8\" text-anchor=\"middle\">container + shared network/storage</text>\n  <rect x=\"32\" y=\"174\" width=\"144\" height=\"36\" rx=\"4\" fill=\"#3b4252\" stroke=\"#81a1c1\" stroke-width=\"1\"/>\n  <text x=\"104\" y=\"190\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Pod: worker-job</text>\n  <text x=\"104\" y=\"202\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"8\" text-anchor=\"middle\">different workload</text>\n  <rect x=\"206\" y=\"106\" width=\"168\" height=\"130\" rx=\"6\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"290\" y=\"124\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\" font-weight=\"bold\">Node 2</text>\n  <rect x=\"218\" y=\"132\" width=\"144\" height=\"36\" rx=\"4\" fill=\"#3b4252\" stroke=\"#a3be8c\" stroke-width=\"1\"/>\n  <text x=\"290\" y=\"146\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Pod: my-api (replica 2)</text>\n  <text x=\"290\" y=\"158\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"8\" text-anchor=\"middle\">container + shared network/storage</text>\n  <rect x=\"392\" y=\"106\" width=\"168\" height=\"130\" rx=\"6\" fill=\"#2e3440\" stroke=\"#4c566a\" stroke-width=\"1\"/>\n  <text x=\"476\" y=\"124\" fill=\"#d8dee9\" font-family=\"sans-serif\" font-size=\"10\" text-anchor=\"middle\" font-weight=\"bold\">Node 3</text>\n  <rect x=\"404\" y=\"132\" width=\"144\" height=\"36\" rx=\"4\" fill=\"#3b4252\" stroke=\"#a3be8c\" stroke-width=\"1\"/>\n  <text x=\"476\" y=\"146\" fill=\"#a3be8c\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">Pod: my-api (replica 3)</text>\n  <text x=\"476\" y=\"158\" fill=\"#4c566a\" font-family=\"sans-serif\" font-size=\"8\" text-anchor=\"middle\">container + shared network/storage</text>\n  <!-- Connectors control plane -> nodes -->\n  <path d=\"M 104 86 L 104 106\" stroke=\"#4c566a\" stroke-width=\"1\" fill=\"none\"/>\n  <path d=\"M 290 86 L 290 106\" stroke=\"#4c566a\" stroke-width=\"1\" fill=\"none\"/>\n  <path d=\"M 476 86 L 476 106\" stroke=\"#4c566a\" stroke-width=\"1\" fill=\"none\"/>\n  <!-- Service label -->\n  <rect x=\"20\" y=\"246\" width=\"540\" height=\"8\" rx=\"3\" fill=\"none\" stroke=\"none\"/>\n  <text x=\"290\" y=\"253\" fill=\"#ebcb8b\" font-family=\"sans-serif\" font-size=\"9\" text-anchor=\"middle\">A Service sits in front of all pods, load-balancing traffic across replicas</text>\n</svg>\n\n**Pod**: The smallest unit in Kubernetes. A pod wraps one (or sometimes a few tightly coupled) containers and gives them a shared IP address and storage volumes. You almost never interact with pods directly.\n\n**Deployment**: A blueprint that says \"I want N replicas of this pod\". Kubernetes creates the pods, spreads them across available nodes, and continuously reconciles if any are missing or unhealthy.\n\n**Service**: A stable network endpoint that sits in front of a set of pods and load-balances traffic across them. Because pods are ephemeral and get new IP addresses when rescheduled, you always talk to a Service rather than a pod directly.\n\n**Node**: A physical or virtual machine in the cluster. The control plane schedules pods onto nodes based on available resources.\n\n**Control Plane**: The cluster's brain. It watches the current state, compares it to the desired state, and issues instructions to make them match. You interact with it via `kubectl` commands or by applying YAML files.\n\n---"
+      },
+      {
+        "id": "self-healing-and-rolling-deployments",
+        "title": "Self-Healing and Rolling Deployments",
+        "content": "Two things Kubernetes handles automatically that teams used to do manually:\n\n**Self-healing**: If a container crashes, the kubelet (an agent on each node) restarts it. If an entire node goes down, the control plane reschedules its pods onto surviving nodes. You do not get paged at 3am because a single pod crashed.\n\n**Rolling deployments**: When you update an image version, Kubernetes replaces pods one at a time, waiting for each new pod to pass health checks before killing the old one. Traffic never drops to zero. If the new version fails health checks, the rollout pauses automatically.\n\n---"
+      },
+      {
+        "id": "when-you-do-not-need-kubernetes",
+        "title": "When You Do Not Need Kubernetes",
+        "content": "Kubernetes is powerful but genuinely complex. For a single-service app or a small team, it often adds more operational overhead than it solves. Managed platforms like [Railway](https://railway.app/), [Render](https://render.com/), or [AWS App Runner](https://aws.amazon.com/apprunner/) give you container deployments with autoscaling without managing a cluster yourself.\n\nKubernetes becomes the right choice when you have many independent services, need fine-grained resource control, or are running at a scale where managed platforms become prohibitively expensive.\n\n---"
+      },
+      {
+        "id": "further-reading",
+        "title": "Further Reading",
+        "content": "- [Kubernetes explained in 6 minutes (TechWorld with Nana)](https://www.youtube.com/watch?v=TlHvYWVUZyc) — the clearest short intro available\n- [The Kubernetes Handbook (freeCodeCamp)](https://www.freecodecamp.org/news/the-kubernetes-handbook/) — comprehensive written guide for engineers new to K8s\n- [Pods vs Deployments vs Services](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) — official docs on the core abstractions\n- [Kubernetes the Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) — set up a cluster from scratch to truly understand what K8s manages for you"
+      }
+    ],
+    "codeExamples": [
+      {
+        "language": "yaml",
+        "title": "A Kubernetes Deployment",
+        "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: my-api\nspec:\n  replicas: 3          # Run 3 identical pods\n  selector:\n    matchLabels:\n      app: my-api\n  template:\n    metadata:\n      labels:\n        app: my-api\n    spec:\n      containers:\n        - name: my-api\n          image: my-registry/my-api:v2.1.0\n          ports:\n            - containerPort: 3000\n          resources:\n            requests:\n              cpu: \"100m\"\n              memory: \"128Mi\"\n            limits:\n              cpu: \"500m\"\n              memory: \"256Mi\"\n"
+      },
+      {
+        "language": "yaml",
+        "title": "A Kubernetes Service (load balancer)",
+        "code": "apiVersion: v1\nkind: Service\nmetadata:\n  name: my-api-service\nspec:\n  selector:\n    app: my-api        # Targets all pods with this label\n  ports:\n    - port: 80\n      targetPort: 3000\n  type: LoadBalancer   # Provisions a cloud load balancer\n"
+      }
+    ],
+    "seoTitle": "Kubernetes Explained: Pods, Deployments, and Container Orchestration",
+    "seoDescription": "Learn how Kubernetes works: pods, nodes, deployments, services, and why it became the standard platform for running containers in production.",
+    "canonicalUrl": "https://graphy.ellomas.com/concepts/kubernetes",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null

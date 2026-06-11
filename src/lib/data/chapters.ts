@@ -31,6 +31,12 @@ export const chapters: Chapter[] = [
     estimatedHours: 3.0
   },
   {
+    id: "infrastructure",
+    title: "Infrastructure",
+    summary: "Containers, orchestration, and the deployment primitives that ship backend software to production.",
+    estimatedHours: 2.5
+  },
+  {
     id: "caching",
     title: "Caching Infrastructure",
     summary: "Accelerating reads and shielding storage layers with memory caches.",
