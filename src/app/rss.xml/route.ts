@@ -1,6 +1,8 @@
 import { concepts } from "@/lib/data/concepts";
 import { SITE_URL } from "@/lib/constants";
 
+export const runtime = "edge";
+
 export async function GET() {
   const feedItems = concepts
     .map((concept) => {

@@ -10,6 +10,8 @@ const diffStyles: Record<string, string> = {
   advanced: "bg-destructive-light text-destructive-dark",
 };
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return paths.map((p) => ({ slug: p.slug }));
 }
