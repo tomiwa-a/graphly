@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { HeroGraphic } from "@/components/hero-graphic";
 
 export function Hero({ totalConcepts = 9, totalPaths = 3 }: { totalConcepts?: number; totalPaths?: number }) {
   const [initiated, setInitiated] = useState(false);
@@ -131,39 +132,7 @@ export function Hero({ totalConcepts = 9, totalPaths = 3 }: { totalConcepts?: nu
 
           {/* Right column — decorative graph nodes */}
           <div className="hidden lg:flex lg:col-span-2 items-center justify-center">
-            <svg
-              viewBox="0 0 240 240"
-              fill="none"
-              className="w-full max-w-[280px] opacity-60"
-              aria-hidden="true"
-            >
-              {/* Connection lines */}
-              <line x1="80" y1="60" x2="160" y2="100" stroke="#C0392B" strokeWidth="1" opacity="0.2" />
-              <line x1="160" y1="100" x2="120" y2="180" stroke="#C0392B" strokeWidth="1" opacity="0.2" />
-              <line x1="80" y1="60" x2="120" y2="180" stroke="#C0392B" strokeWidth="1" opacity="0.2" />
-              <line x1="160" y1="100" x2="200" y2="50" stroke="#C0392B" strokeWidth="1" opacity="0.15" />
-              <line x1="80" y1="60" x2="40" y2="140" stroke="#C0392B" strokeWidth="1" opacity="0.15" />
-
-              {/* Animated nodes */}
-              <g style={{ animation: "float-node 4s ease-in-out infinite" }}>
-                <circle cx="80" cy="60" r="16" fill="#FDDCDC" stroke="#C0392B" strokeWidth="1" />
-                <circle cx="80" cy="60" r="5" fill="#C0392B" />
-              </g>
-              <g style={{ animation: "float-node 4s ease-in-out infinite 0.8s" }}>
-                <circle cx="160" cy="100" r="20" fill="#FEF0F0" stroke="#C0392B" strokeWidth="1" />
-                <circle cx="160" cy="100" r="6" fill="#C0392B" />
-              </g>
-              <g style={{ animation: "float-node 4s ease-in-out infinite 1.6s" }}>
-                <circle cx="120" cy="180" r="14" fill="#FDDCDC" stroke="#C0392B" strokeWidth="1" />
-                <circle cx="120" cy="180" r="4.5" fill="#C0392B" />
-              </g>
-              <g style={{ animation: "float-node 5s ease-in-out infinite 0.4s" }}>
-                <circle cx="200" cy="50" r="10" fill="#FEF0F0" stroke="#C0392B" strokeWidth="1" opacity="0.6" />
-              </g>
-              <g style={{ animation: "float-node 5s ease-in-out infinite 1.2s" }}>
-                <circle cx="40" cy="140" r="8" fill="#FEF0F0" stroke="#C0392B" strokeWidth="1" opacity="0.5" />
-              </g>
-            </svg>
+            <HeroGraphic />
           </div>
         </div>
       </div>

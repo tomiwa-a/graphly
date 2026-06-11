@@ -59,7 +59,7 @@
     ],
     "seoTitle": "Bits & Binary Explained: Bitwise Operators, Bitmasks & Binary Numbers",
     "seoDescription": "Learn what a bit is, how binary numbers work, how to use bitwise operators like AND, OR, XOR, and how bitmasks enable efficient permission checks in software.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/bits",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/bits",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -136,7 +136,7 @@
     ],
     "seoTitle": "Bloom Filters Explained: Space-Efficient Probabilistic Data Structures",
     "seoDescription": "Learn how Bloom filters use a bit array and multiple hash functions to cheaply confirm an item is absent, with real-world uses in Cassandra, RocksDB, and Chrome Safe Browsing.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/bloom-filters",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/bloom-filters",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -205,7 +205,7 @@
     ],
     "seoTitle": "Caching Strategies: Cache-Aside, Write-Through, and CDN Patterns",
     "seoDescription": "Master caching strategies — cache-aside, write-through, write-behind, and CDN caching. Learn TTL management, invalidation, and cache stampede prevention.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/caching-strategies",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/caching-strategies",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -267,7 +267,7 @@
     "codeExamples": [],
     "seoTitle": "Change Data Capture (CDC) Explained: Database Changelogs and Event Streaming",
     "seoDescription": "Learn how Change Data Capture works by reading database write-ahead logs, and why it's used for data sync, event streaming, and real-time analytics pipelines.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/change-data-capture",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/change-data-capture",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -330,7 +330,7 @@
     ],
     "seoTitle": "Circuit Breakers: Preventing Cascading Failures in Distributed Systems",
     "seoDescription": "Learn how circuit breakers detect and isolate faulting downstream services, prevent cascading failures, and implement fallback strategies in production systems.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/circuit-breakers",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/circuit-breakers",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -382,7 +382,7 @@
     "codeExamples": [],
     "seoTitle": "Containerization Explained: What Containers Are and Why They Matter",
     "seoDescription": "Learn what containerization is, how containers differ from virtual machines, and why they became the standard way to ship backend software.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/containerization",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/containerization",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -448,7 +448,7 @@
     ],
     "seoTitle": "Docker Explained: Images, Containers, and the Build-Ship-Run Model",
     "seoDescription": "Learn how Docker works: building images from Dockerfiles, running containers, and pushing to registries. Written for backend engineers, not DevOps specialists.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/docker",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/docker",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -534,7 +534,7 @@
     ],
     "seoTitle": "File Descriptors Explained | Graphly",
     "seoDescription": "Understand Unix file descriptors: how stdin/stdout/stderr work, why high-traffic servers exhaust fd limits, how epoll enables I/O multiplexing, and how to diagnose fd leaks.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/file-descriptors",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/file-descriptors",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -605,7 +605,7 @@
     ],
     "seoTitle": "gRPC and Protocol Buffers Explained Simply",
     "seoDescription": "Learn how gRPC abstracts network communications, utilizing Protocol Buffers and HTTP/2 stream multiplexing for microservices.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/grpc",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/grpc",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -656,7 +656,7 @@
     "codeExamples": [],
     "seoTitle": "Hash Functions: The Mathematics of Lookup Engines",
     "seoDescription": "Learn the core rules of hashing, the difference between hash functions and hash tables, collision resolution, and the security tradeoffs of slow vs fast hash functions.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/hash-functions",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/hash-functions",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -727,7 +727,7 @@
     ],
     "seoTitle": "HTTP Protocol: Methods, Status Codes, and Request Lifecycle",
     "seoDescription": "Learn the HTTP protocol that powers all web communication — methods, status codes, headers, and request/response lifecycle for backend engineers.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/http",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/http",
     "ogImage": null,
     "citations": [
       {
@@ -807,7 +807,7 @@
     ],
     "seoTitle": "Idempotency in REST APIs: Building Reliable Distributed Endpoints",
     "seoDescription": "Learn how idempotency keys mathematically prevent double-billing and duplicate resource creation in HTTP POST networks.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/idempotency",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/idempotency",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -869,7 +869,7 @@
     ],
     "seoTitle": "Database Indexes: B-Trees, Query Performance, and Tradeoffs",
     "seoDescription": "Learn how database indexes work under the hood: B-trees, composite indexes, query planning, and the read/write performance tradeoffs every backend engineer must understand.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/indexes",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/indexes",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -936,7 +936,7 @@
     ],
     "seoTitle": "Kubernetes Explained: Pods, Deployments, and Container Orchestration",
     "seoDescription": "Learn how Kubernetes works: pods, nodes, deployments, services, and why it became the standard platform for running containers in production.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/kubernetes",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/kubernetes",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -1028,7 +1028,7 @@
     ],
     "seoTitle": "LSM-Trees Explained: Write-Optimized Storage for Modern Databases",
     "seoDescription": "Understand how Log-Structured Merge-Trees work: the Memtable, Write-Ahead Log, SSTables, compaction, tombstones, and why RocksDB, Cassandra, and LevelDB use them.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/lsm-trees",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/lsm-trees",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -1115,7 +1115,7 @@
     ],
     "seoTitle": "Message Queues Explained: Delivery Guarantees, Brokers & Backpressure",
     "seoDescription": "Learn how message queues decouple distributed services, the difference between at-most-once and exactly-once delivery, pub/sub vs point-to-point, and how Kafka, RabbitMQ, and SQS compare.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/message-queues",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/message-queues",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -1206,7 +1206,7 @@
     ],
     "seoTitle": "Processes & Threads Explained | Graphly",
     "seoDescription": "Learn the difference between OS processes and threads, how context switching works, CPU-bound vs I/O-bound work, and how goroutines and the GIL affect concurrency.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/processes-threads",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/processes-threads",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -1287,7 +1287,7 @@
     ],
     "seoTitle": "Vector Clocks Explained: Causality, Conflict Detection & CRDTs",
     "seoDescription": "Understand how vector clocks track causal order across distributed nodes, detect concurrent writes, and how systems like DynamoDB and Riak use them for conflict resolution.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/vector-clocks",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/vector-clocks",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null
@@ -1363,7 +1363,7 @@
     ],
     "seoTitle": "Virtual Memory Explained: Pages, Page Tables, TLB & Page Faults",
     "seoDescription": "Learn how virtual memory works: page tables, address translation, TLB caching, page faults, swap space, and why it is the foundation of process isolation.",
-    "canonicalUrl": "https://graphy.ellomas.com/concepts/virtual-memory",
+    "canonicalUrl": "https://graphly.ellomas.com/concepts/virtual-memory",
     "ogImage": null,
     "citations": [],
     "videoEmbed": null

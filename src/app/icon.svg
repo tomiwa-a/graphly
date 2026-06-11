@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Connection lines -->
+  <path d="M16 5L8 24" stroke="#C0392B" strokeWidth="1.5" opacity="0.35" />
+  <path d="M16 5L24 24" stroke="#C0392B" strokeWidth="1.5" opacity="0.35" />
+  <path d="M10 22L22 22" stroke="#C0392B" strokeWidth="1.5" opacity="0.35" />
+  <!-- Primary node — solid blood red -->
+  <circle cx="16" cy="5" r="3.5" fill="#C0392B" />
+  <!-- Secondary nodes — soft red tint -->
+  <circle cx="8" cy="24" r="3" fill="#FDDCDC" stroke="#C0392B" strokeWidth="1.5" />
+  <circle cx="24" cy="24" r="3" fill="#FDDCDC" stroke="#C0392B" strokeWidth="1.5" />
+</svg>

@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const matter = require("gray-matter");
 
-const SITE_URL = "https://graphy.ellomas.com";
+const SITE_URL = "https://graphly.ellomas.com";
 
 const CONTENT_DIR = path.join(__dirname, "..", "src", "content", "concepts");
 const OUTPUT_FILE = path.join(

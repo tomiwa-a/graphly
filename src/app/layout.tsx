@@ -21,13 +21,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { SITE_URL } from "@/lib/constants";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     template: "%s — Graphly",
     default: "Graphly — Backend Engineering Knowledge Graph",
   },
   description:
     "Learn backend engineering through a connected knowledge graph. Explore concepts, prerequisites, multi-language examples.",
+  openGraph: {
+    title: "Graphly — Backend Engineering Knowledge Graph",
+    description:
+      "Learn backend engineering through a connected knowledge graph. Explore concepts, prerequisites, multi-language examples.",
+    url: SITE_URL,
+    siteName: "Graphly",
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
