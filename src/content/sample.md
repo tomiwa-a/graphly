@@ -1,21 +1,75 @@
 ---
-title: "Markdown System Test Playground"
-summary: "Interactive test playground showcasing Phase 3 and Phase 4 systems in action."
+title: "Ultimate Markdown Systems Playground"
+summary: "A comprehensive test catalog of all markdown features available in Graphy."
 video_embed:
   platform: "youtube"
   id: "dQw4w9WgXcQ"
   title: "Graphy Walkthrough Video"
+citations:
+  - title: "HTTP: The Definitive Guide"
+    author: "David Gourley, Brian Totty"
+    chapter: "Chapter 4"
+    page_range: "83-112"
+    external_link: "https://www.oreilly.com/library/view/http-the-definitive/1565925092/"
 ---
 
-# Interactive Markdown Systems Test
+# Ultimate Markdown Playground
 
-Welcome to the **Graphy Markdown Compiler** playground. This document is rendered entirely on the server using build-time HTML compilations, resulting in a lightweight, high-performance page with interactive client-side overlays.
+This page acts as a comprehensive sandbox exercising all markdown parser features, layout rules, and Interactive Client Overlays available in Graphy.
 
 ---
 
-## 1. Code Blocks (Phase 4 Step 1)
+## 1. Text & Basic Formatting
 
-These blocks are parsed and highlighted at build-time using **Shiki**. Use the copy button to copy the snippet, or toggle the line numbers by clicking the `123` button in the headers.
+You can apply **bold**, *italic*, and ***bold-italic*** styling to any text block. You can also reference inline code snippets like `const connection = new Socket();` using single backticks.
+
+---
+
+## 2. Lists & Task Checklists
+
+### Unordered List
+- Layer 7: Application (HTTP, DNS)
+- Layer 4: Transport (TCP, UDP)
+  - Nested protocols (TLS, QUIC)
+- Layer 3: Network (IP, ICMP)
+
+### Ordered List
+1. Establish a TCP three-way handshake.
+2. Perform a TLS cryptographic key exchange.
+3. Transmit the application layer request frames.
+
+### Interactive GFM Checklists
+- [x] Phase 1: Chapter-Grouped Directories & SEO Layouts
+- [x] Phase 2: Tables, Citations, and Admonitions
+- [x] Phase 3: SVG Flowcharts and Video Embeds
+- [ ] Phase 4: Full Interactive Code Playgrounds
+
+---
+
+## 3. Admonitions & Callout Cards
+
+> [!NOTE]
+> This is a general note callout card. Use it to highlight additional context that isn't critical but helps understanding.
+
+> [!TIP]
+> This is a helper tip. Use it for best practices, optimization advice, and productivity shortcuts.
+> 
+> ```typescript {2}
+> // You can even nest code blocks inside tips!
+> console.log("Nested tip code works!");
+> ```
+
+> [!WARNING]
+> This is a warning box. Use it to alert users to potential pitfalls, edge cases, or common configuration bugs.
+
+> [!CAUTION]
+> This is a caution callout. Use it to prevent serious issues such as data loss, race conditions, or infinite recursion.
+
+---
+
+## 4. Code Blocks (Shiki Build-time Highlights)
+
+These blocks support line highlights (defined in meta curly brackets) and toggleable line numbering.
 
 ### TypeScript with Line Highlights (lines 2 and 5)
 
@@ -31,24 +85,33 @@ function checkHealth(node: DatabaseNode): boolean {
 }
 ```
 
-### Go with Line Highlights (lines 3 and 6-7)
+### Go with Line Highlights (lines 3, 7-8)
 
-```go {3,6-7}
+```go {3,7-8}
 package main
 
 import "fmt"
 
 func main() {
-    message := "Graphy is theory-first!"
+    message := "Graphy handles concurrency beautifully!"
     fmt.Println(message)
 }
 ```
 
+### SQL Database Queries
+
+```sql {4}
+SELECT name, role, sync_lag_ms
+FROM database_nodes
+WHERE sync_lag_ms > 1000
+ORDER BY sync_lag_ms DESC;
+```
+
 ---
 
-## 2. Interactive SVG & Mermaid Diagrams
+## 5. Rich System Design Diagrams (SVG)
 
-Here is a raw SVG system architecture flowchart. It is center-aligned, responsive, and styled with high-contrast borders and a subtle shadow.
+Here is a raw inline SVG flowchart. It is center-aligned, responsive, and styled with high-contrast borders:
 
 <svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg">
   <!-- Client Node -->
@@ -81,30 +144,22 @@ Here is a raw SVG system architecture flowchart. It is center-aligned, responsiv
 
 ---
 
-## 3. Video Embeds (Phase 3 Shortcode)
+## 6. GFM Tables
 
-Below is an inline supplement video loaded dynamically using our shortcode:
+Tables are compiled to stretch across full-width columns and break lines naturally:
 
-[[video platform="youtube" id="dQw4w9WgXcQ" title="Never Gonna Give You Up"]]
-
----
-
-## 4. Inline Images & Captions
-
-Images are compiled into semantic markup with responsive constraints and block captions:
-
-![A premium visualization of distributed message queuing topologies.](https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80)
+| Protocol | OSI Layer | Transport | Flow Control | Primary Use Case |
+| :--- | :--- | :--- | :--- | :--- |
+| **HTTP/1.1** | Layer 7 | TCP | TCP Windows | Simple Web Browsing, Legacy APIs |
+| **HTTP/2** | Layer 7 | TCP | Multiplexing Stream Frames | Modern Web, Bidirectional gRPC |
+| **HTTP/3** | Layer 7 | QUIC (UDP) | Connection ID Flow Control | High Packet-Loss Mobile Networks |
 
 ---
 
-## 5. Rich Markdown & Task Checklists
+## 7. Media Supplements (Video Embeds & Captions)
 
-Verify formatting, blockquotes, admonitions, and standard checklists:
+### Video Embed Shortcode
+[[video platform="youtube" id="dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up"]]
 
-- [x] Phase 1: Chapter-Grouped Directories
-- [x] Phase 2: Admonitions & Tables
-- [ ] Phase 3: High-contrast SVGs & Video Shortcodes
-- [ ] Phase 4: Shiki Highlight & Playgrounds
-
-> [!TIP]
-> Hover over any code block to reveal the interactive Copy/Line-number controls.
+### Image with Responsive Figcaption
+![A clean visualization of distributed message queuing topologies in a datacenter cluster.](https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80)

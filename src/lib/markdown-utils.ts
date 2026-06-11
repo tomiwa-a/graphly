@@ -125,17 +125,7 @@ export async function renderFullMarkdown(text: string): Promise<string> {
     } else if (platform === "vimeo") {
       embedUrl = `https://player.vimeo.com/video/${id}`;
     }
-    return `
-      <div class="video-container my-8 relative w-full aspect-video rounded-2xl overflow-hidden border border-[var(--color-border)] shadow-lg bg-black">
-        <iframe
-          src="${embedUrl}"
-          title="${title || 'Video supplement'}"
-          class="absolute inset-0 w-full h-full border-0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen
-        ></iframe>
-      </div>
-    `;
+    return `<div class="video-container my-8 relative w-full aspect-video rounded-2xl overflow-hidden border border-[var(--color-border)] shadow-lg bg-black"><iframe src="${embedUrl}" title="${title || 'Video supplement'}" class="absolute inset-0 w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
   });
 
   const hl = await getHighlighterInstance();
@@ -157,7 +147,7 @@ export async function renderFullMarkdown(text: string): Promise<string> {
             title="${title || ''}" 
             loading="${loading}" 
             fetchpriority="${fetchPriority}"
-            class="w-full h-auto object-cover max-h-[500px]"
+            class="w-full h-auto max-h-[500px] object-contain mx-auto block"
           />
         </div>
         ${text ? `<figcaption class="text-sm font-sans text-foreground-secondary italic text-center">${text}</figcaption>` : ""}
@@ -190,7 +180,7 @@ export async function renderFullMarkdown(text: string): Promise<string> {
       const isHighlighted = highlightedLines.has(lineIdx);
       const classes = [
         "line",
-        isHighlighted ? "highlighted-line bg-[#2b3036] border-l-2 border-primary-500 pl-2 -ml-[10px]" : "",
+        isHighlighted ? "highlighted-line" : "",
       ].filter(Boolean).join(" ");
       return `<span class="${classes}" data-line="${lineIdx}">`;
     });
@@ -204,7 +194,7 @@ export async function renderFullMarkdown(text: string): Promise<string> {
           </div>
           <button class="copy-code-btn px-2 py-1 rounded bg-[#2f363d] hover:bg-[#444d56] transition-colors text-[10px] text-foreground-secondary font-semibold" data-code="${escapedCode}">Copy</button>
         </div>
-        <div class="overflow-x-auto p-4 code-block-content show-line-numbers">
+        <div class="overflow-x-auto py-4 code-block-content show-line-numbers">
           ${processedShikiHtml}
         </div>
       </div>
