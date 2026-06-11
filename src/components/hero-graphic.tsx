@@ -18,19 +18,33 @@ interface HeroEdge {
 }
 
 const NODES: HeroNode[] = [
-  { id: "node1", label: "HTTP Foundations", cx: 80, cy: 60, r: 16, difficulty: "beginner" },
-  { id: "node2", label: "LSM-Trees", cx: 160, cy: 100, r: 20, difficulty: "intermediate" },
-  { id: "node3", label: "Bloom Filters", cx: 120, cy: 180, r: 14, difficulty: "intermediate" },
-  { id: "node4", label: "gRPC Streaming", cx: 200, cy: 50, r: 10, difficulty: "advanced" },
-  { id: "node5", label: "Processes & Threads", cx: 40, cy: 140, r: 8, difficulty: "beginner" },
+  { id: "node1", label: "HTTP Foundations", cx: 80, cy: 60, r: 14, difficulty: "beginner" },
+  { id: "node2", label: "LSM-Trees", cx: 155, cy: 95, r: 16, difficulty: "intermediate" },
+  { id: "node3", label: "Bloom Filters", cx: 115, cy: 165, r: 13, difficulty: "intermediate" },
+  { id: "node4", label: "gRPC Streaming", cx: 205, cy: 65, r: 10, difficulty: "advanced" },
+  { id: "node5", label: "Processes & Threads", cx: 45, cy: 125, r: 8, difficulty: "beginner" },
+  { id: "node6", label: "Message Queues", cx: 195, cy: 145, r: 12, difficulty: "intermediate" },
+  { id: "node7", label: "Circuit Breakers", cx: 160, cy: 205, r: 11, difficulty: "intermediate" },
+  { id: "node8", label: "Virtual Memory", cx: 75, cy: 195, r: 9, difficulty: "intermediate" },
+  { id: "node9", label: "Caching Strategies", cx: 120, cy: 35, r: 15, difficulty: "beginner" },
 ];
 
 const EDGES: HeroEdge[] = [
-  { from: "node1", to: "node2" },
-  { from: "node2", to: "node3" },
-  { from: "node1", to: "node3" },
-  { from: "node2", to: "node4" },
+  { from: "node9", to: "node1" },
+  { from: "node9", to: "node2" },
   { from: "node1", to: "node5" },
+  { from: "node1", to: "node3" },
+  { from: "node1", to: "node2" },
+  { from: "node2", to: "node4" },
+  { from: "node2", to: "node3" },
+  { from: "node2", to: "node6" },
+  { from: "node3", to: "node8" },
+  { from: "node3", to: "node7" },
+  { from: "node3", to: "node6" },
+  { from: "node4", to: "node6" },
+  { from: "node5", to: "node8" },
+  { from: "node6", to: "node7" },
+  { from: "node7", to: "node8" },
 ];
 
 const DIFF_COLORS = {
